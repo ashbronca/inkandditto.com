@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy · Ink & Ditto</title>
+<meta name="description" content="Ink & Ditto collects nothing. What stays on your devices, and what Ditto sends to Claude when you ask it to.">
+<style>
+/* Layout: the page is a note — one centred column of words, with the Markdown marks (##, -, [ ])
+   hanging in a margin to its left, as they do in the app. Ditto stands in that margin beside the
+   one line it's working on. */
+:root {
+  --paper: #FAF8F4;
+  --ink: #1C1A15;
+  --ink-2: rgba(28, 26, 21, 0.62);
+  --rule: rgba(28, 26, 21, 0.38);
+  --fill: rgba(28, 26, 21, 0.06);
+  --your-move: #AE3F2E;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: ui-serif, "New York", "Iowan Old Style", "Charter", Georgia, serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --column: 40rem;
+  --hang: 3.25rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14130F; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
+    --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14130F; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
+  --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; color-scheme: dark;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+  padding-inline: 1rem;
+}
+.page { max-width: calc(var(--column) + var(--hang)); margin-inline: auto; padding-block: 3.5rem 5rem; padding-left: var(--hang); position: relative; }
+@media (max-width: 40rem) { .page { padding-left: 0; } :root { --hang: 0rem; } }
+
+img, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+
+/* The marks that hang in the margin, in rule ink, exactly where the app puts them. */
+.mark { position: absolute; left: calc(-1 * var(--hang)); width: calc(var(--hang) - 0.75rem); text-align: right;
+  color: var(--rule); font: 500 0.95em var(--mono); user-select: none; }
+@media (max-width: 40rem) { .mark { display: none; } }
+
+.lockup { width: min(15rem, 62vw); margin-bottom: 2.25rem; }
+.lockup source, .lockup img { width: 100%; }
+
+h1 { font: 600 clamp(2.4rem, 6.4vw, 3.6rem)/1.05 var(--sans); letter-spacing: -0.025em; margin: 0 0 1.25rem; text-wrap: balance; }
+.pair { font: 400 clamp(1.25rem, 2.6vw, 1.5rem)/1.4 var(--serif); margin: 0 0 1.5rem; color: var(--ink); text-wrap: balance; }
+.lede { color: var(--ink-2); margin: 0 0 2rem; max-width: 34rem; }
+.status { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.15rem; border-radius: 999px;
+  background: var(--ink); color: var(--paper); font-weight: 600; text-decoration: none; font-size: 0.95rem; }
+.soon { color: var(--ink-2); font-size: 0.95rem; }
+
+section { position: relative; margin-top: 5.5rem; }
+h2 { position: relative; font: 600 1.6rem/1.2 var(--sans); letter-spacing: -0.015em; margin: 0 0 1rem; text-wrap: balance; }
+h2 .mark { top: 0.18em; font-size: 0.6em; }
+p { margin: 0 0 1rem; max-width: 36rem; }
+.quiet { color: var(--ink-2); }
+
+.film { margin-top: 3.5rem; border-radius: 14px; overflow: hidden; background: var(--fill); aspect-ratio: 16 / 9; }
+.film video { width: 100%; height: 100%; object-fit: cover; }
+.caption { font-size: 0.85rem; color: var(--ink-2); margin-top: 0.6rem; }
+
+.shot { margin: 1.75rem 0 0; }
+.shot img { border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.08); }
+.shot .dark { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .shot .light { display: none; } :root:not([data-theme="light"]) .shot .dark { display: block; } }
+:root[data-theme="dark"] .shot .light { display: none; }
+:root[data-theme="dark"] .shot .dark { display: block; }
+
+/* The iPhone, two up: raw screens, their corners rounded as the phone's are (55 of 440 pt). */
+.phones { display: grid; grid-template-columns: repeat(2, minmax(0, 17rem)); gap: 1.25rem; justify-content: start; }
+.phones img { border-radius: 12.5% / 5.75%; box-shadow: 0 0 0 1px var(--fill), 0 1px 2px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.08); }
+@media (max-width: 30rem) { .phones { gap: 0.75rem; } }
+.iphone { margin-top: 2.5rem; }
+
+/* A list set the way Ink sets one: the bullet drawn, the words on one edge. */
+ul.proofs { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.55rem; }
+ul.proofs li { position: relative; padding-left: 1.6rem; }
+ul.proofs li::before { content: ""; position: absolute; left: 0.45rem; top: 0.68em; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-2); }
+
+/* The line, handed over: Ditto in the margin, the work in four steps. */
+.line { position: relative; font-size: 1.125rem; padding: 0.15rem 0; margin: 1.5rem 0 0.25rem; }
+.ditto-mark { position: absolute; left: calc(-1 * var(--hang) + 0.85rem); top: 0.38rem; width: 20px; height: 20px; }
+@media (max-width: 40rem) { .ditto-mark { position: static; display: inline-block; vertical-align: -3px; margin-right: 0.4rem; } }
+.ditto-mark .dot { fill: var(--your-move); }
+kbd { font: 500 0.85em var(--mono); padding: 0.1em 0.4em; border-radius: 6px; background: var(--fill); border: 1px solid var(--rule); }
+
+ol.steps { list-style: none; counter-reset: step; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; }
+ol.steps li { counter-increment: step; display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0.25rem 0.5rem; }
+ol.steps li::before { content: counter(step) "."; color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; padding-right: 0.25rem; }
+ol.steps strong { font-weight: 600; }
+
+.decision { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 1.25rem 0 0.4rem; }
+.decision span { padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.9rem; font-weight: 600; }
+.decision .ship { background: var(--ink); color: var(--paper); }
+.decision .ask { background: var(--fill); }
+.decision .discard { color: var(--ink-2); font-weight: 500; }
+.effect { font-size: 0.85rem; color: var(--ink-2); font-family: var(--mono); }
+
+blockquote { margin: 1.5rem 0 0; padding-left: 1.1rem; border-left: 2px solid var(--rule); font: 400 1.2rem/1.5 var(--serif); color: var(--ink); max-width: 34rem; }
+
+.faq { display: grid; gap: 1.25rem; margin-top: 1rem; }
+.faq h3 { font: 600 1.05rem/1.35 var(--sans); margin: 0 0 0.3rem; }
+.faq p { margin: 0; color: var(--ink-2); }
+
+hr { border: 0; height: 1px; background: var(--rule); margin: 5rem 0 2rem; }
+footer { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between; align-items: center; color: var(--ink-2); font-size: 0.9rem; }
+footer img { width: 6.5rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .ditto-mark .eyes { animation: blink 6s infinite; transform-origin: 10px 10px; }
+  @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
+}
+</style>
+<style>
+.doc h1 { font: 700 clamp(1.8rem, 4vw, 2.2rem)/1.15 var(--sans); margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+.doc h2 { font: 600 1.15rem/1.3 var(--sans); margin: 2.2rem 0 0.5rem; }
+.doc p, .doc li { max-width: 38rem; }
+.doc .meta { color: var(--ink-2); margin: 0 0 2rem; }
+.doc .back { display: inline-block; margin-bottom: 2rem; color: var(--ink-2); text-decoration: none; }
+.doc code { font: 0.92em var(--mono); background: var(--fill); padding: 0.1em 0.35em; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main class="page doc">
+<a class="back" href="./">← Ink &amp; Ditto</a>
+<h1>Privacy</h1>
+<p class="meta">Effective 9 October 2026</p>
+<p><strong>The short version: we collect nothing.</strong> There's no account, no analytics, no advertising and no tracking. We have no servers that see your notes.</p>
+
+<h2>Your notes</h2>
+<p>Your notes are plain Markdown files in a folder you choose: on your device, or in your iCloud Drive (<code>iCloud Drive › Ink</code>) so your Mac and iPhone stay in step. iCloud is Apple's service, covered by <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>. We never see your notes.</p>
+
+<h2>Ditto (on the Mac, only if you connect it)</h2>
+<p>Ditto does nothing until you connect it to your own Claude account. When you hand Ditto a line, it sends Claude (made by Anthropic) the line you handed it, the few lines around it, and the part of your taste that applies, so Claude can do the work. When Ditto works on software, it works in your project on a branch of its own, on your Mac. Anything sent to Claude is handled under your agreement with Anthropic and <a href="https://www.anthropic.com/legal/privacy">Anthropic's privacy policy</a>. Ditto never pushes, merges or messages anyone.</p>
+
+<h2>Ditto on the iPhone</h2>
+<p>The iPhone app shows and decides Ditto's work through files in your own iCloud Drive. It talks to no server of ours.</p>
+
+<h2>Speaking a note (Inkling)</h2>
+<p>When you speak a note, the microphone is used only while the Inkling panel is open. Speech is turned into text on your device when your device supports it; otherwise by Apple's speech recognition, under Apple's privacy policy.</p>
+
+<h2>Crash reports</h2>
+<p>If you choose to share crash reports with developers in your device's settings, Apple passes them to us. They contain no notes.</p>
+
+<h2>Children</h2>
+<p>Ink &amp; Ditto collects no personal information from anyone, including children.</p>
+
+<h2>Changes and contact</h2>
+<p>If this policy changes, this page will say so, with a new date. Questions: <a href="mailto:comb.cloaks.7t@icloud.com">comb.cloaks.7t@icloud.com</a>.</p>
+
+</main>
+</body>
+</html>
