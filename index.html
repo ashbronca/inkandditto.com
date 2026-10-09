@@ -48,7 +48,9 @@
   color-scheme: dark;
 }
 
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+/* The page's own colour on the root too: on a phone the safe areas (behind the status bar and the home
+   indicator) are painted from it, and they must follow the toggle with the rest. */
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; background: var(--paper); }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
@@ -344,7 +346,13 @@ footer a { text-decoration: none; }
     var d = now() === "dark";
     button.setAttribute("aria-pressed", String(d));
     button.setAttribute("aria-label", d ? "Light mode" : "Dark mode");
-    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = d ? "#14130F" : "#F7F4EE"; });
+    // One theme colour, with no media query: Safari keeps tinting its bars from a media-qualified tag even
+    // after its content changes, so the pair is replaced by a single tag that says what's showing.
+    if (root.dataset.theme) {
+      document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
+      var m = document.createElement("meta"); m.name = "theme-color"; m.content = d ? "#14130F" : "#F7F4EE";
+      document.head.appendChild(m);
+    }
   }
   function set(t) { root.dataset.theme = t; try { localStorage.setItem("theme", t); } catch (e) {} show(); }
   button.addEventListener("click", function () {
