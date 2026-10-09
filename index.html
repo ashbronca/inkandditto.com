@@ -135,14 +135,12 @@ body { min-height: 100svh; display: grid; place-items: center; }
 .hold nav { display: flex; gap: 1.5rem; font-size: 0.9rem; color: var(--ink-2); }
 .hold nav a { color: var(--ink-2); text-decoration: none; }
 .hold nav a:hover { color: var(--ink); }
-/* In the dark, Ditto is drawn in light ink, as in the app: the light lockup, inverted, warm. */
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hold .lockup img { filter: invert(1) hue-rotate(180deg) brightness(0.96); } }
-:root[data-theme="dark"] .hold .lockup img { filter: invert(1) hue-rotate(180deg) brightness(0.96); }
 </style>
 </head>
 <body>
 <main class="hold">
   <picture class="lockup">
+    <source srcset="assets/00-lockup-dark.png" media="(prefers-color-scheme: dark)">
     <img src="assets/00-lockup-light.png" alt="Ink &amp; Ditto" width="735" height="479">
   </picture>
   <p class="line">Write it down. It gets done.</p>
