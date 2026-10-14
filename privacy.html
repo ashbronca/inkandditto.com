@@ -3,8 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Privacy · Ink & Ditto</title>
-<meta name="description" content="Ink & Ditto collects nothing. What stays on your devices, and what Ditto sends to Claude when you ask it to.">
+<title>Privacy · Ink &amp; Ditto</title>
+<meta name="description" content="Ink &amp; Ditto collects nothing. What stays on your devices, and what Claude reads when you hand Ditto a line.">
+<meta name="theme-color" content="#F7F4EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<script>
+  // The look chosen on the home page, before the first paint, with the theme colour to match.
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark") {
+      document.documentElement.dataset.theme = t;
+      document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
+      var m = document.createElement("meta"); m.name = "theme-color"; m.content = t === "dark" ? "#14130F" : "#F7F4EE";
+      document.head.appendChild(m);
+    }
+  } catch (e) {}
+</script>
+<link rel="icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
 <style>
 /* Layout: the page is a note — one centred column of words, with the Markdown marks (##, -, [ ])
    hanging in a margin to its left, as they do in the app. Ditto stands in that margin beside the
@@ -33,7 +49,7 @@
   --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; color-scheme: dark;
 }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; background: var(--paper); }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
   font: 400 1.0625rem/1.6 var(--sans); -webkit-font-smoothing: antialiased;
@@ -44,7 +60,7 @@ body {
 
 img, video { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 /* The marks that hang in the margin, in rule ink, exactly where the app puts them. */
 .mark { position: absolute; left: calc(-1 * var(--hang)); width: calc(var(--hang) - 0.75rem); text-align: right;
@@ -128,6 +144,8 @@ footer img { width: 6.5rem; }
 .doc h1 { font: 700 clamp(1.8rem, 4vw, 2.2rem)/1.15 var(--sans); margin: 0 0 0.4rem; letter-spacing: -0.01em; }
 .doc h2 { font: 600 1.15rem/1.3 var(--sans); margin: 2.2rem 0 0.5rem; }
 .doc p, .doc li { max-width: 38rem; }
+.doc ul { padding-left: 1.25rem; margin: 0 0 1rem; }
+.doc li { margin-bottom: 0.25rem; }
 .doc .meta { color: var(--ink-2); margin: 0 0 2rem; }
 .doc .back { display: inline-block; margin-bottom: 2rem; color: var(--ink-2); text-decoration: none; }
 .doc code { font: 0.92em var(--mono); background: var(--fill); padding: 0.1em 0.35em; border-radius: 4px; }
@@ -137,23 +155,31 @@ footer img { width: 6.5rem; }
 <main class="page doc">
 <a class="back" href="./">← Ink &amp; Ditto</a>
 <h1>Privacy</h1>
-<p class="meta">Effective 9 October 2026</p>
-<p><strong>The short version: we collect nothing.</strong> There's no account, no analytics, no advertising and no tracking. We have no servers that see your notes.</p>
+<p class="meta">Effective 14 October 2026</p>
+<p><strong>The short version: we collect nothing.</strong> There’s no account, no analytics, no advertising and no tracking. We have no servers that see your notes.</p>
 
 <h2>Your notes</h2>
-<p>Your notes are plain Markdown files in a folder you choose: on your device, or in your iCloud Drive (<code>iCloud Drive › Ink</code>) so your Mac and iPhone stay in step. iCloud is Apple's service, covered by <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a>. We never see your notes.</p>
+<p>Your notes are plain Markdown files in a folder you choose: on your device, or in your iCloud Drive (<code>iCloud Drive › Ink</code>) so your Mac and iPhone stay in step. iCloud is Apple’s service, covered by <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>. We never see your notes.</p>
 
 <h2>Ditto (on the Mac, only if you connect it)</h2>
-<p>Ditto does nothing until you connect it to your own Claude account. When you hand Ditto a line, it sends Claude (made by Anthropic) the line you handed it, the few lines around it, and the part of your taste that applies, so Claude can do the work. When Ditto works on software, it works in your project on a branch of its own, on your Mac. Anything sent to Claude is handled under your agreement with Anthropic and <a href="https://www.anthropic.com/legal/privacy">Anthropic's privacy policy</a>. Ditto never pushes, merges or messages anyone.</p>
+<p>Ditto does nothing until you connect it to your own Claude account. It works through Claude Code on your Mac.</p>
+<p>When you hand Ditto a line, Claude (made by Anthropic) reads what the job needs:</p>
+<ul>
+<li>the line you handed it (or the section, if you handed over a section);</li>
+<li>the note’s title and the lines around it, up to eight either side;</li>
+<li>the part of your taste that applies;</li>
+<li>for code, your project on your Mac, which Claude Code reads and changes on a branch of Ditto’s own.</li>
+</ul>
+<p>Ditto’s checks see the change it made. Anything Claude reads is handled under your agreement with Anthropic and <a href="https://www.anthropic.com/legal/privacy">Anthropic’s privacy policy</a>. Nothing goes to us. Ditto never pushes your code anywhere or messages anyone.</p>
 
 <h2>Ditto on the iPhone</h2>
-<p>The iPhone app shows and decides Ditto's work through files in your own iCloud Drive. It talks to no server of ours.</p>
+<p>The iPhone app shows and decides Ditto’s work through files in your own iCloud Drive. It talks to no server of ours.</p>
 
-<h2>Speaking a note (Inkling)</h2>
-<p>When you speak a note, the microphone is used only while the Inkling panel is open. Speech is turned into text on your device when your device supports it; otherwise by Apple's speech recognition, under Apple's privacy policy.</p>
+<h2>Speaking a note (Mac)</h2>
+<p>When you speak a note on the Mac, the microphone is used only while the Inkling panel is open. Speech is turned into text on your Mac when it supports that; otherwise by Apple’s speech recognition, under Apple’s privacy policy. The iPhone app doesn’t use the microphone.</p>
 
 <h2>Crash reports</h2>
-<p>If you choose to share crash reports with developers in your device's settings, Apple passes them to us. They contain no notes.</p>
+<p>If you choose to share crash reports with developers in your device’s settings, Apple passes them to us. They contain no notes.</p>
 
 <h2>Children</h2>
 <p>Ink &amp; Ditto collects no personal information from anyone, including children.</p>

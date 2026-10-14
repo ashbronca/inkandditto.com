@@ -3,18 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ink &amp; Ditto</title>
-<meta name="description" content="Ink is where you write. Ditto is who you hand the work to. Calm Markdown notes for Mac and iPhone, with Ditto in the margin.">
-<meta property="og:title" content="Ink & Ditto">
+<title>Ink &amp; Ditto: calm Markdown notes for Mac and iPhone</title>
+<meta name="description" content="Calm Markdown notes for Mac and iPhone. If you build software with Claude, hand a line to Ditto: it does the work in your project, checks it, and brings it back for one decision.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://inkandditto.com/">
+<meta property="og:title" content="Ink &amp; Ditto">
 <meta property="og:description" content="Write it down. It gets done. Calm Markdown notes for Mac and iPhone, with Ditto in the margin.">
 <meta property="og:image" content="https://inkandditto.com/assets/og.jpg">
+<meta property="og:image:alt" content="ink, with Ditto beside it, over the line “Write it down. It gets done.”">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#F7F4EE" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
 <script>
-  // The visitor's own choice, before the first paint, so the page never flashes the other look.
+  // The visitor’s own choice, before the first paint, so the page never flashes the other look.
   try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
 <link rel="icon" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
 <style>
 /* The page is a note: one column of words, the Markdown marks (##, -, [ ]) hanging in a margin to its
    left as they do in the app, and Ditto standing in that margin beside the line it's working on.
@@ -33,7 +38,7 @@
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --column: 40rem;
   --hang: 3.25rem;
-  --wide: 68rem;
+  --wide: 57rem;
   color-scheme: light;
 }
 :root[data-theme="light"] { color-scheme: light; }
@@ -61,16 +66,19 @@ body {
 }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+/* The ring follows each control's own shape (a pill stays a pill, the toggle stays round). */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
-/* The bar: the lockup and Download, and nothing else. */
+/* The bar: the lockup, the toggle and where things stand, and nothing else. */
 .bar { position: sticky; top: 0; z-index: 2; margin-inline: -1rem; padding: 0.75rem 1rem;
   padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
   /* Solid: Safari on iOS 26 colours the strip under the status bar from a bar pinned to the top, and only
      from a solid one; see-through, it fell back to black in light mode on a dark iPhone. */
   background: var(--paper); }
 .bar-inner { max-width: var(--wide); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; }
-.bar img { height: 2.1rem; width: auto; }
+/* The lockup is trimmed to its ink, so its left edge is the glyph's. */
+.bar a.home { display: block; border-radius: 6px; }
+.bar img { height: 1.9rem; width: auto; }
 .bar-end { display: flex; align-items: center; gap: 0.5rem; }
 
 /* Paper or ink: a sun that eclipses into a moon. The page itself changes in a circle that grows from
@@ -93,7 +101,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 }
 @media (prefers-reduced-motion: reduce) { .theme .body, .theme .bite, .theme .rays { transition: none; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-.lockup-light, .lockup-dark { display: block; }
 
 .page { max-width: calc(var(--column) + var(--hang)); margin-inline: auto; padding-left: var(--hang); position: relative; }
 @media (max-width: 44rem) { .page { padding-left: 0; } :root { --hang: 0rem; } }
@@ -106,21 +113,27 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 
 .hero { padding-block: clamp(3rem, 9vw, 6rem) 2.5rem; }
 h1 { font: 650 clamp(2.6rem, 7vw, 4.25rem)/1.02 var(--sans); letter-spacing: -0.03em; margin: 0 0 1.25rem; text-wrap: balance; }
-.pair { font: 400 clamp(1.3rem, 2.8vw, 1.6rem)/1.4 var(--serif); margin: 0 0 1.25rem; text-wrap: balance; }
+.pair { font: 400 clamp(1.3rem, 2.8vw, 1.6rem)/1.4 var(--serif); margin: 0 0 1.25rem; }
 .lede { color: var(--ink-2); margin: 0 0 2rem; max-width: 34rem; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; }
 .button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border-radius: 999px;
   background: var(--ink); color: var(--paper); font-weight: 600; text-decoration: none; font-size: 0.95rem; }
 .button.small { padding: 0.45rem 0.95rem; font-size: 0.875rem; }
-.link { font-size: 0.95rem; font-weight: 500; text-decoration: none; }
-.link::after { content: " →"; }
+/* Where things stand, not an action: a ring, not a fill. */
+.button.status { background: transparent; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--rule); font-weight: 600; }
+@media (hover: hover) { .button.status:hover { color: var(--ink); } }
 
-/* The hero picture: the Mac's window, and the iPhone in front of its corner. */
+/* The hero picture: the Mac's window, and the iPhone in front of its corner. The Mac is shown no wider
+   than it was captured (800 points), so it stays sharp on a Retina screen. */
 .stage { position: relative; margin: 1rem auto 0; max-width: var(--wide); padding-bottom: 4%; }
-/* The Mac shots are the window itself, its own corners and shadow (captured, not drawn). */
 .stage .mac { width: 88%; margin-left: -1.5%; }
-.shot.window img { border-radius: 0; box-shadow: none; margin-inline: -2.5%; max-width: 105%; width: 105%; }
 .stage .phone { position: absolute; right: 0; bottom: 0; width: 24%; border-radius: 12.5% / 5.75%; box-shadow: var(--shadow); }
+/* On a phone, the phone: its note alone, at a size you can read. */
+@media (max-width: 34rem) {
+  .stage { padding-bottom: 0; margin-top: 0.5rem; }
+  .stage .mac { display: none !important; }
+  .stage .phone { position: static; width: min(15rem, 66%); margin-inline: auto; }
+}
 
 section { position: relative; margin-top: clamp(5rem, 12vw, 8rem); }
 h2 { position: relative; font: 650 clamp(1.6rem, 3.4vw, 2.1rem)/1.15 var(--sans); letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance; }
@@ -128,21 +141,23 @@ h2 .mark { top: 0.3em; font-size: 0.5em; }
 p { margin: 0 0 1rem; max-width: 36rem; }
 .quiet { color: var(--ink-2); }
 
+/* The Mac's review and room, cropped to what matters and shown at the size they are on the Mac. */
 .shot { margin: 2.25rem 0 0; }
-.shot img { border-radius: 12px; box-shadow: var(--shadow); }
+.shot img { box-shadow: var(--shadow); }
+.shot.review img { border-radius: 4.69% / 5.04%; }
+.shot.room img { border-radius: 4.29% / 7.68%; }
 .dark { display: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .light { display: none; } :root:not([data-theme="light"]) .dark { display: block; } }
 :root[data-theme="dark"] .light { display: none; }
 :root[data-theme="dark"] .dark { display: block; }
 
 /* iPhones, side by side: raw screens with the phone's own corners (55 of 440 pt). */
-.phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.75rem, 2.5vw, 1.75rem); margin: 2.5rem auto 0; max-width: 54rem; }
+.phones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(0.75rem, 2.5vw, 1.75rem); margin: 2.5rem 0 0; max-width: 36rem; }
 .phones figure { margin: 0; }
 .phones img { border-radius: 12.5% / 5.75%; box-shadow: var(--shadow); }
 .phones figcaption { font-size: 0.85rem; color: var(--ink-2); margin-top: 0.85rem; text-wrap: balance; }
-@media (max-width: 34rem) { .phones { grid-template-columns: repeat(2, minmax(0, 1fr)); } .phones figure:nth-child(3) { display: none; } }
 
-ul.proofs { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.55rem; }
+ul.proofs { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.55rem; max-width: 36rem; }
 ul.proofs li { position: relative; padding-left: 1.6rem; }
 ul.proofs li::before { content: ""; position: absolute; left: 0.45rem; top: 0.68em; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-2); }
 
@@ -153,21 +168,15 @@ ul.proofs li::before { content: ""; position: absolute; left: 0.45rem; top: 0.68
 .ditto-mark .dot { fill: var(--your-move); }
 kbd { font: 500 0.85em var(--mono); padding: 0.1em 0.4em; border-radius: 6px; background: var(--fill); border: 1px solid var(--rule); }
 
-ol.steps { list-style: none; counter-reset: step; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; }
+ol.steps { list-style: none; counter-reset: step; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; max-width: 36rem; }
 ol.steps li { counter-increment: step; display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0.25rem 0.5rem; }
 ol.steps li::before { content: counter(step) "."; color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; padding-right: 0.25rem; }
 ol.steps strong { font-weight: 600; }
 
-.decision { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 1.25rem 0 0.4rem; }
-.decision span { padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.9rem; font-weight: 600; }
-.decision .ship { background: var(--ink); color: var(--paper); }
-.decision .ask { background: var(--fill); }
-.decision .discard { color: var(--ink-2); font-weight: 500; }
-
 blockquote { margin: 1.5rem 0 0; padding-left: 1.1rem; border-left: 2px solid var(--rule); font: 400 1.2rem/1.5 var(--serif); max-width: 34rem; }
 
 /* Download: two places, each saying plainly where it stands. */
-.get { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; }
+.get { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; max-width: 36rem; }
 @media (max-width: 34rem) { .get { grid-template-columns: minmax(0, 1fr); } }
 .get div { background: var(--desk); border-radius: 18px; padding: 1.4rem 1.4rem 1.3rem; display: flex; flex-direction: column; align-items: flex-start; }
 .get h3 { font: 600 1.1rem/1.3 var(--sans); margin: 0 0 0.35rem; }
@@ -191,49 +200,48 @@ footer a { text-decoration: none; }
 
 </head>
 <body>
-<main id="top">
-  <header class="bar">
-    <div class="bar-inner">
-      <a href="#top" aria-label="Ink & Ditto, to the top">
-        <img class="light" src="assets/00-lockup-light.png" alt="" width="735" height="479">
-        <img class="dark" src="assets/00-lockup-dark.png" alt="" width="735" height="479">
-      </a>
-      <div class="bar-end">
-        <button class="theme" type="button" aria-label="Dark mode" aria-pressed="false">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <mask id="eclipse"><rect width="24" height="24" fill="#fff"/><circle class="bite" cx="30" cy="0" r="7" fill="#000"/></mask>
-            <circle class="body" cx="12" cy="12" r="5" fill="currentColor" mask="url(#eclipse)"/>
-            <g class="rays" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-              <path d="M12 1.5v2M12 20.5v2M1.5 12h2M20.5 12h2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M4.6 19.4L6 18M18 6l1.4-1.4"/>
-            </g>
-          </svg>
-        </button>
-        <a class="button small" href="#download">Download</a>
-      </div>
+<header class="bar" id="top">
+  <div class="bar-inner">
+    <a class="home" href="#top" aria-label="Ink &amp; Ditto, to the top">
+      <img class="light" src="assets/lockup-light.png" alt="" width="563" height="287" loading="lazy">
+      <img class="dark" src="assets/lockup-dark.png" alt="" width="563" height="287" loading="lazy">
+    </a>
+    <div class="bar-end">
+      <button class="theme" type="button" aria-label="Dark mode" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <mask id="eclipse"><rect width="24" height="24" fill="#fff"/><circle class="bite" cx="30" cy="0" r="7" fill="#000"/></mask>
+          <circle class="body" cx="12" cy="12" r="5" fill="currentColor" mask="url(#eclipse)"/>
+          <g class="rays" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 1.5v2M12 20.5v2M1.5 12h2M20.5 12h2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M4.6 19.4L6 18M18 6l1.4-1.4"/>
+          </g>
+        </svg>
+      </button>
+      <a class="button small status" href="#download">Coming soon</a>
     </div>
-  </header>
+  </div>
+</header>
 
+<main>
   <div class="page hero">
     <h1>Write it down. It gets done.</h1>
-    <p class="pair">Ink is where you write. Ditto is who you hand the work to.</p>
-    <p class="lede">Calm Markdown notes for the Mac and iPhone. When a line is a job, hand it to Ditto. It does the work with Claude, checks it against your taste, and brings it back for one decision.</p>
+    <p class="pair">Ink is where you write.<br>Ditto is who you hand the work to.</p>
+    <p class="lede">Calm Markdown notes for Mac and iPhone. If you build software with Claude, hand a line to Ditto: it does the work in your project with Claude Code, checks it, and brings it back for one decision.</p>
     <div class="actions">
-      <a class="button" href="#download">Download</a>
-      <a class="link" href="#ditto">How Ditto works</a>
+      <a class="button" href="#ditto">See how it works</a>
     </div>
   </div>
 
   <div class="stage">
-    <img class="mac light" src="assets/mac-ink-light.png" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it's working on" width="1600" height="1054">
-    <img class="mac dark" src="assets/mac-ink-dark.png" alt="Ink on the Mac, in dark mode" width="1600" height="1054">
-    <img class="phone light" src="assets/iphone-note-light.jpg" alt="The same note on iPhone" width="600" height="1304">
-    <img class="phone dark" src="assets/iphone-note-dark.jpg" alt="The same note on iPhone, in dark mode" width="600" height="1304">
+    <img class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
+    <img class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
   </div>
 
   <div class="page">
     <section aria-labelledby="ink">
       <h2 id="ink"><span class="mark" aria-hidden="true">##</span>A notes app, first</h2>
-      <p>Ink opens on a fresh page, ready for whatever's on your mind. Every note is a plain Markdown file in iCloud Drive, the same on your Mac and your iPhone. The page is paper and type and nothing else: headings fold, lists and checklists behave, tables line up, and the marks step into the margin so your words never move.</p>
+      <p>Ink opens on a fresh page, ready for whatever’s on your mind. Every note is a plain Markdown file, on your iPhone or in iCloud Drive, where your Mac and iPhone stay in step. The page is paper and type and nothing else: headings fold, lists and checklists behave, tables line up, and the marks step into the margin so your words never move.</p>
       <ul class="proofs">
         <li>Plain Markdown files you own, in a folder you can open in anything.</li>
         <li>No AI anywhere until you connect it.</li>
@@ -243,38 +251,35 @@ footer a { text-decoration: none; }
 
     <section aria-labelledby="ditto">
       <h2 id="ditto"><span class="mark" aria-hidden="true">##</span>Hand a line to Ditto</h2>
-      <p>Ditto lives in the margin. When a line is something to do, press <kbd>⌘↩</kbd>.</p>
+      <p>Ditto is for people who build software with Claude. It lives in the margin: when a line is something to do, press <kbd>⌘↩</kbd>.</p>
       <p class="line">
         <svg class="ditto-mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16 C3 9 6 4 10 4 C14 4 17 9 17 16 Z" fill="currentColor"/><g class="eyes" fill="var(--paper)"><ellipse cx="8" cy="11" rx="1.1" ry="1.6"/><ellipse cx="12" cy="11" rx="1.1" ry="1.6"/></g><circle class="dot" cx="17" cy="4" r="2.2"/></svg>
         The empty state on Projects feels like an error
       </p>
       <ol class="steps">
         <li><span><strong>The line you wrote is the brief.</strong> Ditto takes it, with the lines around it, and works out what kind of job it is.</span></li>
-        <li><span><strong>Ditto does the work</strong> with Claude Code on your Mac. For code, in your project, on a branch of its own; for writing and research, on the page.</span></li>
-        <li><span><strong>It's checked before you see it:</strong> the tests it can run, then a second look against your taste.</span></li>
-        <li><span><strong>It comes back for one call,</strong> with what changed, what was checked, and a sentence of its own.</span></li>
+        <li><span><strong>Ditto does the work</strong> with Claude Code on your Mac: for code, in your project, on a branch of its own; for anything else, a draft for you to copy.</span></li>
+        <li><span><strong>It’s checked before you see it:</strong> the tests it can run, then a second look against your taste.</span></li>
+        <li><span><strong>It comes back for one call:</strong> Ship It, Ask for Changes or Discard, with what changed and what was checked.</span></li>
       </ol>
-      <div class="decision" aria-label="The three answers">
-        <span class="ship">Ship It</span><span class="ask">Ask for Changes…</span><span class="discard">Discard</span>
-      </div>
-      <figure class="shot window">
-        <img class="light" src="assets/mac-review-light.png" alt="A review on the Mac: the Projects screen before and after, what was checked, and Ship It, Ask for Changes and Discard" width="1600" height="1054" loading="lazy">
-        <img class="dark" src="assets/mac-review-dark.png" alt="The same review on the Mac, in dark mode" width="1600" height="1054" loading="lazy">
+      <figure class="shot review">
+        <img class="light" src="assets/mac-review-light-1x.webp" srcset="assets/mac-review-light-1x.webp 1x, assets/mac-review-light.webp 2x" alt="A review on the Mac: the Projects screen after the change, the three checks passed, and Ship It, Ask for Changes and Discard" width="427" height="397" loading="lazy">
+        <img class="dark" src="assets/mac-review-dark-1x.webp" srcset="assets/mac-review-dark-1x.webp 1x, assets/mac-review-dark.webp 2x" alt="The same review on the Mac, in dark mode" width="427" height="397" loading="lazy">
       </figure>
     </section>
 
     <section aria-labelledby="taste">
       <h2 id="taste"><span class="mark" aria-hidden="true">##</span>Say it once</h2>
-      <p>Every call you make, and every reason you give, teaches Ditto your taste. Before you decide, it seals its guess at what you'll say, and shows you how often it's right. When it has earned it, it asks whether it may do things like that without asking. Only your yes changes that.</p>
-      <blockquote>“I expected Ship It. You asked for changes. Noted: you're stricter about shadows than I thought.”</blockquote>
+      <p>Every call you make, and every reason you give, teaches Ditto your taste. Before you decide, it seals its guess at what you’ll say, and shows you how often it’s right. When it has earned it, it asks whether it may do things like that without asking. Only your yes changes that.</p>
+      <blockquote>“I expected you’d ship it. You asked for changes — noted: ‘the shadow is still heavy.’”</blockquote>
     </section>
 
     <section aria-labelledby="room">
-      <h2 id="room"><span class="mark" aria-hidden="true">##</span>Everything you've handed over, in one place</h2>
-      <p>Ditto's room shows what needs you first, then what's being worked on, then what's waiting. Pause, change or stop any of it.</p>
-      <figure class="shot window">
-        <img class="light" src="assets/mac-ditto-light.png" alt="Ditto's room on the Mac: one piece of work needs you, two are being worked on, one is waiting" width="1600" height="1054" loading="lazy">
-        <img class="dark" src="assets/mac-ditto-dark.png" alt="Ditto's room on the Mac, in dark mode" width="1600" height="1054" loading="lazy">
+      <h2 id="room"><span class="mark" aria-hidden="true">##</span>Everything you’ve handed over</h2>
+      <p>Ditto’s room shows what needs you first, then what’s being worked on. Pause, change or stop any of it.</p>
+      <figure class="shot room">
+        <img class="light" src="assets/mac-room-light-1x.webp" srcset="assets/mac-room-light-1x.webp 1x, assets/mac-room-light.webp 2x" alt="Ditto’s room on the Mac: a place to hand Ditto something, one piece of work that needs you, and one being worked on" width="467" height="261" loading="lazy">
+        <img class="dark" src="assets/mac-room-dark-1x.webp" srcset="assets/mac-room-dark-1x.webp 1x, assets/mac-room-dark.webp 2x" alt="Ditto’s room on the Mac, in dark mode" width="467" height="261" loading="lazy">
       </figure>
     </section>
   </div>
@@ -282,37 +287,32 @@ footer a { text-decoration: none; }
   <section class="wide" aria-labelledby="iphone">
     <div class="page">
       <h2 id="iphone"><span class="mark" aria-hidden="true">##</span>And in your pocket</h2>
-      <p>Ink on iPhone opens on a page, too. Your folders, Ditto and Settings are a swipe away. Make Ditto's calls in a spare minute, or hand it a line and your Mac starts it.</p>
-    </div>
+      <p>Ink on iPhone opens on a page, too. Your folders, Ditto and Settings are a swipe away. Make Ditto’s calls in a spare minute, or hand it a line and your Mac starts it.</p>
     <div class="phones">
       <figure>
-        <img class="light" src="assets/iphone-sidebar-light.jpg" alt="The sidebar on iPhone: Ditto, recent notes, folders and tags" width="600" height="1304" loading="lazy">
-        <img class="dark" src="assets/iphone-sidebar-dark.jpg" alt="The sidebar on iPhone, in dark mode" width="600" height="1304" loading="lazy">
-        <figcaption>Everything else is in the sidebar.</figcaption>
-      </figure>
-      <figure>
-        <img class="light" src="assets/iphone-room-light.jpg" alt="Ditto's room on iPhone" width="600" height="1304" loading="lazy">
-        <img class="dark" src="assets/iphone-room-dark.jpg" alt="Ditto's room on iPhone, in dark mode" width="600" height="1304" loading="lazy">
+        <img class="light" src="assets/iphone-room-light.webp" srcset="assets/iphone-room-light-400.webp 400w, assets/iphone-room-light.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="Ditto’s room on iPhone" width="598" height="1300" loading="lazy">
+        <img class="dark" src="assets/iphone-room-dark.webp" srcset="assets/iphone-room-dark-400.webp 400w, assets/iphone-room-dark.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="Ditto’s room on iPhone, in dark mode" width="598" height="1300" loading="lazy">
         <figcaption>What needs you, first.</figcaption>
       </figure>
       <figure>
-        <img class="light" src="assets/iphone-review-light.jpg" alt="A review on iPhone, with Ship It, Ask for Changes and Discard" width="600" height="1304" loading="lazy">
-        <img class="dark" src="assets/iphone-review-dark.jpg" alt="A review on iPhone, in dark mode" width="600" height="1304" loading="lazy">
+        <img class="light" src="assets/iphone-review-light.webp" srcset="assets/iphone-review-light-400.webp 400w, assets/iphone-review-light.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="A review on iPhone, with Ship It, Ask for Changes and Discard" width="598" height="1300" loading="lazy">
+        <img class="dark" src="assets/iphone-review-dark.webp" srcset="assets/iphone-review-dark-400.webp 400w, assets/iphone-review-dark.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="A review on iPhone, in dark mode" width="598" height="1300" loading="lazy">
         <figcaption>Your call, wherever you are.</figcaption>
       </figure>
+    </div>
     </div>
   </section>
 
   <div class="page">
     <section aria-labelledby="trust">
       <h2 id="trust"><span class="mark" aria-hidden="true">##</span>Calm, and yours</h2>
-      <p>Your notes stay in your iCloud Drive. There's no account, and nothing comes to us.</p>
-      <p class="quiet">When you connect Ditto, it works through Claude Code on your Mac with your own Claude account, and Claude reads what the job needs: the line, the note around it, and for code, your project. Ditto never pushes your code anywhere or messages anyone.</p>
+      <p>Your notes stay on your devices and in your iCloud Drive. There’s no account, and nothing comes to us.</p>
+      <p class="quiet">When you connect Ditto, it works through Claude Code on your Mac with your own Claude account, and Claude reads what the job needs: the line, the lines around it, and for code, your project. Ditto never pushes your code anywhere or messages anyone.</p>
     </section>
 
     <section aria-labelledby="download">
       <h2 id="download"><span class="mark" aria-hidden="true">##</span>Download</h2>
-      <p>Ink is free. Ditto is free while it's in early access, and uses your own Claude account.</p>
+      <p>Ink is free. Ditto is free while it’s in early access, and uses your own Claude account.</p>
       <div class="get">
         <div>
           <h3>iPhone</h3>
@@ -321,7 +321,7 @@ footer a { text-decoration: none; }
         </div>
         <div>
           <h3>Mac</h3>
-          <p>A direct download for macOS 15 or later, signed and notarised by Apple.</p>
+          <p>A direct download for macOS 15 or later, signed by us and notarised by Apple.</p>
           <span class="soon">Coming soon</span>
         </div>
       </div>
@@ -331,44 +331,69 @@ footer a { text-decoration: none; }
       <h2 id="faq"><span class="mark" aria-hidden="true">##</span>Questions</h2>
       <div class="faq">
         <div><h3>Do I need Ditto to use Ink?</h3><p>No. Without it, Ink is simply a calm notes app, and Ditto waits quietly until you ask for it.</p></div>
-        <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can't: the brief is the line you already wrote, the work is checked before you see it, and you answer once. Your note remembers what became of every line.</p></div>
+        <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked before you see it, and you answer once. Your note remembers what became of every line.</p></div>
         <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude Code and a Claude account. On iPhone, Ditto shows and decides the work your Mac is doing.</p></div>
         <div><h3>Who makes it?</h3><p>Ash Bronca, in Australia. Write to <a href="mailto:support@inkandditto.com">support@inkandditto.com</a>.</p></div>
       </div>
     </section>
   </div>
-
-  <footer class="wide">
-    <span>© 2026 Ash Bronca</span>
-    <nav><a href="privacy">Privacy</a><a href="support">Support</a></nav>
-  </footer>
 </main>
+
+<footer class="wide">
+  <span>© 2026 Ash Bronca</span>
+  <nav aria-label="More"><a href="privacy">Privacy</a><a href="support">Support</a></nav>
+</footer>
 <script>
 (function () {
   var root = document.documentElement, button = document.querySelector(".theme");
   var dark = matchMedia("(prefers-color-scheme: dark)"), still = matchMedia("(prefers-reduced-motion: reduce)");
-  function now() { return root.dataset.theme || (dark.matches ? "dark" : "light"); }
+  // The page's own pair of theme colours, kept so following the system again can put them back.
+  var pair = Array.prototype.map.call(document.querySelectorAll('meta[name="theme-color"]'), function (m) { return m.cloneNode(); });
+  function system() { return dark.matches ? "dark" : "light"; }
+  function now() { return root.dataset.theme || system(); }
   function show() {
-    var d = now() === "dark";
-    button.setAttribute("aria-pressed", String(d));
-    button.setAttribute("aria-label", d ? "Light mode" : "Dark mode");
-    // One theme colour, with no media query: Safari keeps tinting its bars from a media-qualified tag even
-    // after its content changes, so the pair is replaced by a single tag that says what's showing.
+    // The label names the control; the pressed state says whether it's on. Neither flips the other.
+    button.setAttribute("aria-pressed", String(now() === "dark"));
+    // With a choice of its own, one theme colour with no media query: Safari keeps tinting its bars from a
+    // media-qualified tag even after its content changes. Following the system, the pair comes back.
+    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
     if (root.dataset.theme) {
-      document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
-      var m = document.createElement("meta"); m.name = "theme-color"; m.content = d ? "#14130F" : "#F7F4EE";
+      var m = document.createElement("meta"); m.name = "theme-color"; m.content = now() === "dark" ? "#14130F" : "#F7F4EE";
       document.head.appendChild(m);
-    }
+    } else pair.forEach(function (m) { document.head.appendChild(m.cloneNode()); });
   }
-  function set(t) { root.dataset.theme = t; try { localStorage.setItem("theme", t); } catch (e) {} show(); }
+  // Choosing the system's own look again goes back to following the system.
+  function set(t) {
+    if (t === system()) { delete root.dataset.theme; try { localStorage.removeItem("theme"); } catch (e) {} }
+    else { root.dataset.theme = t; try { localStorage.setItem("theme", t); } catch (e) {} }
+    show();
+  }
+  // Only the look on show is downloaded. The other look's pictures near the screen are fetched when a
+  // change looks likely (a pointer over the toggle, a touch, focus), so the change never shows a blank.
+  function other() { return now() === "dark" ? "light" : "dark"; }
+  function warm() {
+    var want = other(), have = now(), near = [];
+    document.querySelectorAll("img." + want).forEach(function (img) {
+      // Each pair is two neighbours, the light one first.
+      var twin = want === "dark" ? img.previousElementSibling : img.nextElementSibling;
+      if (!twin || !twin.classList.contains(have)) return;
+      var r = twin.getBoundingClientRect();
+      if (r.bottom > -innerHeight && r.top < innerHeight * 2 && r.width) { img.loading = "eager"; near.push(img); }
+    });
+    return near;
+  }
+  ["pointerenter", "touchstart", "focus"].forEach(function (e) { button.addEventListener(e, warm, { passive: true }); });
   button.addEventListener("click", function () {
-    var next = now() === "dark" ? "light" : "dark";
-    if (!document.startViewTransition || still.matches) { set(next); return; }
-    var r = button.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
-    var far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-    document.startViewTransition(function () { set(next); }).ready.then(function () {
-      root.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + far + "px at " + x + "px " + y + "px)"] },
-        { duration: 620, easing: "cubic-bezier(.2,.8,.2,1)", pseudoElement: "::view-transition-new(root)" });
+    var next = other(), ready = warm().map(function (img) { return img.decode().catch(function () {}); });
+    var wait = Promise.race([Promise.all(ready), new Promise(function (r) { setTimeout(r, 350); })]);
+    wait.then(function () {
+      if (!document.startViewTransition || still.matches) { set(next); return; }
+      var r = button.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.startViewTransition(function () { set(next); }).ready.then(function () {
+        root.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + far + "px at " + x + "px " + y + "px)"] },
+          { duration: 620, easing: "cubic-bezier(.2,.8,.2,1)", pseudoElement: "::view-transition-new(root)" });
+      });
     });
   });
   dark.addEventListener("change", show);
