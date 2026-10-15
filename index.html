@@ -998,10 +998,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   function finish(p, pts, roundable) {
     var s = p.s, B = B0 - p.lift, cx = CXD + p.x, R = 14;
     if (roundable && p.round > 0) {
-      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s, rc = B - R * s;
+      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s, rc = B - ryy * Math.cos(Math.PI / 13);   // the smooth outline runs along the chord at the bottom: sit that on the line
       pts = pts.map(function (q, i) { var a = -Math.PI / 2 + (i - 6) * 2 * Math.PI / 13; return [q[0] + (cx + rx * Math.cos(a) - q[0]) * u, q[1] + (rc + ryy * Math.sin(a) - q[1]) * u]; });
     }
-    if (p.rot) {
+    // A round ball of ink looks the same at any angle, so while it's a ball it stays upright (its foot rides
+    // exactly on the line); turning only shows once it has a shape to turn.
+    if (p.rot && !(roundable && p.round > 0)) {
       var oy = B - (DH * s * 0.45) * (1 - p.round) - R * s * p.round, cr = Math.cos(p.rot), sr = Math.sin(p.rot);
       pts = pts.map(function (q) { var dx = q[0] - cx, dy = q[1] - oy; return [cx + dx * cr - dy * sr, oy + dx * sr + dy * cr]; });
     }
@@ -1087,6 +1089,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     while (this.acc >= H) {
       this.acc -= H;
       for (var i = 0; i < P.length; i++) {
+        // Firm (a ball of ink in motion): it holds its exact shape. The springs only soften it once it relaxes.
+        if ((q.firm || 1) >= 1.6) { P[i][0] = T[i][0]; P[i][1] = T[i][1]; V[i][0] = V[i][1] = 0; continue; }
         var w = 2 * Math.PI * HZ[i] * (q.firm || 1), k = w * w, c = 2 * ZETA[i] * w;
         for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
       }
@@ -1358,7 +1362,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     var X0 = (sp.right + unit * 1.5 - fx) / unit, Y0 = -(sp.top - last.top) / unit;
     var red = hdSvg.querySelector(".red");
     var G = 550, POP = 2400, H = 1 / 240, R0 = 14;
-    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.4, z0 = 1.0, vroll = 0, xs = 0, TR = 1000, tl = 0, Reff = 1, turns = 1, rollAt = 0;
+    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.4, z0 = 1.0, vroll = 0, xs = 0, TR = 1000, bounced = false, tl = 0, Reff = 1, turns = 1, rollAt = 0;
     for (var tt = 0; tt <= 6200; tt += H * 1000) {
       var kk = 0.12, rnd = 1, st = 1, rot = 0;
       if (tt < POP) { kk = tt < 2150 ? 0.12 : 0.12 + 0.18 * EASE.o(Math.min((tt - 2150) / 250, 1)); }
@@ -1366,9 +1370,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       if (ph === "fly") {
         vy -= (vy > 0 ? 586 : 760) * H; y += vy * H; x += vx * H;
         kk = 0.3 + 0.15 * Math.min((tt - POP) / 650, 1);
-        if (y <= 0 && vy < 0) {
-          // Contact: a squash as deep as the fall was fast; then it springs off into its roll.
-          qv -= Math.abs(vy) * 0.011; y = 0; ph = "push"; tl = tt; xl = x; d = -x;
+        if (y <= 0 && vy < 0 && !bounced && Math.abs(vy) > 90) {
+          // A ball of ink, round the whole way: it meets the line and gives one small, low bounce.
+          y = 0; vy = -vy * 0.24; bounced = true;
+        } else if (y <= 0 && vy < 0) {
+          // Down for good: it rolls on.
+          y = 0; ph = "push"; tl = tt; xl = x; d = -x;
           vroll = w0 * d / (2 * z0); turns = Math.max(1, Math.round(d / (2 * Math.PI * R0 * 0.75))); Reff = (d + 0.0001) / (2 * Math.PI * turns);
           vy = 0;
         }
@@ -1382,9 +1389,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         var ur = Math.min((tt - rollAt) / TR, 1), om = 1 - ur; x = xs * om * om * om; vx = 3 * -xs * om * om / (TR / 1000);
       }
       if (ph === "push" || ph === "roll") { kk = 0.45 + 0.55 * Math.max(0, Math.min((x - xl) / d, 1)); rot = (x - xl) / Reff; }
-      // The squash springs back (a little under-damped), and in flight the drop stretches along its fall.
       var wq = 2 * Math.PI * 3.4; qv += (-wq * wq * q - 2 * 0.36 * wq * qv) * H; q += qv * H;
-      st = 1 + q + (ph === "fly" ? Math.min(0.14, Math.abs(vy) * 0.0008) : 0);
+      st = 1;   // round the whole way: no stretch in flight, no squash on landing (the dome comes only at rest)
       // Still enough, it stops being a ball: the dome rises out of it.
       // It rolls as a true ball of ink; only once it has rocked back and is still does the dome rise out of it.
       if (ph === "push" || ph === "roll") rnd = 1;
@@ -1401,8 +1407,10 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     }
     run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.3 }, { opacity: 0 }], { delay: 2150, duration: 1500, easing: "ease-in-out", fill: "backwards" });
     var keys = [
-      { t: 0, open: 0, o: 0, foot: 3.6, firm: 1 }, { t: 2140, o: 0 }, { t: 2190, o: 1 },
-      { t: rollAt, firm: 1.7 }, { t: SIMEND - 200, firm: 1.7 }, { t: SIMEND + 200, firm: 1 },
+      // A firm ball of ink until it rests (it holds a true circle through the pop, the fall, the bounce and
+      // the roll); soft again as the dome rises out of it.
+      { t: 0, open: 0, o: 0, foot: 3.6, firm: 4 }, { t: 2140, o: 0 }, { t: 2190, o: 1 },
+      { t: SIMEND - 200, firm: 4 }, { t: SIMEND + 200, firm: 1 },
       { t: SIMEND + 120, open: 0 }, { t: SIMEND + 200, open: 0.2 }, { t: SIMEND + 300, open: 1 },
       { t: SIMEND + 560, open: 1 }, { t: SIMEND + 640, open: 0.1 }, { t: SIMEND + 760, open: 1 }
     ];
