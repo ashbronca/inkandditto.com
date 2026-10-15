@@ -158,10 +158,17 @@ h1 .om-b { white-space: nowrap; }
 .om-ditto { display: inline-block; width: 1.04em; margin-left: 0.02em; vertical-align: -0.052em; }
 .om-ditto svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 94%; }
 .om-ditto .eyes { transform-box: fill-box; transform-origin: center; }
+/* Ditto on a visit (⌘↩), and what it says when it takes a line. Neither ever takes a click or a selection. */
+.visitor { position: fixed; left: 0; top: 0; z-index: 5; display: none; pointer-events: none; }
+.visitor svg { display: block; width: 100%; height: auto; overflow: visible; }
+.onit { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; user-select: none; -webkit-user-select: none; opacity: 0; white-space: nowrap;
+  padding: 0.38em 0.85em; border-radius: 999px; font: 500 0.8125rem/1.2 var(--sans); color: var(--ink); background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 0 0 0.5px var(--rule), 0 6px 20px rgba(0, 0, 0, 0.12); }
 .end .om-ditto { vertical-align: -0.052em; }
 h1 .caret-at { height: 0.74em; vertical-align: 0; }
 /* The caret only writes the name; the page at rest has none. */
-h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em; border-radius: 99px; opacity: 0; }
+h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em; border-radius: 99px; opacity: 0; transform-origin: 50% 100%; }
+.om-ditto .red { opacity: 0; }
 .line { font: 400 clamp(1.35rem, 3vw, 1.75rem)/1.3 var(--serif); letter-spacing: -0.005em; margin: 0 0 0.6rem; max-width: none; text-wrap: balance; }
 .lede { color: var(--ink-2); margin: 0 0 2rem; max-width: 30rem; text-wrap: balance; font-size: 1rem; }
 /* The verse: one serif, centred, generous leading; the maker's name in its italic. */
@@ -169,6 +176,10 @@ h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em;
   font: 400 clamp(1.3rem, 2.7vw, 1.65rem)/1.7 var(--serif); letter-spacing: -0.003em; }
 .verse p { max-width: none; margin: 0 auto; }
 .verse .turn { margin-top: 1.4em; }
+/* Lines the page brings in one by one (the script makes them; without it they're simply lines). */
+.vl { display: inline-block; }
+.statement .vl { display: block; }
+.mk { display: block; }
 .verse .by { margin-top: 2.5rem; font-size: 0.68em; color: var(--ink-2); letter-spacing: 0.005em; }
 .verse em { font-style: italic; color: var(--ink); }
 /* The bar keeps only the toggle while the name fills the screen; the lockup comes back once it's gone by. */
@@ -474,9 +485,9 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 @container (max-width: 24rem) { .rv-b { padding: 0.45em 0.7em; } .rv-acts { gap: 0.3rem; } .rv-slot { margin-left: calc(0.75rem - var(--mg)); } }
 .d-ditto .after { position: absolute; left: 1.2rem; top: 1rem; font-size: 0.875rem; color: var(--ink-2); opacity: 0; }
 /* After a call: the review goes; the line keeps what became of it. */
-.d-ditto.shipped .rv, .d-ditto.discarded .rv, .d-ditto.asked .rv { opacity: 0; transform: translateY(1.25rem) scale(0.98); pointer-events: none; }
+.d-ditto.shipping .rv, .d-ditto.shipped .rv, .d-ditto.discarded .rv, .d-ditto.asked .rv { opacity: 0; transform: translateY(1.25rem) scale(0.98); pointer-events: none; }
 .d-ditto.shipped .dt-ditto, .d-ditto.discarded .dt-ditto { opacity: 0; transform: translateY(40%) scale(0.8); }
-.d-ditto.asked .dt-ditto .dot { opacity: 0; transform: scale(0); }
+.d-ditto.asked .dt-ditto .dot, .d-ditto.shipping .dt-ditto .dot, .d-ditto.shipped .dt-ditto .dot { opacity: 0; transform: scale(0); }
 .d-ditto.shipped .dt-done { opacity: 1; }
 .d-ditto.shipped .after.s, .d-ditto.discarded .after.d { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
@@ -501,8 +512,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 <header class="bar" id="top">
   <div class="bar-inner">
     <a class="home" href="#top" aria-label="Ink &amp; Ditto, to the top">
-      <img class="light" src="assets/lockup-light.png" alt="" width="563" height="287" loading="lazy">
-      <img class="dark" src="assets/lockup-dark.png" alt="" width="563" height="287" loading="lazy">
+      <img decoding="async" class="light" src="assets/lockup-light.png" alt="" width="563" height="287" loading="lazy">
+      <img decoding="async" class="dark" src="assets/lockup-dark.png" alt="" width="563" height="287" loading="lazy">
     </a>
     <div class="bar-end">
       <a class="button small status" href="#download"><span class="unless-get">Coming soon</span><span class="when-get">Download</span></a>
@@ -527,7 +538,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         <linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
         <clipPath id="hdc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
       </defs>
-      <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#hdg)"/>
+      <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#hdg)"/><path class="b red" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: var(--your-move)"/>
       <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#hdc)" fill="none" stroke="url(#hdr)" stroke-width="1.6"/>
       <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g></g>
     </svg></span></span></h1>
@@ -535,7 +546,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     <p class="lede">Calm Markdown notes for Mac and iPhone.<span class="unless-get"> Coming soon.</span></p>
     <div class="actions when-get">
       <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
-      <a class="store when-store" data-get="store" href="#download"><img data-badge alt="Download on the App Store" width="120" height="40"></a>
+      <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
     </div>
   </div>
 
@@ -552,10 +563,10 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   </section>
 
   <div class="stage">
-    <img class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
-    <img class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
-    <img class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
-    <img class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
   </div>
 
   <section class="chapter" aria-labelledby="ink">
@@ -776,7 +787,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       <div>
         <h3>iPhone</h3>
         <p>iOS 26 or later.</p>
-        <a class="store when-store" data-get="store" href="#download"><img data-badge alt="Download on the App Store" width="120" height="40"></a>
+        <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
         <span class="soon unless-store">Coming soon</span>
       </div>
       <div>
@@ -806,8 +817,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         <linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
         <clipPath id="fdc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
       </defs>
-      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#fdg)"/>
-      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" clip-path="url(#fdc)" fill="none" stroke="url(#fdr)" stroke-width="1.6"/>
+      <path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#fdg)"/>
+      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#fdc)" fill="none" stroke="url(#fdr)" stroke-width="1.6"/>
       <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g>
     </svg></span><span class="vh">.</span></p>
   <p class="small">© 2026 Ash Bronca <span aria-hidden="true">·</span> <a href="privacy">Privacy</a> <span aria-hidden="true">·</span> <a href="support">Support</a></p>
@@ -836,6 +847,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     if (t === system()) { delete root.dataset.theme; try { localStorage.removeItem("theme"); } catch (e) {} }
     else { root.dataset.theme = t; try { localStorage.setItem("theme", t); } catch (e) {} }
     show();
+    document.dispatchEvent(new CustomEvent("inktheme", { detail: t }));
   }
   // Only the look on show is downloaded. The other look's pictures near the screen are fetched when a
   // change looks likely (a pointer over the toggle, a touch, focus), so the change never shows a blank.
@@ -972,12 +984,14 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     o: function (u) { return 1 - Math.pow(1 - u, 3); },
     io: function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
   };
-  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1 };
+  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1, k: 1 };
   function outline(p) {
     var s = p.s, h = 27 * s, w = 13.4 / Math.sqrt(s), B = 32 - p.lift, cx = 20 + p.x, f = p.foot, ys = B - h * 0.444, ry = ys - (B - h), pts = [];
     pts.push([cx - w - f, B], [cx - w - f * 0.18, B - 1.9], [cx - w, B - h * 0.24]);
     for (var k = 0; k <= 6; k++) { var th = Math.PI * (1 - k / 6); pts.push([cx + w * Math.cos(th) + p.lean * Math.sin(th), ys - ry * Math.sin(th)]); }
     pts.push([cx + w, B - h * 0.24], [cx + w + f * 0.18, B - 1.9], [cx + w + f, B]);
+    // Its size (k), about the middle of its foot: a drop can grow or shrink as it travels.
+    if (p.k !== 1) pts = pts.map(function (q) { return [cx + (q[0] - cx) * p.k, B + (q[1] - B) * p.k]; });
     return pts;
   }
   // How loose each point is: Hz and damping, foot to crown and back.
@@ -992,18 +1006,40 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   }
   Rig.prototype.target = function (p) { this.p = p; };
   Rig.prototype.snap = function (p) {
-    this.p = p; this.P = outline(p).map(function (q) { return q.slice(); }); this.V = this.P.map(function () { return [0, 0]; });
+    this.p = p; this.cur = null; this.P = outline(p).map(function (q) { return q.slice(); }); this.V = this.P.map(function () { return [0, 0]; });
     this.E = this.eyeAt(); this.EV = [0, 0]; this.last = 0; this.acc = 0; this.draw();
   };
   Rig.prototype.set = Rig.prototype.snap;
   Rig.prototype.eyeAt = function () {
     var P = this.P, a = P[3], b = P[9], c = P[6], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-    return [mx + (c[0] - mx) * 0.45 + this.p.lx, my + (c[1] - my) * 0.03 + this.p.ly];
+    var q = this.cur || this.p;
+    return [mx + (c[0] - mx) * 0.45 + q.lx, my + (c[1] - my) * 0.03 + q.ly];
   };
   // One step of real time; returns whether it's still moving.
+  // A moment played over whatever Ditto is doing (a trip, a nod, sleepy eyes, a bounce): pose keys for the
+  // numbers it changes, and optionally a path (x, lift) it travels. The springs still do the moving.
+  Rig.prototype.play = function (keys, path, onEnd) {
+    keys.sort(function (a, b) { return a.t - b.t; });
+    if (this.fx && this.fx.onEnd) { var f = this.fx.onEnd; this.fx = null; f(true); }
+    this.fx = { at: performance.now(), keys: keys, path: path, end: keys[keys.length - 1].t, onEnd: onEnd };
+    wakeRig(this);
+  };
+  Rig.prototype.stopFx = function () { var f = this.fx; this.fx = null; if (f && f.onEnd) f.onEnd(true); };
   Rig.prototype.tick = function (now) {
     if (!this.P) this.snap(this.p);
-    var dt = this.last ? Math.min((now - this.last) / 1000, 0.05) : 1 / 60, H = 1 / 240, T = outline(this.p), P = this.P, V = this.V, moving = 0;
+    var q = this.p, fx = this.fx;
+    if (fx) {
+      var ft = now - fx.at;
+      if (ft >= fx.end) { this.fx = null; if (fx.onEnd) fx.onEnd(false); }
+      else {
+        var tr = fx.keys._tr || (fx.keys._tr = tracks(fx.keys));
+        q = Object.assign({}, q);
+        for (var nm in tr) q[nm] = mono(tr[nm], ft);
+        if (fx.path) Object.assign(q, fx.path(ft));
+      }
+    }
+    this.cur = q;
+    var dt = this.last ? Math.min((now - this.last) / 1000, 0.05) : 1 / 60, H = 1 / 240, T = outline(q), P = this.P, V = this.V, moving = 0;
     this.last = now; this.acc += dt;
     while (this.acc >= H) {
       this.acc -= H;
@@ -1012,12 +1048,16 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
       }
       // The eyes ride the body, a moment behind it.
-      var e = this.eyeAt(), we = 2 * Math.PI * 5.5;
-      for (j = 0; j < 2; j++) { this.EV[j] += (we * we * (e[j] - this.E[j]) - 2 * 0.62 * we * this.EV[j]) * H; this.E[j] += this.EV[j] * H; }
+      var e = this.eyeAt(), we = 2 * Math.PI * 9, lim = 1.4 * (q.k || 1);
+      for (j = 0; j < 2; j++) {
+        this.EV[j] += (we * we * (e[j] - this.E[j]) - 2 * 0.7 * we * this.EV[j]) * H; this.E[j] += this.EV[j] * H;
+        // However fast it moves, the eyes stay on the face.
+        if (Math.abs(this.E[j] - e[j]) > lim) { this.E[j] = e[j] + Math.sign(this.E[j] - e[j]) * lim; this.EV[j] *= 0.5; }
+      }
     }
     for (i = 0; i < P.length; i++) moving = Math.max(moving, Math.abs(V[i][0]) + Math.abs(V[i][1]), Math.abs(T[i][0] - P[i][0]) + Math.abs(T[i][1] - P[i][1]));
     this.draw();
-    return moving > 0.004;
+    return moving > 0.004 || !!this.fx;
   };
   Rig.prototype.draw = function () {
     var P = this.P, n = P.length, r = function (v) { return Math.round(v * 100) / 100; }, d = "M" + r(P[0][0]) + " " + r(P[0][1]);
@@ -1030,18 +1070,18 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     this.paths.forEach(function (e) { e.setAttribute("d", d); });
     // The eyes squash and stretch with the body.
     var wid = P[9][0] - P[3][0], hgt = (P[0][1] + P[12][1]) / 2 - P[6][1], ex = 3.7 * wid / 26.8;
-    var ry = 2.35 * Math.max(this.p.open, 0.08) * Math.pow(Math.max(hgt, 5) / 27, 0.7), rx = 1.55 * Math.pow(Math.max(wid, 5) / 26.8, 0.6);
+    var q = this.cur || this.p, ry = (q.open <= 0.02 ? 0 : 2.35 * Math.max(q.open, 0.08)) * Math.pow(Math.max(hgt, 5) / 27, 0.7), rx = 1.55 * Math.pow(Math.max(wid, 5) / 26.8, 0.6);
     for (var k = 0; k < 2; k++) {
-      var e = this.eyes[k]; e.setAttribute("cx", r(this.E[0] + (k ? ex : -ex))); e.setAttribute("cy", r(this.E[1])); e.setAttribute("rx", r(rx)); e.setAttribute("ry", r(ry));
+      var e = this.eyes[k]; e.setAttribute("cx", r(this.E[0] + (k ? ex : -ex))); e.setAttribute("cy", r(this.E[1])); e.setAttribute("rx", r(ry ? rx : 0)); e.setAttribute("ry", r(ry));
     }
     if (this.dot) { this.dot.setAttribute("cx", r(P[8][0] + 3)); this.dot.setAttribute("cy", r(P[7][1] - 0.2)); }
-    if (this.g) this.g.style.opacity = this.p.o;
+    if (this.g) this.g.style.opacity = q.o;
   };
   // Keys { t, ...numbers }: each number eases through its own keys on a monotone cubic (continuous, no overshoot).
   function tracks(keys) {
     var out = {};
     for (var n in REST) {
-      var pts = keys.filter(function (k) { return n in k; }).map(function (k) { return [k.t, k[n]]; });
+      var pts = keys.filter(function (k) { return n in k; }).map(function (k) { return [k.t, k[n]]; }).filter(function (q, i, a) { return !a[i + 1] || a[i + 1][0] > q[0]; });
       if (pts.length) out[n] = pts;
     }
     return out;
@@ -1072,6 +1112,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     if (looping) requestAnimationFrame(loop);
   }
   function wake(a) { actors.add(a); if (!looping) { looping = true; requestAnimationFrame(loop); } }
+  // A Ditto with a moment to play and nobody else moving it ticks itself until it's still.
+  function wakeRig(rig) { rig._actor = rig._actor || { frame: function (now) { return rig.tick(now); } }; wake(rig._actor); }
   // A run of poses that behaves like an Animation, so a tile can start, pause, replay and cancel it with the rest.
   function RigRun(rig, keys, delay) { this.rig = rig; this.keys = keys; this.delay = delay; this.t0 = performance.now(); this.end = keys[keys.length - 1].t; rig.snap(pose(keys, 0)); wake(this); }
   RigRun.prototype.frame = function (now) {
@@ -1154,8 +1196,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     stop(t);
     if (still.matches) return;
     var run = new Run(delay || 0);
-    if (entrance) run.go(t, [{ opacity: 0, transform: "translateY(28px) scale(.985)" }, { opacity: 1, transform: "none" }], { duration: 640, easing: SPR.e });
-    run.at += entrance ? 150 : 0;
+    if (entrance) run.go(t, [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 760, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
+    run.at += entrance ? 680 : 0;
     demos[t.dataset.demo](run, t);
     t._runs = run.list;
     return run.list;
@@ -1181,8 +1223,15 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       if (act && d) {
         stop(t);
         var a = act.dataset.act;
-        d.classList.add(a === "ship" ? "shipped" : a === "discard" ? "discarded" : "asked");
-        if (a === "ship" && !still.matches) t.querySelector(".dt-done").animate([{ opacity: 0, transform: "scale(.4)" }, { opacity: 1, transform: "none" }], { duration: POP.d, easing: POP.e, delay: 200, fill: "backwards" });
+        if (a === "ship") {
+          d.classList.add("shipping");
+          window.__dittoShip(t, function () {
+            d.classList.remove("shipping"); d.classList.add("shipped");
+            if (!still.matches) t.querySelector(".dt-done").animate([{ opacity: 0, transform: "scale(.4)" }, { opacity: 1, transform: "none" }], { duration: POP.d, easing: POP.e, delay: 200, fill: "backwards" });
+          });
+          return;
+        }
+        d.classList.add(a === "discard" ? "discarded" : "asked");
         if (a === "ask") {
           var dt = t.querySelector(".dt-ditto");
           if (!still.matches) dt.animate([{ transform: "none" }, { transform: "scale(1.03, .96)" }, { transform: "none" }], { duration: 700, iterations: 2, easing: "ease-in-out" });
@@ -1231,71 +1280,90 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   }
   function playOpening() {
     var run = new Run(0), S = performance.now();
-    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b")), ALL = A.concat(B);
-    // When each key lands (ms): uneven, quicker inside a word, a breath at each space.
-    var times = [600, 712, 790, 1000, 1118, 1290, 2850, 2955, 3030, 3102, 3196], END = 3250;
-    var ink = [{ opacity: 0, filter: "blur(0.6px)" }, { opacity: 1, filter: "blur(0)" }];
-    ALL.forEach(function (l, i) { run.go(l, ink, { delay: times[i], duration: 90, easing: "cubic-bezier(.2,.8,.2,1)" }); });
-    // The caret glides to each new place in 70 ms, steady while typing, blinking at the system's rhythm when not.
-    var caret = h1.querySelector(".caret"), last = ALL[ALL.length - 1].getBoundingClientRect(), T = END + 240, glide = "cubic-bezier(.2,.8,.2,1)";
+    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b"));
+    var ink = [{ opacity: 0, filter: "blur(0.6px)" }, { opacity: 1, filter: "blur(0)" }], inkOpt = function (t) { return { delay: t, duration: 90, easing: "cubic-bezier(.2,.8,.2,1)" }; };
+    // "Ink &": a held beat with the caret blinking, then a person's rhythm, a breath after "Ink" and after "&".
+    var timesA = [600, 712, 790, 1000, 1118, 1290];
+    A.forEach(function (l, i) { run.go(l, ink, inkOpt(timesA[i])); });
+    // The caret glides to each new place; the anchor carries it, so the stroke itself is free to pool.
+    var anchor = h1.querySelector(".caret-at"), caret = h1.querySelector(".caret"), last = B[B.length - 1].getBoundingClientRect(), glide = "cubic-bezier(.2,.8,.2,1)";
     function at(r, edge) { return "translate(" + (r[edge] - last.right).toFixed(1) + "px," + (r.top - last.top).toFixed(1) + "px)"; }
-    var kf = [{ offset: 0, transform: at(ALL[0].getBoundingClientRect(), "left") }], prev = kf[0].transform;
-    ALL.forEach(function (l, i) {
-      var now = at(l.getBoundingClientRect(), "right");
-      kf.push({ offset: times[i] / T, transform: prev, easing: glide }, { offset: Math.min((times[i] + 70) / T, 1), transform: now }); prev = now;
-    });
-    kf.push({ offset: 1, transform: "none" });
-    run.go(caret, kf, { duration: T, easing: "linear" });
-    var blink = [[0, 0], [100, 1], [400, 1], [470, 0.08], [530, 0.08], [600, 1], [1820, 1], [1890, 0.08], [2350, 0.08], [2420, 1], [END, 1], [T, 0]];
-    run.go(caret, blink.map(function (b) { return { offset: b[0] / T, opacity: b[1] }; }), { duration: T, easing: "linear", fill: "both" });
-    // Ditto. Travel and height are worked out per hop (a true arc, held a touch at the top); the shape eases
-    // through its poses; the soft body does the rest.
-    var unit = hd.getBoundingClientRect().width / 40, from = (innerWidth - hd.getBoundingClientRect().left + 40) / unit;
-    var hops = [{ a: 1350, b: 1780, x0: from, x1: from * 0.42, h: 24 }, { a: 1960, b: 2440, x0: from * 0.42, x1: 0, h: 19 }];
+    var T = 2400, kf = [{ offset: 0, transform: at(A[0].getBoundingClientRect(), "left") }], prev = kf[0].transform;
+    A.forEach(function (l, i) { var now = at(l.getBoundingClientRect(), "right"); kf.push({ offset: timesA[i] / T, transform: prev, easing: glide }, { offset: (timesA[i] + 70) / T, transform: now }); prev = now; });
+    kf.push({ offset: 1, transform: prev });
+    run.go(anchor, kf, { duration: T, easing: "linear", fill: "backwards" });
+    run.go(caret, [[0, 0], [100, 1], [400, 1], [470, 0.08], [530, 0.08], [600, 1], [1640, 1], [1700, 0.08], [1820, 0.08], [1880, 1], [2150, 1], [2320, 0]]
+      .map(function (b) { return { offset: b[0] / T, opacity: b[1] }; }), { duration: T, easing: "linear", fill: "both" });
+    // It softens: the stroke shortens and flows down into its own foot.
+    run.go(caret, [{ transform: "none" }, { transform: "none", offset: 0.82 }, { transform: "scaleY(0.12)" }], { duration: 2340, easing: "cubic-bezier(.55,0,.75,.3)", fill: "both" });
+    // The drop: Ditto, made of the caret's ink, at its foot. Margin red deepens to ink as it gathers, swells
+    // through a wobbling blob into the dome, the springs settle, and the eyes open last, with a blink.
+    var unit = hd.getBoundingClientRect().width / 40, fr = hdSvg.getBoundingClientRect(), fx = fr.left + 20 * unit;
+    var sp = A[A.length - 1].getBoundingClientRect(), d0 = B[0].getBoundingClientRect();
+    var X0 = (sp.right + unit * 1.2 - fx) / unit, Y0 = -(sp.top - last.top) / unit, X1 = (d0.left + 19 * unit - fx) / unit;
+    var red = hdSvg.querySelector(".red");
+    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.55 }, { opacity: 0 }], { delay: 2150, duration: 900, easing: "ease-in-out", fill: "backwards" });
+    // Then it writes its name: three small hops to the right, each letter inking in as Ditto's back foot passes it.
+    var hops = [], t0 = 3080, air = 300, ground = 110, n = 3;
+    for (var i = 0; i < n; i++) { var a = t0 + i * (air + ground); hops.push({ a: a, b: a + air, x0: X1 + (0 - X1) * i / n, x1: X1 + (0 - X1) * (i + 1) / n, h: 9 }); }
     var keys = [
-      { t: 0, s: 1.1, foot: 2, lean: -1.4, lx: -1.2 },
-      { t: 1350, s: 1.12, foot: 1.8, lean: -1.8 },                 // already leaving the ground as it comes in
-      { t: 1560, s: 1.03, foot: 1.4, lean: -1.2 },                 // the top of the first arc
-      { t: 1760, s: 1.08, foot: 1.6, lean: -1.4 },
-      { t: 1785, s: 0.87, foot: 4.8, lean: -1.9 },                 // lands
-      { t: 1870, s: 0.96, foot: 4, lean: -0.8 },
-      { t: 1945, s: 0.8, foot: 5.2, lean: -1.4 },                  // the long crouch before the second
-      { t: 2000, s: 1.15, foot: 1.6, lean: -2.2 },                 // and up
-      { t: 2200, s: 1.03, foot: 1.3, lean: -1.1 },                 // hangs at the top
-      { t: 2420, s: 1.09, foot: 1.5, lean: -1.5 },
-      { t: 2448, s: 0.82, foot: 5.6, lean: -2.4, lx: -1.2 },       // a firm landing
-      { t: 2570, s: 1.06, foot: 3.1, lean: 1.2 },                  // settles once
-      { t: 2700, s: 0.985, foot: 3.8, lean: -0.3, lx: 0 },         // and again
-      { t: 2860, s: 1, foot: 3.6, lean: 0 },
-      { t: 2450, open: 1 }, { t: 2510, open: 0.1 }, { t: 2620, open: 1 }   // blinks as it lands
+      { t: 0, k: 0.1, s: 0.6, foot: 6, open: 0, o: 0, lean: 0 },
+      { t: 2140, k: 0.1, o: 0 }, { t: 2190, o: 1 },
+      { t: 2400, k: 0.36, s: 0.7, foot: 6.5 },                     // a drop, spreading
+      { t: 2620, k: 0.72, s: 0.82, foot: 5.4, lean: 0.8 },         // a blob, wobbling
+      { t: 2800, k: 1.04, s: 1.08, foot: 2.8, lean: -0.6 },        // up into the dome
+      { t: 2940, k: 1, s: 0.97, foot: 3.9, lean: 0.2 },
+      { t: 3020, s: 1, foot: 3.6, lean: 0, open: 0 },
+      { t: 3060, open: 0.15 }, { t: 3130, open: 1 }                // and opens its eyes
     ];
-    keys.sort(function (a, b) { return a.t - b.t; });
-    heroHop = { at: S, keys: keys, hops: hops, end: 2900 };
+    hops.forEach(function (h, i) {
+      keys.push({ t: h.a - 70, s: 0.88, foot: 4.4, lean: -0.5 }, { t: h.a + 30, s: 1.1, foot: 2, lean: 1.6 },
+        { t: (h.a + h.b) / 2, s: 1.03, foot: 1.6, lean: 1 }, { t: h.b - 15, s: 1.06, foot: 1.8, lean: 1.2 },
+        { t: h.b, s: i === n - 1 ? 0.8 : 0.9, foot: i === n - 1 ? 5.6 : 4.6, lean: 1.4 });
+    });
+    var land = hops[n - 1].b;
+    keys.push({ t: land + 120, s: 1.06, foot: 3.1, lean: -0.9 }, { t: land + 250, s: 0.985, foot: 3.8, lean: 0.3 }, { t: land + 400, s: 1, foot: 3.6, lean: 0 },
+      { t: land + 20, open: 1 }, { t: land + 80, open: 0.1 }, { t: land + 190, open: 1 });
+    function path(t) {
+      if (t < 2300) return { x: X0, lift: Y0 };
+      if (t < 2900) { var u = EASE.io((t - 2300) / 600); return { x: X0 + (X1 - X0) * u, lift: Y0 * (1 - u) }; }
+      var x = X1;
+      for (var i = 0; i < hops.length; i++) {
+        var h = hops[i];
+        if (t >= h.b) { x = h.x1; continue; }
+        if (t > h.a) { var v = (t - h.a) / (h.b - h.a); return { x: h.x0 + (h.x1 - h.x0) * v, lift: h.h * (1 - Math.pow(Math.abs(2 * v - 1), 2.2)) }; }
+        return { x: h.x0, lift: 0 };
+      }
+      return { x: x, lift: 0 };
+    }
+    // When each letter of "Ditto" appears: as Ditto's back foot passes the middle of it.
+    B.forEach(function (l) {
+      var r = l.getBoundingClientRect(), c = (r.left + r.width / 2 - fx) / unit, when = land;
+      for (var t = 3000; t <= land; t += 8) { if (path(t).x - 16 >= c) { when = t; break; } }
+      run.go(l, ink, inkOpt(when));
+    });
+    var END = land + 400;
+    heroHop = { at: S, keys: keys, path: path, end: END + 40 };
     heroRig.snap(heroPose(0));
     wakeHero();
-    // The page breathes out: the line, then the rest, quietly.
-    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1; });
-    rest.forEach(function (e, i) { run.go(e, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { delay: END + 120 + i * 140, duration: 700, easing: "cubic-bezier(.2,.8,.2,1)" }); });
+    // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
+    // first; the bar's controls last. Nothing arrives at once.
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 650;
+    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent; });
+    rest.forEach(function (e, i) {
+      var dur = i === 0 ? 900 : 800;
+      run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
+      when2 += dur + 450;
+    });
     document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
-      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: END + 400, duration: 700, easing: "ease-out" });
+      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: when2 - 150, duration: 700, easing: "ease-out" });
     });
     opening = run.list;
     delete root.dataset.opening;
     setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
     run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
   }
-  function heroPose(t) {
-    var p = pose(heroHop.keys, t), hops = heroHop.hops, x = hops[0].x0, lift = 0;
-    for (var i = 0; i < hops.length; i++) {
-      var h = hops[i];
-      if (t >= h.b) { x = h.x1; continue; }
-      if (t > h.a) { var u = (t - h.a) / (h.b - h.a); x = h.x0 + (h.x1 - h.x0) * u; lift = h.h * (1 - Math.pow(Math.abs(2 * u - 1), 2.2)); }
-      else x = h.x0;
-      break;
-    }
-    p.x = x; p.lift = lift;
-    return p;
-  }
+  function heroPose(t) { var p = pose(heroHop.keys, t); return Object.assign(p, heroHop.path(t)); }
   if ("opening" in root.dataset) {
     if (still.matches || scrollY > 4) delete root.dataset.opening;
     else {
@@ -1352,35 +1420,271 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     }, { passive: true });
   })();
 
+  // ———— Whimsy: three small moments, each Ditto being itself ————
+  var endSvg = document.querySelector(".end .om-ditto svg"), endRig = endSvg ? new Rig(endSvg) : null;
+  if (endRig && !still.matches) endRig.snap(Object.assign({}, REST));
+  function onScreen(el) { var r = el.getBoundingClientRect(); return r.width && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth; }
+
+  // 1. Goodnight, Ditto. Into the dark, every Ditto in view closes its eyes, slowly, as if nodding off, and
+  //    opens them again; into the light, a quick squint. Once per switch, under the toggle's own circle.
+  document.addEventListener("inktheme", function (e) {
+    if (still.matches) return;
+    var night = e.detail === "dark";
+    var keys = night
+      ? [{ t: 0, open: 1, s: 1 }, { t: 380, open: 0.06, s: 0.975 }, { t: 820, open: 0.06, s: 0.975 }, { t: 1120, open: 1, s: 1 }]
+      : [{ t: 0, open: 1 }, { t: 110, open: 0.3 }, { t: 280, open: 0.3 }, { t: 420, open: 1 }];
+    var tile = document.querySelector(".t-ditto");
+    [[heroRig, hd], [endRig, endSvg], [tile && tile._rig, tile && tile.querySelector(".dt-ditto")]].forEach(function (d) {
+      if (d[0] && d[1] && onScreen(d[1]) && !d[0].fx) { d[0].play(keys.map(function (k) { return Object.assign({}, k); })); if (d[0] === heroRig) wakeHero(); }
+    });
+  });
+
+  // 2. ⌘↩ (Ctrl+↩ elsewhere), or a tap on a Ditto: Ditto takes the line you're reading, as it would in Ink.
+  //    It hops from where it rests (or in from the nearest edge) to the start of the line nearest the middle
+  //    of the screen, nods as it takes it, says so, and hops home. Never while you're typing in a field.
+  var visitor = document.createElement("div"), onit = document.createElement("div");
+  visitor.className = "visitor"; visitor.setAttribute("aria-hidden", "true");
+  visitor.innerHTML = hdSvg.outerHTML.replace(/id="hd/g, 'id="vd').replace(/#hd/g, "#vd");
+  onit.className = "onit"; onit.setAttribute("aria-hidden", "true"); onit.textContent = "Ditto’s on it.";
+  document.body.append(visitor, onit);
+  var visitorRig = new Rig(visitor.querySelector("svg")), trip = null;
+  var LINES = ".hero > p, .verse p, .chapter h2, .chapter .lead, .beats h3, .beats p, .chapter .aside, .qa h3, .qa p, .tile .tx, .get h3, .end-line";
+  function lineNearMiddle() {
+    var mid = innerHeight / 2, top = 70, best = null;
+    document.querySelectorAll(LINES).forEach(function (el) {
+      if (!onScreen(el)) return;
+      var rg = document.createRange(); rg.selectNodeContents(el);
+      var fs = parseFloat(getComputedStyle(el).fontSize), rows = {};
+      Array.prototype.forEach.call(rg.getClientRects(), function (r) {
+        if (!r.width || r.height < fs * 0.6) return;
+        var k = Math.round(r.top / (fs * 0.5));
+        var row = rows[k] || (rows[k] = { left: r.left, top: r.top, bottom: r.bottom, fs: fs });
+        row.left = Math.min(row.left, r.left); row.bottom = Math.max(row.bottom, r.bottom); row.top = Math.min(row.top, r.top);
+      });
+      for (var k in rows) {
+        var row = rows[k];
+        if (row.top < top || row.bottom > innerHeight - 8) continue;
+        var dd = Math.abs((row.top + row.bottom) / 2 - mid);
+        if (!best || dd < best.d) best = { d: dd, left: row.left, top: row.top, bottom: row.bottom, fs: row.fs };
+      }
+    });
+    return best;
+  }
+  // Hops from (x0, y0) to (x1, y1), in Ditto's own units: a true arc each, as many as the distance needs.
+  function hopsBetween(a, x0, y0, x1, y1, unit) {
+    // One hop, however far: high enough to clear the words between, never touching down on them.
+    var dist = Math.hypot(x1 - x0, y1 - y0), dur = Math.min(760, 380 + dist * unit * 0.4);
+    return [{ a: a, b: a + dur, x0: x0, x1: x1, y0: y0, y1: y1, h: Math.max(14, Math.min(60, dist * 0.32)) }];
+  }
+  function pathOf(hops) {
+    return function (t) {
+      var h = hops[0], x = h.x0, y = h.y0;
+      for (var i = 0; i < hops.length; i++) {
+        h = hops[i];
+        if (t >= h.b) { x = h.x1; y = h.y1; continue; }
+        if (t > h.a) { var u = (t - h.a) / (h.b - h.a); x = h.x0 + (h.x1 - h.x0) * u; y = h.y0 + (h.y1 - h.y0) * u + h.h * (1 - Math.pow(Math.abs(2 * u - 1), 2.2)); }
+        break;
+      }
+      return { x: x, lift: y };
+    };
+  }
+  // The shape through a run of hops: a crouch, a stretch up, a hang, a squash on landing; between hops in a run
+  // the landing is the next crouch; after the last, it settles (unless something else, like a nod, follows).
+  function shapeFor(hops, keys, settle) {
+    hops.forEach(function (h, i) {
+      var dir = h.x1 < h.x0 ? -1 : 1;
+      if (i === 0) keys.push({ t: h.a - 120, s: 1, foot: 3.6, lean: 0 });
+      keys.push({ t: h.a - 20, s: 0.86, foot: 4.6, lean: -0.6 * dir }, { t: h.a + 40, s: 1.12, foot: 1.8, lean: 1.8 * dir },
+        { t: (h.a + h.b) / 2, s: 1.03, foot: 1.4, lean: 1.1 * dir }, { t: h.b - 20, s: 1.08, foot: 1.6, lean: 1.3 * dir },
+        { t: h.b, s: 0.84, foot: 5, lean: 1.8 * dir });
+      if (i === hops.length - 1 && settle) keys.push({ t: h.b + 120, s: 1.05, foot: 3.2, lean: -0.9 * dir }, { t: h.b + 240, s: 1, foot: 3.6, lean: 0 });
+    });
+    return keys;
+  }
+  function showOnit(x, y, ms, delay) {
+    onit.getAnimations().forEach(function (a) { a.cancel(); });
+    var w = onit.offsetWidth || 120;
+    onit.style.left = Math.max(8, Math.min(innerWidth - w - 8, x - 12)) + "px";
+    onit.style.top = Math.max(8, y - 38) + "px";
+    onit.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none", offset: 0.12 }, { opacity: 1, transform: "none", offset: 0.88 }, { opacity: 0, transform: "none" }],
+      { duration: ms, delay: delay || 0, easing: "cubic-bezier(.2,.8,.2,1)", fill: "both" });
+  }
+  function endTrip() {
+    if (!trip) return;
+    var t = trip; trip = null;
+    t.rig.stopFx(); t.rig.snap(Object.assign({}, REST));
+    if (t.visitor) visitor.style.display = "none"; else t.home.style.visibility = "";
+    onit.getAnimations().forEach(function (a) { a.cancel(); });
+  }
+  function takeLine() {
+    var line = lineNearMiddle();
+    if (!line) return;
+    endTrip();
+    var baseline = line.bottom - line.fs * 0.24;
+    if (still.matches) { showOnit(line.left, line.top, 1900); return; }
+    // Who goes: a Ditto resting in view, or one from just past the nearest edge.
+    var home = onScreen(hd) && !(opening.length || heroHop) ? hd : endSvg && onScreen(endSvg) ? endSvg.parentNode : null, rig, unit, ox, oy, sx, sy;
+    if (home) {
+      rig = home === hd ? heroRig : endRig;
+      var sr = (home === hd ? hdSvg : endSvg).getBoundingClientRect(); unit = sr.width / 40; ox = sr.left + 20 * unit; oy = sr.top + 32 * unit;
+    } else {
+      unit = Math.max(26, Math.min(64, line.fs * 1.3)) / 40; rig = visitorRig;
+    }
+    // At the line it's the line's size: a resting Ditto shrinks (or grows) to it on the way, and back.
+    var lineUnit = Math.max(26, Math.min(64, line.fs * 1.3)) / 40, K = home ? lineUnit / unit : 1;
+    // Where it stands: in the margin before the line, or on the line's first letters if there's no margin.
+    var half = 18 * lineUnit, gap = line.fs * 0.35, tx = line.left - gap - half, ty = baseline;
+    if (tx - half < 6) { tx = line.left + half; ty = line.top + line.fs * 0.08; }
+    if (!home) {
+      // The visitor's own place is the landing spot; it comes in from the nearer side, along the line.
+      ox = tx; oy = ty;
+      visitor.style.width = 40 * unit + "px"; visitor.style.left = tx - 20 * unit + "px"; visitor.style.top = ty - 32 * unit + "px"; visitor.style.display = "block";
+      sx = (tx < innerWidth / 2 ? -tx - 30 * unit : innerWidth - tx + 30 * unit) / unit; sy = 0;
+      rig.snap(Object.assign({}, REST, { x: sx }));
+    }
+    var X = home ? (tx - ox) / unit : 0, Y = home ? -(ty - oy) / unit : 0, X0 = home ? 0 : sx, Y0 = 0;
+    var go = hopsBetween(140, X0, Y0, X, Y, unit), arrive = go[go.length - 1].b, stay = 1750;
+    var back = hopsBetween(arrive + stay, X, Y, X0, Y0, unit), end = back[back.length - 1].b + 320;
+    var hops = go.concat(back), keys = shapeFor(back, shapeFor(go, [{ t: 0, s: 1, foot: 3.6, lean: 0, open: 1 }], false), true);
+    // The nod as it takes the line: a deeper squash, a blink, a lean toward the words.
+    var toward = X0 < X || (home && tx > ox) ? 1 : -1;
+    var leave = back[0].a;
+    keys.push({ t: go[0].a, k: 1 }, { t: arrive, k: K }, { t: leave, k: K }, { t: back[0].b, k: 1 });
+    keys.push({ t: arrive + 60, s: 0.8, foot: 5.4, open: 1 }, { t: arrive + 150, open: 0.1 }, { t: arrive + 260, s: 1.04, foot: 3.2, open: 1, lean: 1.4 * toward },
+      { t: arrive + 480, s: 1, foot: 3.6, lean: 0 }, { t: end, s: 1, foot: 3.6, lean: 0, open: 1 });
+    trip = { rig: rig, visitor: !home, home: home, y: scrollY };
+    var mine = trip;
+    rig.play(keys, pathOf([{ a: 0, b: 1, x0: X0, x1: X0, y0: Y0, y1: Y0, h: 0 }].concat(hops)), function () { if (trip === mine) { trip = null; if (mine.visitor) visitor.style.display = "none"; } });
+    if (rig === heroRig) wakeHero();
+    showOnit(tx - half, ty - 34 * lineUnit, 1600, arrive + 180);
+  }
+  addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || !(e.metaKey || e.ctrlKey) || e.repeat || e.altKey) return;
+    var a = document.activeElement;
+    if (a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return;
+    takeLine();
+  });
+  [hd, endSvg && endSvg.parentNode].forEach(function (el) {
+    if (el) el.addEventListener("pointerup", function (e) { if (e.pointerType === "touch") takeLine(); });
+  });
+  // Reading on: if the page moves far, Ditto goes straight home.
+  addEventListener("scroll", function () { if (trip && Math.abs(scrollY - trip.y) > 60) endTrip(); }, { passive: true });
+
+  // 3. Ship It, in the Ditto tile: a tiny happy bounce, two small hops in place, before the line is done.
+  window.__dittoShip = function (t, done) {
+    var dt = t.querySelector(".dt-ditto"), rig = t._rig || (t._rig = new Rig(dt));
+    if (still.matches) return done();
+    rig.snap(Object.assign({}, REST));
+    rig.play([
+      { t: 0, s: 1, foot: 3.6, lift: 0, open: 1 }, { t: 90, s: 0.88, foot: 4.4, lift: 0 }, { t: 150, s: 1.1, foot: 2, lift: 0 },
+      { t: 260, s: 1.03, foot: 1.6, lift: 7, open: 0.5 }, { t: 365, s: 1.07, foot: 1.8, lift: 0.6 }, { t: 385, s: 0.86, foot: 4.8, lift: 0 },
+      { t: 450, s: 1.08, foot: 2.2, lift: 0 }, { t: 545, s: 1.02, foot: 1.7, lift: 5 }, { t: 640, s: 1.06, foot: 1.9, lift: 0.4 },
+      { t: 655, s: 0.9, foot: 4.4, lift: 0, open: 0.5 }, { t: 770, s: 1.03, foot: 3.4, open: 1 }, { t: 900, s: 1, foot: 3.6 }
+    ], null, function (cut) { if (!cut) done(); });
+  };
+
   if (still.matches || !("IntersectionObserver" in window)) return;
   // Each tile waits at its first frame until it's well in view, then plays, once. Tiles arriving together
   // are a beat apart. Nothing is held back from a reader who scrolls quickly: an entrance is half a second.
-  var waiting = [];
-  tiles.forEach(function (t) { play(t, 0, false).forEach(function (a) { a.pause(); a.currentTime = 0; }); waiting.push(t); });
+  var waiting = [], speed = 0;
+  tiles.forEach(function (t) { play(t, 0, true).forEach(function (a) { a.pause(); a.currentTime = 0; }); waiting.push(t); });
+  // Tiles arriving together are a beat apart, left to right along their row.
   var io = new IntersectionObserver(function (entries) {
-    var n = 0;
+    var now = [];
     entries.forEach(function (e) {
+      if (!e.isIntersecting && e.boundingClientRect.bottom < 0) { io.unobserve(e.target); stop(e.target); return; }
       if (!e.isIntersecting) return;
-      if (e.intersectionRatio < 0.5 && e.intersectionRect.height < innerHeight * 0.45) return;
-      io.unobserve(e.target); play(e.target, 120 + n++ * 120, false);
+      io.unobserve(e.target); now.push(e.target);
     });
-  }, { threshold: [0, 0.25, 0.5, 0.75] });
+    now.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return Math.round(ra.top / 40) - Math.round(rb.top / 40) || ra.left - rb.left; });
+    var fast = speed > 2.5;
+    now.forEach(function (t, n) { var list = play(t, fast ? 0 : n * 90, true); if (fast && list[0]) list[0].updatePlaybackRate(760 / 300); });
+  }, { threshold: 0.25, rootMargin: "0px 0px -6% 0px" });
   tiles.forEach(function (t) { io.observe(t); });
-  // The rest of the page has one motion each, at most. Ditto's three beats arrive in order, each as it comes into view.
-  var beatIO = new IntersectionObserver(function (es) {
-    var n = 0;
-    es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio >= 0.5) { beatIO.unobserve(e.target); var r = e.target._run; r.currentTime = -(n++ * 160); r.play(); } });
-  }, { threshold: [0, 0.5, 1] });
-  document.querySelectorAll(".beats li").forEach(function (li) {
-    var r = li.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 640, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
-    r.pause(); r.currentTime = 0; li._run = r; beatIO.observe(li);
+  // ———— Arrivals: how the page comes into view as you read down it ————
+  // One family of motion, one easing. Display type rises into view from behind its own baseline, line by
+  // line; body copy fades up a few pixels; the product shot settles; tiles rise, and only then play. Each
+  // thing arrives once. Things that arrive together are a beat apart; things that arrive alone come at once.
+  // Scrolling fast, everything resolves in a third of a second. Without script, or with Reduce Motion,
+  // everything is simply there.
+  var EASE_IN = "cubic-bezier(0.22, 1, 0.36, 1)";
+  var KINDS = {
+    mask: { d: 760, k: [{ transform: "translateY(100%)", clipPath: "inset(0 0 100% 0)" }, { transform: "none", clipPath: "inset(-0.3em -0.3em -0.35em -0.3em)" }] },
+    line: { d: 760, k: [{ opacity: 0, transform: "translateY(8px)", filter: "blur(3px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }] },
+    turn: { d: 900, k: [{ opacity: 0, transform: "translateY(8px)", filter: "blur(3px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }] },
+    rise: { d: 700, k: [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }] },
+    shot: { d: 900, k: [{ opacity: 0, transform: "translateY(24px) scale(0.97)" }, { opacity: 1, transform: "none" }] }
+  };
+  // Lines of display type, each its own piece (split where the author broke the line).
+  function linesOf(el) {
+    var groups = [[]], out = [];
+    Array.prototype.slice.call(el.childNodes).forEach(function (n) { if (n.nodeName === "BR") groups.push([n]); else groups[groups.length - 1].push(n); });
+    groups.forEach(function (g) {
+      var br = g[0] && g[0].nodeName === "BR" ? g.shift() : null, span = document.createElement("span");
+      if (!g.length) return;
+      span.className = "vl"; g[0].parentNode.insertBefore(span, g[0]); g.forEach(function (n) { span.appendChild(n); }); out.push(span);
+    });
+    return out;
+  }
+  var arrivals = [];   // [element, kind, gap after the previous arrival in its batch]
+  function add(el, kind, gap) { if (el) arrivals.push([el, kind, gap || 0]); }
+  var verse = document.querySelector(".verse");
+  if (verse) verse.querySelectorAll("p").forEach(function (p) {
+    if (p.classList.contains("by")) return add(p, "rise", 300);
+    linesOf(p).forEach(function (l, i) { var turn = p.classList.contains("turn") && i === 0; add(l, turn ? "turn" : "line", turn ? 440 : 160); });
   });
-  // At the end, Ditto, resting as the last line's full stop, blinks once as you arrive.
-  var endEyes = document.querySelector(".end .eyes");
-  var endObs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { endObs.disconnect(); if (endEyes) setTimeout(function () { endEyes.animate([{ transform: "none" }, { transform: "scaleY(.1)", offset: 0.45 }, { transform: "none" }], { duration: 200, easing: "ease-in-out" }); }, 600); } }); }, { threshold: 1 });
-  endObs.observe(document.querySelector(".end-line"));
+  add(document.querySelector(".stage"), "shot");
+  document.querySelectorAll(".chapter").forEach(function (c) {
+    var h = c.querySelector("h2");
+    // The statement's lines stand as blocks of their own, so the breaks between them go.
+    if (h && h.classList.contains("statement")) { linesOf(h).forEach(function (l) { add(l, "mask", 140); }); h.querySelectorAll("br").forEach(function (b) { b.remove(); }); }
+    else add(h, "mask");
+    add(c.querySelector(".lead"), "rise", 150);
+    c.querySelectorAll(".beats li").forEach(function (li, i) {
+      add(li.querySelector(".n"), "rise", i ? 180 : 120); add(li.querySelector("h3"), "rise", 110); add(li.querySelector("p"), "rise", 110);
+    });
+    add(c.querySelector(".aside"), "rise", 200);
+    c.querySelectorAll(".get > div").forEach(function (d) { add(d, "rise", 120); });
+    c.querySelectorAll(".qa > div").forEach(function (d) { add(d, "rise", 100); });
+  });
+  var endLine = document.querySelector(".end-line");
+  add(endLine, "mask"); add(document.querySelector(".end .small"), "rise", 300);
+  arrivals.forEach(function (a, i) {
+    var el = a[0], K = KINDS[a[1]], target = el;
+    // A mask moves an inner piece behind the element's own edge; the element itself is what's watched
+    // (a fully masked element has no visible area, so it would never count as in view).
+    if (a[1] === "mask") { target = document.createElement("span"); target.className = "mk"; while (el.firstChild) target.appendChild(el.firstChild); el.appendChild(target); }
+    el._arr = target.animate(K.k, { duration: K.d, easing: EASE_IN, fill: "backwards" });
+    el._arr.pause(); el._arr.currentTime = 0; el._gap = a[2]; el._i = i;
+  });
+  // How fast the reader is going: past about 2.5 px a millisecond, arrivals take a third of a second.
+  var lastY = scrollY, lastT = performance.now();
+  addEventListener("scroll", function () { var t = performance.now(), dt = t - lastT; if (dt > 0) speed = speed * 0.6 + Math.abs(scrollY - lastY) / dt * 0.4; lastY = scrollY; lastT = t; }, { passive: true });
+  function arrive(list) {
+    var fast = speed > 2.5, at = 0;
+    list.sort(function (a, b) { return a._i - b._i; });
+    list.forEach(function (el, n) {
+      var a = el._arr; if (!a) return;
+      at += n ? el._gap : 0;
+      if (fast) { a.updatePlaybackRate(a.effect.getTiming().duration / 300); a.currentTime = 0; a.play(); }
+      else { a.currentTime = -at; a.play(); }
+      a.finished.then(function () { if (el === endLine && endRig && !endRig.fx) setTimeout(function () { endRig.play([{ t: 0, open: 1 }, { t: 90, open: 0.08 }, { t: 200, open: 1 }]); }, 250); }, function () {});
+      el._arr = null;
+    });
+  }
+  var arrIO = new IntersectionObserver(function (es) {
+    var now = [];
+    es.forEach(function (e) {
+      if (!e.target._arr) return;
+      // Already above the screen (a link to further down, or a quick fling): simply there.
+      if (!e.isIntersecting && e.boundingClientRect.bottom < 0) { e.target._arr.finish(); e.target._arr = null; arrIO.unobserve(e.target); return; }
+      if (e.isIntersecting) { now.push(e.target); arrIO.unobserve(e.target); }
+    });
+    if (now.length) arrive(now);
+  }, { threshold: 0.25, rootMargin: "0px 0px -6% 0px" });
+  arrivals.forEach(function (a) { arrIO.observe(a[0]); });
   // Reduce Motion switched on mid-visit: everything goes to its last frame at once.
-  still.addEventListener("change", function () { if (still.matches) { tiles.forEach(stop); delete root.dataset.motion; } });
+  still.addEventListener("change", function () { if (still.matches) { tiles.forEach(stop); arrivals.forEach(function (x) { if (x[0]._arr) { x[0]._arr.finish(); x[0]._arr = null; } }); delete root.dataset.motion; } });
 })();
 </script>
 
