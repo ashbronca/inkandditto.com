@@ -71,8 +71,9 @@
   --fill-2: rgba(28, 26, 21, 0.12);
   --hl: rgba(252, 214, 84, 0.55);
   --glass: rgba(247, 244, 238, 0.74);
-  --ditto-top: #2E2B25; --ditto-foot: #0D0C0A; --ditto-rim: rgba(242, 238, 230, 0); --ditto-eye: #FBF8F2;
   --wall-1: #E9E2D5; --wall-2: #D3C8B5;
+  /* Ditto's material (docs/ditto-character/ditto-7-final.json) */
+  --dm0: #46423B; --dm1: #23211C; --dm2: #151410; --dm3: #0D0C0A; --dsh: 0.5; --drim: #DCE2EC; --drim-a: 0; --dbleed: #14120F; --dbleed-a: 0.5; --deye: #F7F4EE; --dpupil: #100F0C; --dflat: #1C1A16;
   color-scheme: light;
 }
 :root[data-theme="light"] { color-scheme: light; }
@@ -82,7 +83,8 @@
     --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
     --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
     --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
-    --ditto-top: #3B372F; --ditto-foot: #1A1914; --ditto-rim: rgba(242, 238, 230, 0.6); --ditto-eye: #FBF8F2; --wall-1: #2C2822; --wall-2: #171511;
+    --wall-1: #2C2822; --wall-2: #171511;
+    /* Ditto's material, dark */ --dm0: #5A5650; --dm1: #2E2C27; --dm2: #22201C; --dm3: #1A1915; --dsh: 0.36; --drim: #EEEAE2; --drim-a: 0.5; --dbleed: #14120F; --dbleed-a: 0.55; --deye: #F2EEE6; --dpupil: #100F0C; --dflat: #3A3731;
     color-scheme: dark;
   }
 }
@@ -91,7 +93,8 @@
   --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
     --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
     --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
-    --ditto-top: #3B372F; --ditto-foot: #1A1914; --ditto-rim: rgba(242, 238, 230, 0.6); --ditto-eye: #FBF8F2; --wall-1: #2C2822; --wall-2: #171511;
+    --wall-1: #2C2822; --wall-2: #171511;
+  /* Ditto's material, dark */ --dm0: #5A5650; --dm1: #2E2C27; --dm2: #22201C; --dm3: #1A1915; --dsh: 0.36; --drim: #EEEAE2; --drim-a: 0.5; --dbleed: #14120F; --dbleed-a: 0.55; --deye: #F2EEE6; --dpupil: #100F0C; --dflat: #3A3731;
   color-scheme: dark;
 }
 
@@ -148,6 +151,14 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   min-height: 34rem; min-height: calc(100svh - 4.4rem - env(safe-area-inset-top, 0px)); padding-bottom: 6svh; box-sizing: border-box;
   overflow-x: hidden; overflow-x: clip; }
 .hero .actions { justify-content: center; }
+/* Read on: a hairline chevron at the foot of the first screen, written in once the name has settled. */
+.hero { position: relative; }
+.cue { position: absolute; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); width: 2.75rem; height: 2.75rem; margin-left: -1.375rem;
+  display: grid; place-items: center; border-radius: 50%; color: var(--ink); transition: opacity 0.35s ease, visibility 0.35s; }
+.cue svg { width: 22px; height: 13px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-js] .cue { opacity: 0; visibility: hidden; }
+:root[data-js] .cue.on { opacity: 1; visibility: visible; }
+@media (hover: hover) { .cue:hover { color: var(--ink-2); } }
 /* The name, set as display type: New York (Apple's serif, with optical sizes) on Apple devices, the brand's
    line is already set in it; then Iowan, Charter, Georgia. Tight tracking only because it's this big. */
 h1 { font: 400 min(clamp(3.25rem, 13vw, 8.5rem), 16.5vw)/1 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 0 1.75rem;
@@ -155,7 +166,7 @@ h1 { font: 400 min(clamp(3.25rem, 13vw, 8.5rem), 16.5vw)/1 var(--serif); font-op
 h1 .om-b { white-space: nowrap; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* Ditto is the name's full stop: a drop of ink standing on the baseline, a hair after the o. */
-.om-ditto { display: inline-block; width: 1.04em; margin-left: 0.02em; vertical-align: -0.052em; }
+.om-ditto { display: inline-block; width: 1.13em; margin-left: 0.01em; vertical-align: -0.057em; }
 .om-ditto svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 94%; }
 .om-ditto .eyes { transform-box: fill-box; transform-origin: center; }
 /* Ditto on a visit (⌘↩), and what it says when it takes a line. Neither ever takes a click or a selection. */
@@ -164,11 +175,16 @@ h1 .om-b { white-space: nowrap; }
 .onit { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; user-select: none; -webkit-user-select: none; opacity: 0; white-space: nowrap;
   padding: 0.38em 0.85em; border-radius: 999px; font: 500 0.8125rem/1.2 var(--sans); color: var(--ink); background: var(--glass);
   -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 0 0 0.5px var(--rule), 0 6px 20px rgba(0, 0, 0, 0.12); }
-.end .om-ditto { vertical-align: -0.052em; }
+.end .om-ditto { vertical-align: -0.057em; }
 h1 .caret-at { height: 0.74em; vertical-align: 0; }
 /* The caret only writes the name; the page at rest has none. */
 h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em; border-radius: 99px; opacity: 0; transform-origin: 50% 100%; }
-.om-ditto .red { opacity: 0; }
+/* Ditto, refined: its material, eyes and the ink's bleed. Small (40 px and under) it's flat, with bigger eyes. */
+.ditto7 .red { opacity: 0; fill: var(--your-move); }
+.ditto7 .ew { fill: var(--deye); } .ditto7 .pu { fill: var(--dpupil); } .ditto7 .cl { fill: #fff; }
+.ditto7 .bl { fill: var(--dbleed); fill-opacity: var(--dbleed-a); }
+.ditto7.small .b:not(.red) { fill: var(--dflat); }
+.ditto7.small .sh, .ditto7.small .rim, .ditto7.small .bl, .ditto7.small .pu, .ditto7.small .cl { display: none; }
 .line { font: 400 clamp(1.35rem, 3vw, 1.75rem)/1.3 var(--serif); letter-spacing: -0.005em; margin: 0 0 0.6rem; max-width: none; text-wrap: balance; }
 .lede { color: var(--ink-2); margin: 0 0 2rem; max-width: 30rem; text-wrap: balance; font-size: 1rem; }
 /* The verse: one serif, centred, generous leading; the maker's name in its italic. */
@@ -532,25 +548,17 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 
 <main>
   <div class="hero" id="hero">
-    <h1><span class="vh">Ink &amp; Ditto</span><span class="om-a" aria-hidden="true">Ink &amp; </span><span class="om-b" aria-hidden="true">Ditto<span class="caret-at" aria-hidden="true"><i class="caret"></i></span><span class="om-ditto" aria-hidden="true"><svg viewBox="0 0 40 34">
-      <defs>
-        <linearGradient id="hdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
-        <linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
-        <clipPath id="hdc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
-      </defs>
-      <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#hdg)"/><path class="b red" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: var(--your-move)"/>
-      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#hdc)" fill="none" stroke="url(#hdr)" stroke-width="1.6"/>
-      <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g></g>
-    </svg></span></span></h1>
+    <h1><span class="vh">Ink &amp; Ditto</span><span class="om-a" aria-hidden="true">Ink &amp; </span><span class="om-b" aria-hidden="true">Ditto<span class="caret-at" aria-hidden="true"><i class="caret"></i></span><span class="om-ditto" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="hdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="hds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="hdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="hdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="hdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="hdl0"><path class="lp" d="M13.73 18.89Q16.5 18.94 19.27 18.84L19.27 23.98Q16.5 23.98 13.73 23.98Z"/></clipPath><clipPath id="hdl1"><path class="lp" d="M26.28 18.89Q23.5 18.94 20.73 18.84L20.73 23.98Q23.5 23.98 26.28 23.98Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#hdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#hdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#hdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#hds)" filter="url(#hdh)"/><path class="rim bp" clip-path="url(#hdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#hdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#hdl0)"><ellipse class="ew" cx="16.5" cy="21.28" rx="1.85" ry="2.5"/><circle class="pu" cx="16.68" cy="21.76" r="1.18"/><circle class="cl" cx="16.33" cy="21.29" r="0.4"/></g><g clip-path="url(#hdl1)"><ellipse class="ew" cx="23.5" cy="21.28" rx="1.85" ry="2.5"/><circle class="pu" cx="23.32" cy="21.76" r="1.18"/><circle class="cl" cx="22.96" cy="21.29" r="0.4"/></g></g></g></svg></span></span></h1>
     <p class="line">Write it down. It gets done.</p>
     <p class="lede">Calm Markdown notes for Mac and iPhone.<span class="unless-get"> Coming soon.</span></p>
     <div class="actions when-get">
       <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
       <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
     </div>
+    <a class="cue" href="#verse" aria-label="Read on"><svg viewBox="0 0 22 13" aria-hidden="true"><path pathLength="1" d="M1.5 1.75 11 11.25 20.5 1.75"/></svg></a>
   </div>
 
-  <section class="verse" aria-label="What Ink is for">
+  <section class="verse" id="verse" aria-label="What Ink is for">
     <p>Ink is for<br>
       what you can’t forget,<br>
       what you can’t say yet,<br>
@@ -704,17 +712,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
               <div class="dt-h">This week</div>
               <div class="dt-line">
                 <span class="dt-mg">
-                  <svg class="dt-ditto" viewBox="0 0 40 34">
-                    <defs>
-                      <linearGradient id="dtg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
-                      <linearGradient id="dtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
-                      <clipPath id="dtc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
-                    </defs>
-                    <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#dtg)"/>
-                    <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#dtc)" fill="none" stroke="url(#dtr)" stroke-width="1.8"/>
-                    <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g></g>
-                    <circle class="dot" cx="34.6" cy="6.8" r="3.4" style="fill: var(--your-move)"/>
-                  </svg>
+                  <svg class="ditto7 small dt-ditto" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="dtg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="dts" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="dtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="dtf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="dth" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="dtc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="dtl0"><path class="lp" d="M13.06 18.31Q16.5 18.38 19.94 18.26L19.94 24.63Q16.5 24.63 13.06 24.63Z"/></clipPath><clipPath id="dtl1"><path class="lp" d="M26.94 18.31Q23.5 18.38 20.06 18.26L20.06 24.63Q23.5 24.63 26.94 24.63Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#dtf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#dtg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#dtc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#dts)" filter="url(#dth)"/><path class="rim bp" clip-path="url(#dtc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#dtr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#dtl0)"><ellipse class="ew" cx="16.5" cy="21.28" rx="2.29" ry="3.1"/><circle class="pu" cx="16.73" cy="21.88" r="1.47"/><circle class="cl" cx="16.29" cy="21.29" r="0.5"/></g><g clip-path="url(#dtl1)"><ellipse class="ew" cx="23.5" cy="21.28" rx="2.29" ry="3.1"/><circle class="pu" cx="23.27" cy="21.88" r="1.47"/><circle class="cl" cx="22.83" cy="21.29" r="0.5"/></g></g><circle class="dot" cx="36.6" cy="8.8" r="3.4" style="fill: var(--your-move)"/></g></svg>
                   <svg class="dt-done" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5"/></svg>
                 </span>
                 <span class="txt">The empty state on Projects feels like an error</span>
@@ -811,16 +809,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 </main>
 
 <footer class="end">
-  <p class="end-line">Write it down. It gets done<span class="om-ditto rests" aria-hidden="true"><svg viewBox="0 0 40 34">
-      <defs>
-        <linearGradient id="fdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
-        <linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
-        <clipPath id="fdc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
-      </defs>
-      <path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#fdg)"/>
-      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#fdc)" fill="none" stroke="url(#fdr)" stroke-width="1.6"/>
-      <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g>
-    </svg></span><span class="vh">.</span></p>
+  <p class="end-line">Write it down. It gets done<span class="om-ditto rests" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="fdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="fds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="fdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="fdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="fdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="fdl0"><path class="lp" d="M13.73 18.89Q16.5 18.94 19.27 18.84L19.27 23.98Q16.5 23.98 13.73 23.98Z"/></clipPath><clipPath id="fdl1"><path class="lp" d="M26.28 18.89Q23.5 18.94 20.73 18.84L20.73 23.98Q23.5 23.98 26.28 23.98Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#fdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#fdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#fdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#fds)" filter="url(#fdh)"/><path class="rim bp" clip-path="url(#fdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#fdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#fdl0)"><ellipse class="ew" cx="16.5" cy="21.28" rx="1.85" ry="2.5"/><circle class="pu" cx="16.68" cy="21.76" r="1.18"/><circle class="cl" cx="16.33" cy="21.29" r="0.4"/></g><g clip-path="url(#fdl1)"><ellipse class="ew" cx="23.5" cy="21.28" rx="1.85" ry="2.5"/><circle class="pu" cx="23.32" cy="21.76" r="1.18"/><circle class="cl" cx="22.96" cy="21.29" r="0.4"/></g></g></g></svg></span><span class="vh">.</span></p>
   <p class="small">© 2026 Ash Bronca <span aria-hidden="true">·</span> <a href="privacy">Privacy</a> <span aria-hidden="true">·</span> <a href="support">Support</a></p>
 </footer>
 <script>
@@ -984,49 +973,91 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     o: function (u) { return 1 - Math.pow(1 - u, 3); },
     io: function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
   };
-  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1, k: 1, rot: 0, round: 0, firm: 1 };
-  function outline(p) {
-    var s = p.s, h = 27 * s, w = 13.4 / Math.sqrt(s), B = 32 - p.lift, cx = 20 + p.x, f = p.foot, ys = B - h * 0.444, ry = ys - (B - h), pts = [];
-    pts.push([cx - w - f, B], [cx - w - f * 0.18, B - 1.9], [cx - w, B - h * 0.24]);
-    for (var k = 0; k <= 6; k++) { var th = Math.PI * (1 - k / 6); pts.push([cx + w * Math.cos(th) + p.lean * Math.sin(th), ys - ry * Math.sin(th)]); }
-    pts.push([cx + w, B - h * 0.24], [cx + w + f * 0.18, B - 1.9], [cx + w + f, B]);
-    // As a drop it's round (a ball of ink, squashed or stretched by s), and it can roll: the same points,
-    // moved onto a circle and turned about its middle. Whatever Ditto's outline, this is how it travels.
-    var R = 14, rc = B - R * s;
-    if (p.round > 0) {
-      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s;
+  // ———— Ditto ————
+  // Ditto, refined (docs/ditto-character/ditto-7-final.json): thirteen points on the 40 × 34 grid, standing on
+  // y 32, drawn as a closed B-spline whose base leaves the page with no corner; eyes seen between lids, with a
+  // pupil and a catchlight; a highlight and the ink's bleed into the paper. Each point is on its own spring
+  // toward where the pose wants it: the base firm, the crown loose. A fixed step on real time makes it the same
+  // at 60 Hz and 120 Hz. A pose is a handful of numbers: height at constant volume (s), lean, foot spread
+  // (foot), lift, travel (x), size (k), roundness and roll (round, rot), eyes (open, lid, smile, lx, ly).
+  var D7 = {
+    pts: [[11.2, 32], [5.9, 31.7], [4.3, 27.4], [3.9, 22.4], [6.1, 14.2], [11, 8.9], [20.2, 6.4], [28.9, 9], [33.6, 14.5], [36.1, 22.6], [35.7, 27.5], [34.2, 31.7], [28.9, 32]],
+    eyes: [[16.5, 21.2], [23.5, 21.2]], erx: 1.85, ery: 2.5, pupil: 0.64, lid: 0.05, gy: 0.18,
+    sheen: "M9.9 17.9C10.1 14.6 12.0 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13.0 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z"
+  };
+  var B0 = 32, CXD = 20, DH = 25.6;
+  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lid: 0, smile: 0, lx: 0, ly: 0, x: 0, o: 1, k: 1, rot: 0, round: 0, firm: 1 };
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  // Where the pose puts a point given at rest (outline, eyes and highlight alike).
+  function place(p, x, y) {
+    var u = clamp01((B0 - y) / DH), s = p.s, spread = (p.foot - 3.6) / 2, B = B0 - p.lift;
+    var dx = (x - CXD) / Math.sqrt(s) * (1 + spread * 0.2 * (1 - u) * (1 - u));
+    return [CXD + p.x + dx + p.lean * u, B - (B0 - y) * s * (1 - spread * 0.07)];
+  }
+  // As a drop it's round (a ball of ink), and it can roll; and it has a size. The same for whatever is drawn.
+  function finish(p, pts, roundable) {
+    var s = p.s, B = B0 - p.lift, cx = CXD + p.x, R = 14;
+    if (roundable && p.round > 0) {
+      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s, rc = B - R * s;
       pts = pts.map(function (q, i) { var a = -Math.PI / 2 + (i - 6) * 2 * Math.PI / 13; return [q[0] + (cx + rx * Math.cos(a) - q[0]) * u, q[1] + (rc + ryy * Math.sin(a) - q[1]) * u]; });
     }
     if (p.rot) {
-      var oy = B - (h * 0.45) * (1 - p.round) - R * s * p.round, cr = Math.cos(p.rot), sr = Math.sin(p.rot);
+      var oy = B - (DH * s * 0.45) * (1 - p.round) - R * s * p.round, cr = Math.cos(p.rot), sr = Math.sin(p.rot);
       pts = pts.map(function (q) { var dx = q[0] - cx, dy = q[1] - oy; return [cx + dx * cr - dy * sr, oy + dx * sr + dy * cr]; });
     }
-    // Its size (k), about the middle of its foot: a drop can grow or shrink as it travels.
     if (p.k !== 1) pts = pts.map(function (q) { return [cx + (q[0] - cx) * p.k, B + (q[1] - B) * p.k]; });
     return pts;
+  }
+  function outline(p) { return finish(p, D7.pts.map(function (q) { return place(p, q[0], q[1]); }), true); }
+  function attach(p, pts) { return finish(p, pts.map(function (q) { return place(p, q[0], q[1]); }), false); }
+  var r2 = function (v) { return Math.round(v * 100) / 100; };
+  // A closed uniform cubic B-spline through the 13 points, with two helpers on the base: straight along the
+  // page, leaving it with zero curvature.
+  function bodyPath(P) {
+    var n = P.length, a = P[n - 1], b = P[0], d = "";
+    var Q = P.concat([[a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3], [a[0] + 2 * (b[0] - a[0]) / 3, a[1] + 2 * (b[1] - a[1]) / 3]]), m = Q.length;
+    for (var i = 0; i < m; i++) {
+      var q0 = Q[(i - 1 + m) % m], q1 = Q[i], q2 = Q[(i + 1) % m], q3 = Q[(i + 2) % m];
+      if (!i) d = "M" + r2((q0[0] + 4 * q1[0] + q2[0]) / 6) + " " + r2((q0[1] + 4 * q1[1] + q2[1]) / 6);
+      d += "C" + r2((2 * q1[0] + q2[0]) / 3) + " " + r2((2 * q1[1] + q2[1]) / 3) + " " + r2((q1[0] + 2 * q2[0]) / 3) + " " + r2((q1[1] + 2 * q2[1]) / 3) + " " + r2((q1[0] + 4 * q2[0] + q3[0]) / 6) + " " + r2((q1[1] + 4 * q2[1] + q3[1]) / 6);
+    }
+    return d + "Z";
+  }
+  // The eyes, from the pose and the body's wobble: lids (lid, and a blink is "not open"), lower lids (smile),
+  // gaze, a pupil and a catchlight. Small Dittos have bigger eyes and no pupil.
+  function eyeShapes(q, dev, small) {
+    var out = [], sq = Math.sqrt(q.s), sc = small ? (small === 2 ? 1.4 : 1.24) : 1;
+    var lid = clamp01(Math.max(D7.lid, q.lid || 0, 1 - q.open)), sm = Math.max(0, Math.min(1.2, q.smile || 0));
+    var gx = q.lx * 0.32, gy = D7.gy + q.ly * 0.3;
+    var C = attach(q, D7.eyes);
+    for (var k = 0; k < 2; k++) {
+      var side = k ? 1 : -1, ex = C[k][0] + dev[0] + gx * 0.55 * q.k, ey = C[k][1] + dev[1] + gy * 0.45 * q.k;
+      var rx = D7.erx * Math.pow(1 / sq, 0.6) * q.k * sc, ry = D7.ery * Math.pow(q.s, 0.7) * q.k * sc;
+      var top = ey - ry * 1.08 + lid * ry * 2.16, yTo = top + lid * ry * 0.3, yTi = top - lid * ry * 0.08, yTc = top + lid * ry * 0.7;
+      var bot = ey + ry * 1.08, yBs = bot - sm * ry * 0.55, yBc = bot - sm * ry * 2.2, xo = ex + side * rx * 1.5, xi = ex - side * rx * 1.5;
+      var e = { ex: ex, ey: ey, rx: rx, ry: lid > 0.97 ? 0 : ry,
+        clip: "M" + r2(xo) + " " + r2(yTo) + "Q" + r2(ex) + " " + r2(yTc) + " " + r2(xi) + " " + r2(yTi) + "L" + r2(xi) + " " + r2(yBs) + "Q" + r2(ex) + " " + r2(yBc) + " " + r2(xo) + " " + r2(yBs) + "Z" };
+      var pr = rx * D7.pupil; e.pr = pr; e.px = ex + (gx * 0.4 - side * 0.1) * rx; e.py = ey + (gy * 0.4 + 0.12) * ry; e.cx = e.px - pr * 0.3; e.cy = e.py - pr * 0.4; e.cr = pr * 0.34;
+      out.push(e);
+    }
+    return out;
   }
   // How loose each point is: Hz and damping, foot to crown and back.
   var HZ = [9, 8, 6.2, 5.4, 4.9, 4.5, 4.2, 4.5, 4.9, 5.4, 6.2, 8, 9], ZETA = [0.85, 0.8, 0.7, 0.62, 0.56, 0.52, 0.5, 0.52, 0.56, 0.62, 0.7, 0.8, 0.85];
   function Rig(svg) {
     this.svg = svg;
-    this.paths = svg.querySelectorAll(".b, .r, clipPath path");
-    this.eyes = svg.querySelectorAll(".eyes ellipse");
-    this.dot = svg.querySelector(".dot");
-    this.g = svg.querySelector(".rig");
+    this.paths = svg.querySelectorAll(".bp"); this.sh = svg.querySelector(".sh"); this.bl = svg.querySelector(".bl");
+    this.ew = svg.querySelectorAll(".ew"); this.pu = svg.querySelectorAll(".pu"); this.cl = svg.querySelectorAll(".cl"); this.lp = svg.querySelectorAll(".lp");
+    this.dot = svg.querySelector(".dot"); this.g = svg.querySelector(".rig");
+    this.small = svg.classList.contains("tiny") ? 2 : svg.classList.contains("small") ? 1 : 0;
     this.p = Object.assign({}, REST); this.P = null; this.acc = 0; this.last = 0;
   }
   Rig.prototype.target = function (p) { this.p = p; };
   Rig.prototype.snap = function (p) {
     this.p = p; this.cur = null; this.P = outline(p).map(function (q) { return q.slice(); }); this.V = this.P.map(function () { return [0, 0]; });
-    this.E = this.eyeAt(); this.EV = [0, 0]; this.last = 0; this.acc = 0; this.draw();
+    this.last = 0; this.acc = 0; this.draw();
   };
   Rig.prototype.set = Rig.prototype.snap;
-  Rig.prototype.eyeAt = function () {
-    var P = this.P, a = P[3], b = P[9], c = P[6], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
-    var q = this.cur || this.p;
-    return [mx + (c[0] - mx) * 0.45 + q.lx, my + (c[1] - my) * 0.03 + q.ly];
-  };
-  // One step of real time; returns whether it's still moving.
   // A moment played over whatever Ditto is doing (a trip, a nod, sleepy eyes, a bounce): pose keys for the
   // numbers it changes, and optionally a path (x, lift) it travels. The springs still do the moving.
   Rig.prototype.play = function (keys, path, onEnd) {
@@ -1036,6 +1067,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     wakeRig(this);
   };
   Rig.prototype.stopFx = function () { var f = this.fx; this.fx = null; if (f && f.onEnd) f.onEnd(true); };
+  // One step of real time; returns whether it's still moving.
   Rig.prototype.tick = function (now) {
     if (!this.P) this.snap(this.p);
     var q = this.p, fx = this.fx;
@@ -1058,34 +1090,32 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         var w = 2 * Math.PI * HZ[i] * (q.firm || 1), k = w * w, c = 2 * ZETA[i] * w;
         for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
       }
-      // The eyes ride the body, a moment behind it.
-      var e = this.eyeAt(), we = 2 * Math.PI * 9, lim = 1.4 * (q.k || 1);
-      for (j = 0; j < 2; j++) {
-        this.EV[j] += (we * we * (e[j] - this.E[j]) - 2 * 0.7 * we * this.EV[j]) * H; this.E[j] += this.EV[j] * H;
-        // However fast it moves, the eyes stay on the face.
-        if (Math.abs(this.E[j] - e[j]) > lim) { this.E[j] = e[j] + Math.sign(this.E[j] - e[j]) * lim; this.EV[j] *= 0.5; }
-      }
     }
     for (i = 0; i < P.length; i++) moving = Math.max(moving, Math.abs(V[i][0]) + Math.abs(V[i][1]), Math.abs(T[i][0] - P[i][0]) + Math.abs(T[i][1] - P[i][1]));
-    this.draw();
+    this.draw(T);
     return moving > 0.004 || !!this.fx;
   };
-  Rig.prototype.draw = function () {
-    var P = this.P, n = P.length, r = function (v) { return Math.round(v * 100) / 100; }, d = "M" + r(P[0][0]) + " " + r(P[0][1]);
-    // A smooth spline through the points (Catmull–Rom, as Béziers); the base closes straight along the page.
-    for (var i = 0; i < n - 1; i++) {
-      var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || P[i + 1];
-      d += "C" + r(p1[0] + (p2[0] - p0[0]) / 6) + " " + r(p1[1] + (p2[1] - p0[1]) / 6) + " " + r(p2[0] - (p3[0] - p1[0]) / 6) + " " + r(p2[1] - (p3[1] - p1[1]) / 6) + " " + r(p2[0]) + " " + r(p2[1]);
-    }
-    d += "Z";
+  Rig.prototype.draw = function (T) {
+    var P = this.P, q = this.cur || this.p, d = bodyPath(P);
+    T = T || outline(q);
     this.paths.forEach(function (e) { e.setAttribute("d", d); });
-    // The eyes squash and stretch with the body.
-    var wid = P[9][0] - P[3][0], hgt = (P[0][1] + P[12][1]) / 2 - P[6][1], ex = 3.7 * wid / 26.8;
-    var q = this.cur || this.p, ry = (q.open <= 0.02 ? 0 : 2.35 * Math.max(q.open, 0.08)) * Math.pow(Math.max(hgt, 5) / 27, 0.7), rx = 1.55 * Math.pow(Math.max(wid, 5) / 26.8, 0.6);
-    for (var k = 0; k < 2; k++) {
-      var e = this.eyes[k]; e.setAttribute("cx", r(this.E[0] + (k ? ex : -ex))); e.setAttribute("cy", r(this.E[1])); e.setAttribute("rx", r(ry ? rx : 0)); e.setAttribute("ry", r(ry));
+    // The face rides the body's wobble: the shoulders' and crown's lag behind the pose.
+    var dev = [0, 0]; for (var i = 3; i <= 9; i++) { dev[0] += (P[i][0] - T[i][0]) / 7; dev[1] += (P[i][1] - T[i][1]) / 7; }
+    if (this.sh) this.sh.setAttribute("d", D7.sheen.replace(/(-?\d*\.?\d+)[ ,](-?\d*\.?\d+)/g, function (m, a, b) { var p = attach(q, [[+a, +b]])[0]; return r2(p[0] + dev[0]) + " " + r2(p[1] + dev[1]); }));
+    if (this.bl) {
+      var a0 = P[0], a1 = P[12], fade = clamp01(1 - q.lift / 2.5) * (1 - q.round);
+      this.bl.setAttribute("cx", r2((a0[0] + a1[0]) / 2)); this.bl.setAttribute("cy", r2((a0[1] + a1[1]) / 2 - 0.12));
+      this.bl.setAttribute("rx", r2(Math.max(0, (a1[0] - a0[0]) / 2 + 4.6 * q.k))); this.bl.setAttribute("ry", r2(0.42 * q.k)); this.bl.style.opacity = fade;
     }
-    if (this.dot) { this.dot.setAttribute("cx", r(P[8][0] + 3)); this.dot.setAttribute("cy", r(P[7][1] - 0.2)); }
+    var E = eyeShapes(q, dev, this.small);
+    for (var k = 0; k < 2; k++) {
+      var e = E[k];
+      if (this.lp[k]) this.lp[k].setAttribute("d", e.clip);
+      if (this.ew[k]) { this.ew[k].setAttribute("cx", r2(e.ex)); this.ew[k].setAttribute("cy", r2(e.ey)); this.ew[k].setAttribute("rx", r2(e.ry ? e.rx : 0)); this.ew[k].setAttribute("ry", r2(e.ry)); }
+      if (this.pu[k]) { this.pu[k].setAttribute("cx", r2(e.px)); this.pu[k].setAttribute("cy", r2(e.py)); this.pu[k].setAttribute("r", r2(e.ry ? e.pr : 0)); }
+      if (this.cl[k]) { this.cl[k].setAttribute("cx", r2(e.cx)); this.cl[k].setAttribute("cy", r2(e.cy)); this.cl[k].setAttribute("r", r2(e.ry ? e.cr : 0)); }
+    }
+    if (this.dot) { this.dot.setAttribute("cx", r2(P[8][0] + 3)); this.dot.setAttribute("cy", r2(P[7][1] - 0.2)); }
     if (this.g) this.g.style.opacity = q.o;
   };
   // Keys { t, ...numbers }: each number eases through its own keys on a monotone cubic (continuous, no overshoot).
@@ -1377,7 +1407,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
     // first; the bar's controls last. Nothing arrives at once.
     var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 650;
-    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent; });
+    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
       run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
@@ -1557,6 +1587,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       var sr = (home === hd ? hdSvg : endSvg).getBoundingClientRect(); unit = sr.width / 40; ox = sr.left + 20 * unit; oy = sr.top + 32 * unit;
     } else {
       unit = Math.max(26, Math.min(64, line.fs * 1.3)) / 40; rig = visitorRig;
+      var vpx = 40 * unit, vsvg = visitor.querySelector("svg"); vsvg.classList.toggle("small", vpx <= 40); visitorRig.small = vpx <= 40 ? (vpx <= 20 ? 2 : 1) : 0;
     }
     // At the line it's the line's size: a resting Ditto shrinks (or grows) to it on the way, and back.
     var lineUnit = Math.max(26, Math.min(64, line.fs * 1.3)) / 40, K = home ? lineUnit / unit : 1;
@@ -1604,12 +1635,42 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     if (still.matches) return done();
     rig.snap(Object.assign({}, REST));
     rig.play([
-      { t: 0, s: 1, foot: 3.6, lift: 0, open: 1 }, { t: 90, s: 0.88, foot: 4.4, lift: 0 }, { t: 150, s: 1.1, foot: 2, lift: 0 },
-      { t: 260, s: 1.03, foot: 1.6, lift: 7, open: 0.5 }, { t: 365, s: 1.07, foot: 1.8, lift: 0.6 }, { t: 385, s: 0.86, foot: 4.8, lift: 0 },
+      { t: 0, s: 1, foot: 3.6, lift: 0, open: 1, smile: 0 }, { t: 90, s: 0.88, foot: 4.4, lift: 0 }, { t: 150, s: 1.1, foot: 2, lift: 0 },
+      { t: 260, s: 1.03, foot: 1.6, lift: 7, smile: 1 }, { t: 365, s: 1.07, foot: 1.8, lift: 0.6 }, { t: 385, s: 0.86, foot: 4.8, lift: 0 },
       { t: 450, s: 1.08, foot: 2.2, lift: 0 }, { t: 545, s: 1.02, foot: 1.7, lift: 5 }, { t: 640, s: 1.06, foot: 1.9, lift: 0.4 },
-      { t: 655, s: 0.9, foot: 4.4, lift: 0, open: 0.5 }, { t: 770, s: 1.03, foot: 3.4, open: 1 }, { t: 900, s: 1, foot: 3.6 }
+      { t: 655, s: 0.9, foot: 4.4, lift: 0, smile: 1 }, { t: 770, s: 1.03, foot: 3.4 }, { t: 1100, smile: 0 }, { t: 900, s: 1, foot: 3.6 }
     ], null, function (cut) { if (!cut) done(); });
   };
+
+  // ———— Read on ————
+  // Once the name and both lines have arrived and the reader has been still for a moment and a half, a
+  // hairline chevron writes itself in as one stroke, settles once, and rests; Ditto glances down at it. The
+  // first scroll takes it away for the visit. Only when the name is the first screen.
+  (function () {
+    var cue = document.querySelector(".cue"); if (!cue) return;
+    var gone = !!location.hash || scrollY > 4, last = performance.now();
+    function away() { if (scrollY > 4) { gone = true; cue.classList.remove("on"); removeEventListener("scroll", away); } last = performance.now(); }
+    addEventListener("scroll", away, { passive: true });
+    cue.addEventListener("click", function (e) {
+      var v = document.getElementById("verse"); if (!v) return;
+      e.preventDefault(); v.scrollIntoView({ behavior: still.matches ? "auto" : "smooth", block: "start" });
+    });
+    function settled() { return !opening.length && !heroHop && !("opening" in root.dataset); }
+    var since = 0;
+    (function wait() {
+      if (gone) return;
+      if (!settled()) { since = 0; return setTimeout(wait, 250); }
+      if (!since) since = performance.now();
+      if (performance.now() - Math.max(last, since) < 1500) return setTimeout(wait, 100);
+      cue.classList.add("on");
+      if (still.matches) return;
+      var path = cue.querySelector("path");
+      path.style.strokeDasharray = "1"; path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 450, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "backwards" });
+      cue.animate([{ transform: "translateY(-6px)" }, { transform: "translateY(-6px)", offset: 0.4 }, { transform: "none" }], { duration: 1200, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
+      // Ditto looks down at it, once, and back.
+      heroRig.play([{ t: 0, ly: 0, lx: 0 }, { t: 260, ly: 1.7, lx: 0 }, { t: 1000, ly: 1.7, lx: 0 }, { t: 1350, ly: 0, lx: 0 }]); wakeHero();
+    })();
+  })();
 
   if (still.matches || !("IntersectionObserver" in window)) return;
   // Each tile waits at its first frame until it's well in view, then plays, once. Tiles arriving together
