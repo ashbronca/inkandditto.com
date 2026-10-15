@@ -984,12 +984,23 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     o: function (u) { return 1 - Math.pow(1 - u, 3); },
     io: function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
   };
-  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1, k: 1 };
+  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1, k: 1, rot: 0, round: 0, firm: 1 };
   function outline(p) {
     var s = p.s, h = 27 * s, w = 13.4 / Math.sqrt(s), B = 32 - p.lift, cx = 20 + p.x, f = p.foot, ys = B - h * 0.444, ry = ys - (B - h), pts = [];
     pts.push([cx - w - f, B], [cx - w - f * 0.18, B - 1.9], [cx - w, B - h * 0.24]);
     for (var k = 0; k <= 6; k++) { var th = Math.PI * (1 - k / 6); pts.push([cx + w * Math.cos(th) + p.lean * Math.sin(th), ys - ry * Math.sin(th)]); }
     pts.push([cx + w, B - h * 0.24], [cx + w + f * 0.18, B - 1.9], [cx + w + f, B]);
+    // As a drop it's round (a ball of ink, squashed or stretched by s), and it can roll: the same points,
+    // moved onto a circle and turned about its middle. Whatever Ditto's outline, this is how it travels.
+    var R = 14, rc = B - R * s;
+    if (p.round > 0) {
+      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s;
+      pts = pts.map(function (q, i) { var a = -Math.PI / 2 + (i - 6) * 2 * Math.PI / 13; return [q[0] + (cx + rx * Math.cos(a) - q[0]) * u, q[1] + (rc + ryy * Math.sin(a) - q[1]) * u]; });
+    }
+    if (p.rot) {
+      var oy = B - (h * 0.45) * (1 - p.round) - R * s * p.round, cr = Math.cos(p.rot), sr = Math.sin(p.rot);
+      pts = pts.map(function (q) { var dx = q[0] - cx, dy = q[1] - oy; return [cx + dx * cr - dy * sr, oy + dx * sr + dy * cr]; });
+    }
     // Its size (k), about the middle of its foot: a drop can grow or shrink as it travels.
     if (p.k !== 1) pts = pts.map(function (q) { return [cx + (q[0] - cx) * p.k, B + (q[1] - B) * p.k]; });
     return pts;
@@ -1044,7 +1055,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     while (this.acc >= H) {
       this.acc -= H;
       for (var i = 0; i < P.length; i++) {
-        var w = 2 * Math.PI * HZ[i], k = w * w, c = 2 * ZETA[i] * w;
+        var w = 2 * Math.PI * HZ[i] * (q.firm || 1), k = w * w, c = 2 * ZETA[i] * w;
         for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
       }
       // The eyes ride the body, a moment behind it.
@@ -1296,53 +1307,70 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       .map(function (b) { return { offset: b[0] / T, opacity: b[1] }; }), { duration: T, easing: "linear", fill: "both" });
     // It softens: the stroke shortens and flows down into its own foot.
     run.go(caret, [{ transform: "none" }, { transform: "none", offset: 0.82 }, { transform: "scaleY(0.12)" }], { duration: 2340, easing: "cubic-bezier(.55,0,.75,.3)", fill: "both" });
-    // The drop: Ditto, made of the caret's ink, at its foot. Margin red deepens to ink as it gathers, swells
-    // through a wobbling blob into the dome, the springs settle, and the eyes open last, with a blink.
+    // The drop, as physics. The caret's ink gathers at its foot into a drop; it pops up and falls back under
+    // gravity (the rise, hang and fall measured from LoveFrom's full stop), lands with a squash that's as
+    // deep as it was fast, springs off into a roll, writes "Ditto" as it rolls (each letter inking in just
+    // behind it), runs a little past and rocks back to its place, and only then, still, becomes Ditto: the
+    // dome rises out of the ball, and the eyes open. Worked out once, step by step, before the first frame.
     var unit = hd.getBoundingClientRect().width / 40, fr = hdSvg.getBoundingClientRect(), fx = fr.left + 20 * unit;
-    var sp = A[A.length - 1].getBoundingClientRect(), d0 = B[0].getBoundingClientRect();
-    var X0 = (sp.right + unit * 1.2 - fx) / unit, Y0 = -(sp.top - last.top) / unit, X1 = (d0.left + 19 * unit - fx) / unit;
+    var sp = A[A.length - 1].getBoundingClientRect();
+    var X0 = (sp.right + unit * 1.5 - fx) / unit, Y0 = -(sp.top - last.top) / unit;
     var red = hdSvg.querySelector(".red");
-    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.55 }, { opacity: 0 }], { delay: 2150, duration: 900, easing: "ease-in-out", fill: "backwards" });
-    // Then it writes its name: three small hops to the right, each letter inking in as Ditto's back foot passes it.
-    var hops = [], t0 = 3080, air = 300, ground = 110, n = 3;
-    for (var i = 0; i < n; i++) { var a = t0 + i * (air + ground); hops.push({ a: a, b: a + air, x0: X1 + (0 - X1) * i / n, x1: X1 + (0 - X1) * (i + 1) / n, h: 9 }); }
-    var keys = [
-      { t: 0, k: 0.1, s: 0.6, foot: 6, open: 0, o: 0, lean: 0 },
-      { t: 2140, k: 0.1, o: 0 }, { t: 2190, o: 1 },
-      { t: 2400, k: 0.36, s: 0.7, foot: 6.5 },                     // a drop, spreading
-      { t: 2620, k: 0.72, s: 0.82, foot: 5.4, lean: 0.8 },         // a blob, wobbling
-      { t: 2800, k: 1.04, s: 1.08, foot: 2.8, lean: -0.6 },        // up into the dome
-      { t: 2940, k: 1, s: 0.97, foot: 3.9, lean: 0.2 },
-      { t: 3020, s: 1, foot: 3.6, lean: 0, open: 0 },
-      { t: 3060, open: 0.15 }, { t: 3130, open: 1 }                // and opens its eyes
-    ];
-    hops.forEach(function (h, i) {
-      keys.push({ t: h.a - 70, s: 0.88, foot: 4.4, lean: -0.5 }, { t: h.a + 30, s: 1.1, foot: 2, lean: 1.6 },
-        { t: (h.a + h.b) / 2, s: 1.03, foot: 1.6, lean: 1 }, { t: h.b - 15, s: 1.06, foot: 1.8, lean: 1.2 },
-        { t: h.b, s: i === n - 1 ? 0.8 : 0.9, foot: i === n - 1 ? 5.6 : 4.6, lean: 1.4 });
-    });
-    var land = hops[n - 1].b;
-    keys.push({ t: land + 120, s: 1.06, foot: 3.1, lean: -0.9 }, { t: land + 250, s: 0.985, foot: 3.8, lean: 0.3 }, { t: land + 400, s: 1, foot: 3.6, lean: 0 },
-      { t: land + 20, open: 1 }, { t: land + 80, open: 0.1 }, { t: land + 190, open: 1 });
-    function path(t) {
-      if (t < 2300) return { x: X0, lift: Y0 };
-      if (t < 2900) { var u = EASE.io((t - 2300) / 600); return { x: X0 + (X1 - X0) * u, lift: Y0 * (1 - u) }; }
-      var x = X1;
-      for (var i = 0; i < hops.length; i++) {
-        var h = hops[i];
-        if (t >= h.b) { x = h.x1; continue; }
-        if (t > h.a) { var v = (t - h.a) / (h.b - h.a); return { x: h.x0 + (h.x1 - h.x0) * v, lift: h.h * (1 - Math.pow(Math.abs(2 * v - 1), 2.2)) }; }
-        return { x: h.x0, lift: 0 };
+    var G = 550, POP = 2400, H = 1 / 240, R0 = 14;
+    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.0, z0 = 0.55, vroll = 0, tl = 0, Reff = 1, turns = 1, rollAt = 0;
+    for (var tt = 0; tt <= 6200; tt += H * 1000) {
+      var kk = 0.12, rnd = 1, st = 1, rot = 0;
+      if (tt < POP) { kk = tt < 2150 ? 0.12 : 0.12 + 0.18 * EASE.o(Math.min((tt - 2150) / 250, 1)); }
+      else if (ph === "pool") ph = "fly";
+      if (ph === "fly") {
+        vy -= (vy > 0 ? 586 : 760) * H; y += vy * H; x += vx * H;
+        kk = 0.3 + 0.15 * Math.min((tt - POP) / 650, 1);
+        if (y <= 0 && vy < 0) {
+          // Contact: a squash as deep as the fall was fast; then it springs off into its roll.
+          qv -= Math.abs(vy) * 0.011; y = 0; ph = "push"; tl = tt; xl = x; d = -x;
+          vroll = w0 * d / (2 * z0); turns = Math.max(1, Math.round(d / (2 * Math.PI * R0 * 0.75))); Reff = (d + 0.0001) / (2 * Math.PI * turns);
+          vy = 0;
+        }
+      } else if (ph === "push") {
+        // The squash gives back what it took, forward: the roll's speed arrives over 140 ms.
+        var u2 = Math.min((tt - tl) / 140, 1); vx = 24 + (vroll - 24) * EASE.io(u2); x += vx * H;
+        if (u2 >= 1) { ph = "roll"; rollAt = tt; }
+      } else if (ph === "roll") {
+        var a = -w0 * w0 * x - 2 * z0 * w0 * vx; vx += a * H; x += vx * H;
       }
-      return { x: x, lift: 0 };
+      if (ph === "push" || ph === "roll") { kk = 0.45 + 0.55 * Math.max(0, Math.min((x - xl) / d, 1)); rot = (x - xl) / Reff; }
+      // The squash springs back (a little under-damped), and in flight the drop stretches along its fall.
+      var wq = 2 * Math.PI * 3.4; qv += (-wq * wq * q - 2 * 0.36 * wq * qv) * H; q += qv * H;
+      st = 1 + q + (ph === "fly" ? Math.min(0.14, Math.abs(vy) * 0.0008) : 0);
+      // Still enough, it stops being a ball: the dome rises out of it.
+      // Rolling, it keeps a hint of its foot, so you can see it turn (a perfect circle would only slide).
+      if (ph === "push" || ph === "roll") rnd = 1 - 0.16 * EASE.io(Math.min((tt - tl) / 300, 1));
+      if (ph === "roll" && tt - rollAt > 1450) rnd = Math.max(0, 0.84 * (1 - EASE.io(Math.min((tt - rollAt - 1450) / 480, 1))));
+      // As it becomes Ditto it comes upright, whatever is left of its rocking.
+      var up = 2 * Math.PI * turns; if (ph === "roll" && tt - rollAt > 1450) rot = up + (rot - up) * (rnd / 0.84);
+      sim.push([tt, x, Math.max(y, 0), rot, rnd, kk, Math.max(0.55, st)]);
     }
-    // When each letter of "Ditto" appears: as Ditto's back foot passes the middle of it.
+    var SIMEND = rollAt + 1450 + 480;
+    function simAt(t) {
+      var step = H * 1000, i = Math.min(sim.length - 1, Math.max(0, Math.floor(t / step))), a = sim[i], b = sim[Math.min(i + 1, sim.length - 1)], u = Math.max(0, Math.min((t - a[0]) / step, 1));
+      var L = function (j) { return a[j] + (b[j] - a[j]) * u; };
+      return { x: L(1), lift: L(2), rot: L(3), round: L(4), k: L(5), s: L(6) };
+    }
+    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.3 }, { opacity: 0 }], { delay: 2150, duration: 1500, easing: "ease-in-out", fill: "backwards" });
+    var keys = [
+      { t: 0, open: 0, o: 0, foot: 3.6, firm: 1 }, { t: 2140, o: 0 }, { t: 2190, o: 1 },
+      { t: rollAt, firm: 1.7 }, { t: SIMEND - 200, firm: 1.7 }, { t: SIMEND + 200, firm: 1 },
+      { t: SIMEND + 120, open: 0 }, { t: SIMEND + 200, open: 0.2 }, { t: SIMEND + 300, open: 1 },
+      { t: SIMEND + 560, open: 1 }, { t: SIMEND + 640, open: 0.1 }, { t: SIMEND + 760, open: 1 }
+    ];
+    function path(t) { var p = simAt(t); if (t > SIMEND) { p.round = 0; p.rot = Math.round(p.rot / (2 * Math.PI)) * 2 * Math.PI; } return p; }
+    // When each letter of "Ditto" appears: as the back of the rolling drop passes the middle of it.
     B.forEach(function (l) {
-      var r = l.getBoundingClientRect(), c = (r.left + r.width / 2 - fx) / unit, when = land;
-      for (var t = 3000; t <= land; t += 8) { if (path(t).x - 16 >= c) { when = t; break; } }
+      var r = l.getBoundingClientRect(), c = (r.right - fx) / unit, when = SIMEND;
+      for (var t = POP; t <= SIMEND; t += 8) { var p = simAt(t); if (p.x - R0 * p.k * 1.05 >= c) { when = t; break; } }
       run.go(l, ink, inkOpt(when));
     });
-    var END = land + 400;
+    var END = SIMEND + 800;
     heroHop = { at: S, keys: keys, path: path, end: END + 40 };
     heroRig.snap(heroPose(0));
     wakeHero();
