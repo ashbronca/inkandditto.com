@@ -140,14 +140,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 @media (prefers-reduced-motion: reduce) { .theme .body, .theme .bite, .theme .rays { transition: none; } }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
-.page { max-width: calc(var(--column) + var(--hang)); margin-inline: auto; padding-left: var(--hang); position: relative; }
-@media (max-width: 44rem) { .page { padding-left: 0; } :root { --hang: 0rem; } }
-.wide { max-width: var(--wide); margin-inline: auto; }
-
-/* The marks that hang in the margin, in rule ink, where the app puts them. */
-.mark { position: absolute; left: calc(-1 * var(--hang)); width: calc(var(--hang) - 0.75rem); text-align: right;
-  color: var(--rule); font: 500 0.95em var(--mono); user-select: none; }
-@media (max-width: 44rem) { .mark { display: none; } }
 
 /* The first screen is the name on paper, and nothing else until it has been written. */
 .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -164,6 +156,7 @@ h1 .om-b { white-space: nowrap; }
 .om-ditto { display: inline-block; width: 1.04em; margin-left: 0.02em; vertical-align: -0.052em; }
 .om-ditto svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 94%; }
 .om-ditto .eyes { transform-box: fill-box; transform-origin: center; }
+.end .om-ditto { vertical-align: -0.052em; }
 h1 .caret-at { height: 0.74em; vertical-align: 0; }
 /* The caret only writes the name; the page at rest has none. */
 h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em; border-radius: 99px; opacity: 0; }
@@ -202,68 +195,50 @@ h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em;
   .stage .phone { position: static; width: min(15rem, 66%); margin-inline: auto; }
 }
 
-section { position: relative; margin-top: clamp(5rem, 12vw, 8rem); }
-h2 { position: relative; font: 650 clamp(1.6rem, 3.4vw, 2.1rem)/1.15 var(--sans); letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance; }
-h2 .mark { top: 0.3em; font-size: 0.5em; }
-p { margin: 0 0 1rem; max-width: 36rem; }
-.quiet { color: var(--ink-2); }
-
-/* The Mac's review and room, cropped to what matters and shown at the size they are on the Mac. */
-.shot { margin: 2.25rem 0 0; }
-.shot img { box-shadow: var(--shadow); }
-.shot.review img { border-radius: 4.69% / 5.04%; }
-.shot.room img { border-radius: 4.29% / 7.68%; }
+/* Chapters: the hero's voice all the way down. A serif headline, centred; a quieter line under it; then
+   whatever the chapter shows, with room to breathe between. */
+p { margin: 0 0 1rem; }
+.chapter { max-width: 64rem; margin: clamp(7rem, 17vw, 12rem) auto 0; text-align: center; }
+.chapter h2 { font: 400 clamp(2.2rem, 5.4vw, 3.5rem)/1.08 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 auto 1.1rem; text-wrap: balance; }
+.chapter .lead { color: var(--ink-2); max-width: 33rem; margin: 0 auto; text-wrap: balance; }
+.chapter .statement { font-size: clamp(2rem, 4.8vw, 3.25rem); line-height: 1.15; margin-bottom: 1.6rem; }
+.chapter .bento-wrap { text-align: left; }
 .dark { display: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .light { display: none; } :root:not([data-theme="light"]) .dark { display: block; } }
 :root[data-theme="dark"] .light { display: none; }
 :root[data-theme="dark"] .dark { display: block; }
 
-/* iPhones, side by side: raw screens with the phone's own corners (55 of 440 pt). */
-.phones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(0.75rem, 2.5vw, 1.75rem); margin: 2.5rem 0 0; max-width: 36rem; }
-.phones figure { margin: 0; }
-.phones img { border-radius: 12.5% / 5.75%; box-shadow: var(--shadow); }
-.phones figcaption { font-size: 0.85rem; color: var(--ink-2); margin-top: 0.85rem; text-wrap: balance; }
+/* Ditto, in three beats. The numerals are the serif's; the third is red, because it's your move. */
+.beats { list-style: none; padding: 0; margin: clamp(3rem, 7vw, 4.5rem) auto 0; display: grid; gap: 2.5rem; max-width: 58rem; text-align: left; }
+@media (min-width: 48rem) { .beats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+.beats li { display: grid; gap: 0.5rem; align-content: start; max-width: 22rem; }
+@media (max-width: 47.99rem) { .beats li { margin-inline: auto; width: 100%; max-width: 26rem; } }
+.beats .n { font: 400 2.75rem/1 var(--serif); font-variant-numeric: oldstyle-nums; color: var(--ink-2); margin-bottom: 0.35rem; }
+.beats .n.yours { color: var(--your-move); }
+.beats h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; }
+.beats p { color: var(--ink-2); margin: 0; }
+.chapter .aside { color: var(--ink-2); margin: 3rem auto 0; max-width: 30rem; font-size: 0.9375rem; }
+kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35em; background: var(--sheet); box-shadow: 0 0 0 1px var(--rule), 0 1.5px 0 var(--rule); }
 
-ul.proofs { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; gap: 0.55rem; max-width: 36rem; }
-ul.proofs li { position: relative; padding-left: 1.6rem; }
-ul.proofs li::before { content: ""; position: absolute; left: 0.45rem; top: 0.68em; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-2); }
+/* Download: two quiet columns, each saying plainly where it stands. */
+.get { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; max-width: 38rem; margin: 3rem auto 0; }
+@media (min-width: 34rem) { .get { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.get div { display: flex; flex-direction: column; align-items: center; }
+.get h3 { font: 400 1.5rem/1.2 var(--serif); margin: 0 0 0.3rem; }
+.get p { margin: 0 0 1.1rem; color: var(--ink-2); font-size: 0.9375rem; text-wrap: balance; }
+.get .store, .get .button, .get .soon { margin-top: auto; }
+.get .soon { font-size: 0.875rem; font-weight: 600; padding: 0.45rem 0.95rem; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--rule); color: var(--ink-2); }
 
-/* The line, handed over: Ditto in the margin beside it, its hand up. */
-.line { position: relative; font-size: 1.125rem; padding: 0.15rem 0; margin: 1.75rem 0 0.25rem; }
-.ditto-mark { position: absolute; left: calc(-1 * var(--hang) + 0.85rem); top: 0.4rem; width: 20px; height: 20px; color: var(--ink); }
-@media (max-width: 44rem) { .ditto-mark { position: static; display: inline-block; vertical-align: -3px; margin-right: 0.4rem; } }
-.ditto-mark .dot { fill: var(--your-move); }
-kbd { font: 500 0.85em var(--mono); padding: 0.1em 0.4em; border-radius: 6px; background: var(--fill); border: 1px solid var(--rule); }
+.qa { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: 26rem; margin: 3rem auto 0; text-align: left; overflow-wrap: anywhere; }
+.qa h3 { font: 400 1.25rem/1.3 var(--serif); margin: 0 0 0.4rem; }
+.qa p { margin: 0; color: var(--ink-2); }
 
-ol.steps { list-style: none; counter-reset: step; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 1rem; max-width: 36rem; }
-ol.steps li { counter-increment: step; display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0.25rem 0.5rem; }
-ol.steps li::before { content: counter(step) "."; color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; padding-right: 0.25rem; }
-ol.steps strong { font-weight: 600; }
-
-blockquote { margin: 1.5rem 0 0; padding-left: 1.1rem; border-left: 2px solid var(--rule); font: 400 1.2rem/1.5 var(--serif); max-width: 34rem; }
-
-/* Download: two places, each saying plainly where it stands. */
-.get { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; max-width: 36rem; }
-@media (max-width: 34rem) { .get { grid-template-columns: minmax(0, 1fr); } }
-.get div { background: var(--desk); border-radius: 18px; padding: 1.4rem 1.4rem 1.3rem; display: flex; flex-direction: column; align-items: flex-start; }
-.get h3 { font: 600 1.1rem/1.3 var(--sans); margin: 0 0 0.35rem; }
-.get p { margin: 0 0 1rem; color: var(--ink-2); font-size: 0.95rem; }
-.get .store, .get .button { margin-top: auto; }
-.get .soon { margin-top: auto; font-size: 0.85rem; font-weight: 600; padding: 0.35rem 0.8rem; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
-
-.faq { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; margin-top: 1rem; overflow-wrap: anywhere; }
-.faq h3 { font: 600 1.05rem/1.35 var(--sans); margin: 0 0 0.3rem; }
-.faq p { margin: 0; color: var(--ink-2); }
-
-footer { margin-top: clamp(5rem, 12vw, 8rem); padding-block: 2rem 3rem; border-top: 1px solid var(--rule);
-  display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between; align-items: center; color: var(--ink-2); font-size: 0.9rem; }
-footer nav { display: flex; gap: 1.25rem; }
-footer a { text-decoration: none; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .ditto-mark .eyes { animation: blink 6s infinite; transform-origin: 10px 11px; }
-  @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
-}
+/* The end echoes the beginning: the line, and Ditto resting as its full stop. */
+.end { text-align: center; margin: clamp(8rem, 20vw, 14rem) auto 0; padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)); }
+.end-line { font: 400 clamp(2rem, 6.4vw, 4.5rem)/1.1 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 0 clamp(4rem, 10vw, 6rem); text-wrap: balance; }
+.end .small { font-size: 0.875rem; color: var(--ink-2); margin: 0; }
+.end a { text-decoration: none; }
+@media (hover: hover) { .end a:hover { color: var(--ink); } }
 
 /* ———— The bento: one idea per tile, each a small working piece of the app, drawn in the page. ————
    A tile is the app's chrome; a sheet on it is the app's page. Every demo is authored at its last frame,
@@ -579,306 +554,259 @@ footer a { text-decoration: none; }
     <img class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
   </div>
 
-  <div class="page">
-    <section aria-labelledby="ink">
-      <h2 id="ink"><span class="mark" aria-hidden="true">##</span>A notes app, first</h2>
-      <p>Ink opens on a fresh page, ready for whatever’s on your mind. Every note is a plain Markdown file, on your iPhone or in iCloud Drive, where your Mac and iPhone stay in step. The page is paper and type and nothing else: headings fold, lists and checklists behave, tables line up, and the marks step into the margin so your words never move.</p>
-      <ul class="proofs">
-        <li>Plain Markdown files you own, in a folder you can open in anything.</li>
-        <li>No AI anywhere until you connect it.</li>
-        <li>Typing never waits on Ditto.</li>
-      </ul>
-    </section>
-  </div>
-
-  <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
-  <div class="bento-wrap">
-    <div class="bento">
-      <article class="tile big t-write" data-demo="write">
-        <div class="tx"><h3>Writing that feels like paper.</h3> <p>Plain Markdown, and nothing on the page but your words.</p></div>
-        <div class="demo d-write" aria-hidden="true" data-tap>
-          <div class="sheet">
-            <div class="w-title">Saturday</div>
-            <p class="w-p">Market first: peaches, sourdough, the good butter.</p>
-            <p class="w-p" data-type>Coffee with Sam at nine, then the long way home along the <span class="nb">water.<span class="caret-at"><i class="caret"></i></span></span></p>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile t-check" data-demo="check">
-        <div class="tx"><h3>Checklists.</h3> <p>Tick it, and it’s crossed off in one stroke.</p></div>
-        <div class="demo d-check" aria-hidden="true">
-          <div class="sheet">
-            <div class="sh-h">Before the trip</div>
-            <ul class="checks">
-              <li class="on" data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Book the ferry<i class="strike"></i></span></li>
-              <li class="on" data-tap data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Pack the good camera<i class="strike"></i></span></li>
-              <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Ring Mum back<i class="strike"></i></span></li>
-              <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Water the garden<i class="strike"></i></span></li>
-            </ul>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile t-links" data-demo="links">
-        <div class="tx"><h3>Links that follow a rename.</h3> <p>Change a title, and every link to it changes too.</p></div>
-        <div class="demo d-links" aria-hidden="true" data-tap>
-          <div class="sheet l-a">
-            <div class="l-title"><span class="swap"><span class="old">Groceries</span><span class="new">Shopping</span></span></div>
-            <div class="l-line">Oat milk, lemons, eggs</div>
-          </div>
-          <div class="sheet l-b">
-            <div class="l-title">Weekend</div>
-            <div class="l-line ink">The list: <span class="swap"><span class="old lnk"><span class="br">[[</span>Groceries<span class="br">]]</span></span><span class="new lnk"><span class="br">[[</span>Shopping<span class="br">]]</span></span></span></div>
-            <div class="toast">Updated 1 link to “Shopping” <span class="sep">·</span> <b>Undo</b></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile t-search" data-demo="search">
-        <div class="tx"><h3>Files, scans and PDFs, in your notes.</h3> <p>Search reads them too, even the words in a photo.</p></div>
-        <div class="demo d-search" aria-hidden="true" data-tap>
-          <div class="photo">
-            <div class="receipt">
-              <div class="rh">BAKEHOUSE</div>
-              <div class="rr"><span>Sourdough</span><span>9.00</span></div>
-              <div class="rr hit"><span><i class="hl"></i>Croissant</span><span>4.50</span></div>
-              <div class="rr"><span>Flat white</span><span>5.00</span></div>
-              <div class="rr rt"><span>Total</span><span>18.50</span></div>
+  <section class="chapter" aria-labelledby="ink">
+    <h2 id="ink">A notes app, first.</h2>
+    <p class="lead">Every note is a plain Markdown file, in step on your Mac and iPhone. Nothing on the page but your words.</p>
+    <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
+    <div class="bento-wrap">
+      <div class="bento">
+        <article class="tile big t-write" data-demo="write">
+          <div class="tx"><h3>Writing that feels like paper.</h3> <p>Plain Markdown, and nothing on the page but your words.</p></div>
+          <div class="demo d-write" aria-hidden="true" data-tap>
+            <div class="sheet">
+              <div class="w-title">Saturday</div>
+              <p class="w-p">Market first: peaches, sourdough, the good butter.</p>
+              <p class="w-p" data-type>Coffee with Sam at nine, then the long way home along the <span class="nb">water.<span class="caret-at"><i class="caret"></i></span></span></p>
             </div>
           </div>
-          <div class="sheet s-panel">
-            <div class="s-field"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg><span data-type>croissant</span></div>
-            <div class="s-hit"><b>Market run</b><span>In a picture: <mark>Croissant</mark> 4.50</span></div>
-          </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="tile t-lock" data-demo="lock">
-        <div class="tx"><h3>Locked notes.</h3> <p>Face ID or Touch ID opens them. Only the title shows.</p></div>
-        <div class="demo d-lock" aria-hidden="true" data-tap>
-          <div class="sheet">
-            <div class="k-title">Passport and visas</div>
-            <div class="k-body">
-              <p class="k-words">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
-              <p class="k-blur">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
-              <div class="k-lock">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="shackle" d="M7.8 10.5V8a4.2 4.2 0 0 1 8.4 0v2.5"/><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" stroke="none"/></svg>
-                <span>Locked</span>
-              </div>
-            </div>
-            <svg class="faceid" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15V11a5 5 0 0 1 5-5h4M33 6h4a5 5 0 0 1 5 5v4M42 33v4a5 5 0 0 1-5 5h-4M15 42h-4a5 5 0 0 1-5-5v-4"/><path d="M17 18v3M31 18v3M24 18v9.5h-2M18.5 32.5c3 2.6 8 2.6 11 0"/></svg>
-          </div>
-        </div>
-      </article>
-
-      <article class="tile t-tags" data-demo="tags">
-        <div class="tx"><h3>Tags, nested.</h3> <p>Write #travel/japan/kyoto, and the sidebar files it.</p></div>
-        <div class="demo d-tags" aria-hidden="true" data-tap>
-          <div class="sheet g-note">Ryokan booked for April <span class="cap">#travel/japan/kyoto</span></div>
-          <ul class="g-tree">
-            <li style="--d:0"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>travel</li>
-            <li style="--d:1" data-r="1"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>japan</li>
-            <li style="--d:2" data-r="2" class="sel"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>kyoto<span class="n">3</span></li>
-            <li style="--d:2" data-r="2"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>osaka<span class="n">1</span></li>
-            <li style="--d:1" data-r="1"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>portugal<span class="n">5</span></li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="tile t-widget" data-demo="widget">
-        <div class="tx"><h3>A note on your Home Screen.</h3> <p>Small, medium or large, and on the Lock Screen.</p></div>
-        <div class="demo d-widget" aria-hidden="true" data-tap>
-          <div class="hs">
-            <div class="wg"><b>Saturday</b>
+        <article class="tile t-check" data-demo="check">
+          <div class="tx"><h3>Checklists.</h3> <p>Tick it, and it’s crossed off in one stroke.</p></div>
+          <div class="demo d-check" aria-hidden="true">
+            <div class="sheet">
+              <div class="sh-h">Before the trip</div>
               <ul class="checks">
-                <li class="on"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
-                <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
+                <li class="on" data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Book the ferry<i class="strike"></i></span></li>
+                <li class="on" data-tap data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Pack the good camera<i class="strike"></i></span></li>
+                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Ring Mum back<i class="strike"></i></span></li>
+                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Water the garden<i class="strike"></i></span></li>
               </ul>
             </div>
-            <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
-            <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="tile t-import" data-demo="import">
-        <div class="tx"><h3>Bring your notes.</h3> <p>From Bear, Obsidian or Notes’ exported files, with their folders and pictures.</p></div>
-        <div class="demo d-import" aria-hidden="true" data-tap>
-          <div class="im-stack">
-            <div class="im-card" style="--i:0"><b>Garden plans</b><span>Tomatoes along the back fence</span></div>
-            <div class="im-card" style="--i:1"><b>Reading list</b><span>The one Sam lent me, then poetry</span></div>
-            <div class="im-card" style="--i:2"><b>Recipes</b><span>Lemon cake, the good one</span></div>
-          </div>
-          <div class="toast">Imported 214 notes from Bear <span class="sep">·</span> <b>Undo</b></div>
-        </div>
-      </article>
-
-      <article class="tile big t-ditto" data-demo="ditto">
-        <div class="tx"><h3>Hand a line to Ditto.</h3> <p>If you build software with Claude, press ⌘↩. Ditto does the work on your Mac, checks it, and brings it back for one decision.</p></div>
-        <div class="demo d-ditto" aria-hidden="true" data-tap>
-          <div class="sheet">
-            <div class="keys"><span>⌘</span><span>↩</span></div>
-            <div class="dt-h">This week</div>
-            <div class="dt-line">
-              <span class="dt-mg">
-                <svg class="dt-ditto" viewBox="0 0 40 34">
-                  <defs>
-                    <linearGradient id="dtg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
-                    <linearGradient id="dtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
-                    <clipPath id="dtc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
-                  </defs>
-                  <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#dtg)"/>
-                  <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#dtc)" fill="none" stroke="url(#dtr)" stroke-width="1.8"/>
-                  <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g></g>
-                  <circle class="dot" cx="34.6" cy="6.8" r="3.4" style="fill: var(--your-move)"/>
-                </svg>
-                <svg class="dt-done" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5"/></svg>
-              </span>
-              <span class="txt">The empty state on Projects feels like an error</span>
+        <article class="tile t-links" data-demo="links">
+          <div class="tx"><h3>Links that follow a rename.</h3> <p>Change a title, and every link to it changes too.</p></div>
+          <div class="demo d-links" aria-hidden="true" data-tap>
+            <div class="sheet l-a">
+              <div class="l-title"><span class="swap"><span class="old">Groceries</span><span class="new">Shopping</span></span></div>
+              <div class="l-line">Oat milk, lemons, eggs</div>
             </div>
-            <div class="dt-line"><span class="txt">Dense tables on mobile need a second look</span></div>
-            <div class="dt-line"><span class="txt">Tidy the billing copy</span></div>
-            <div class="rv-slot">
-            <div class="rv">
-              <div class="rv-eb">Review</div>
-              <div class="rv-t">The empty state on Projects feels like an error</div>
-              <div class="rv-m">1 file changed · +5 −2</div>
-              <div class="rv-ok">No problems found in the three checks.</div>
-              <div class="rv-acts"><span class="rv-b ship" data-act="ship">Ship It <i>⌘↩</i></span><span class="rv-b" data-act="ask">Ask for Changes… <i>⌘R</i></span><span class="rv-b quiet" data-act="discard">Discard <i>⌘⌫</i></span></div>
-            </div>
-            <div class="after s">Shipped. Tap to see it again.</div>
-            <div class="after d">Discarded. Tap to see it again.</div>
+            <div class="sheet l-b">
+              <div class="l-title">Weekend</div>
+              <div class="l-line ink">The list: <span class="swap"><span class="old lnk"><span class="br">[[</span>Groceries<span class="br">]]</span></span><span class="new lnk"><span class="br">[[</span>Shopping<span class="br">]]</span></span></span></div>
+              <div class="toast">Updated 1 link to “Shopping” <span class="sep">·</span> <b>Undo</b></div>
             </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="tile t-devices" data-demo="devices">
-        <div class="tx"><h3>Mac and iPhone.</h3> <p>One way of working on both, in step through iCloud Drive.</p></div>
-        <div class="demo" aria-hidden="true">
-          <div class="dv">
-            <div class="mw">
-              <div class="side"><div class="lights"><i></i><i></i><i></i></div><div class="srch"></div><div class="row sel">Saturday</div><div class="row">Reading list</div><div class="row">Garden plans</div></div>
-              <div class="pg"><div class="t">Saturday</div>
+        <article class="tile t-search" data-demo="search">
+          <div class="tx"><h3>Files, scans and PDFs, in your notes.</h3> <p>Search reads them too, even the words in a photo.</p></div>
+          <div class="demo d-search" aria-hidden="true" data-tap>
+            <div class="photo">
+              <div class="receipt">
+                <div class="rh">BAKEHOUSE</div>
+                <div class="rr"><span>Sourdough</span><span>9.00</span></div>
+                <div class="rr hit"><span><i class="hl"></i>Croissant</span><span>4.50</span></div>
+                <div class="rr"><span>Flat white</span><span>5.00</span></div>
+                <div class="rr rt"><span>Total</span><span>18.50</span></div>
+              </div>
+            </div>
+            <div class="sheet s-panel">
+              <div class="s-field"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg><span data-type>croissant</span></div>
+              <div class="s-hit"><b>Market run</b><span>In a picture: <mark>Croissant</mark> 4.50</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-lock" data-demo="lock">
+          <div class="tx"><h3>Locked notes.</h3> <p>Face ID or Touch ID opens them. Only the title shows.</p></div>
+          <div class="demo d-lock" aria-hidden="true" data-tap>
+            <div class="sheet">
+              <div class="k-title">Passport and visas</div>
+              <div class="k-body">
+                <p class="k-words">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
+                <p class="k-blur">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
+                <div class="k-lock">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="shackle" d="M7.8 10.5V8a4.2 4.2 0 0 1 8.4 0v2.5"/><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" stroke="none"/></svg>
+                  <span>Locked</span>
+                </div>
+              </div>
+              <svg class="faceid" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15V11a5 5 0 0 1 5-5h4M33 6h4a5 5 0 0 1 5 5v4M42 33v4a5 5 0 0 1-5 5h-4M15 42h-4a5 5 0 0 1-5-5v-4"/><path d="M17 18v3M31 18v3M24 18v9.5h-2M18.5 32.5c3 2.6 8 2.6 11 0"/></svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-tags" data-demo="tags">
+          <div class="tx"><h3>Tags, nested.</h3> <p>Write #travel/japan/kyoto, and the sidebar files it.</p></div>
+          <div class="demo d-tags" aria-hidden="true" data-tap>
+            <div class="sheet g-note">Ryokan booked for April <span class="cap">#travel/japan/kyoto</span></div>
+            <ul class="g-tree">
+              <li style="--d:0"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>travel</li>
+              <li style="--d:1" data-r="1"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>japan</li>
+              <li style="--d:2" data-r="2" class="sel"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>kyoto<span class="n">3</span></li>
+              <li style="--d:2" data-r="2"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>osaka<span class="n">1</span></li>
+              <li style="--d:1" data-r="1"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>portugal<span class="n">5</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="tile t-widget" data-demo="widget">
+          <div class="tx"><h3>A note on your Home Screen.</h3> <p>Small, medium or large, and on the Lock Screen.</p></div>
+          <div class="demo d-widget" aria-hidden="true" data-tap>
+            <div class="hs">
+              <div class="wg"><b>Saturday</b>
+                <ul class="checks">
+                  <li class="on"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
+                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
+                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
+                </ul>
+              </div>
+              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
+              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-import" data-demo="import">
+          <div class="tx"><h3>Bring your notes.</h3> <p>From Bear, Obsidian or Notes’ exported files, with their folders and pictures.</p></div>
+          <div class="demo d-import" aria-hidden="true" data-tap>
+            <div class="im-stack">
+              <div class="im-card" style="--i:0"><b>Garden plans</b><span>Tomatoes along the back fence</span></div>
+              <div class="im-card" style="--i:1"><b>Reading list</b><span>The one Sam lent me, then poetry</span></div>
+              <div class="im-card" style="--i:2"><b>Recipes</b><span>Lemon cake, the good one</span></div>
+            </div>
+            <div class="toast">Imported 214 notes from Bear <span class="sep">·</span> <b>Undo</b></div>
+          </div>
+        </article>
+
+        <article class="tile big t-ditto" data-demo="ditto">
+          <div class="tx"><h3>Hand a line to Ditto.</h3> <p>If you build software with Claude, press ⌘↩. Ditto does the work on your Mac, checks it, and brings it back for one decision.</p></div>
+          <div class="demo d-ditto" aria-hidden="true" data-tap>
+            <div class="sheet">
+              <div class="keys"><span>⌘</span><span>↩</span></div>
+              <div class="dt-h">This week</div>
+              <div class="dt-line">
+                <span class="dt-mg">
+                  <svg class="dt-ditto" viewBox="0 0 40 34">
+                    <defs>
+                      <linearGradient id="dtg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
+                      <linearGradient id="dtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
+                      <clipPath id="dtc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
+                    </defs>
+                    <g class="rig"><path class="b" d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#dtg)"/>
+                    <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" class="r" clip-path="url(#dtc)" fill="none" stroke="url(#dtr)" stroke-width="1.8"/>
+                    <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g></g>
+                    <circle class="dot" cx="34.6" cy="6.8" r="3.4" style="fill: var(--your-move)"/>
+                  </svg>
+                  <svg class="dt-done" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5"/></svg>
+                </span>
+                <span class="txt">The empty state on Projects feels like an error</span>
+              </div>
+              <div class="dt-line"><span class="txt">Dense tables on mobile need a second look</span></div>
+              <div class="dt-line"><span class="txt">Tidy the billing copy</span></div>
+              <div class="rv-slot">
+              <div class="rv">
+                <div class="rv-eb">Review</div>
+                <div class="rv-t">The empty state on Projects feels like an error</div>
+                <div class="rv-m">1 file changed · +5 −2</div>
+                <div class="rv-ok">No problems found in the three checks.</div>
+                <div class="rv-acts"><span class="rv-b ship" data-act="ship">Ship It <i>⌘↩</i></span><span class="rv-b" data-act="ask">Ask for Changes… <i>⌘R</i></span><span class="rv-b quiet" data-act="discard">Discard <i>⌘⌫</i></span></div>
+              </div>
+              <div class="after s">Shipped. Tap to see it again.</div>
+              <div class="after d">Discarded. Tap to see it again.</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-devices" data-demo="devices">
+          <div class="tx"><h3>Mac and iPhone.</h3> <p>One way of working on both, in step through iCloud Drive.</p></div>
+          <div class="demo" aria-hidden="true">
+            <div class="dv">
+              <div class="mw">
+                <div class="side"><div class="lights"><i></i><i></i><i></i></div><div class="srch"></div><div class="row sel">Saturday</div><div class="row">Reading list</div><div class="row">Garden plans</div></div>
+                <div class="pg"><div class="t">Saturday</div>
+                  <ul class="checks">
+                    <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
+                    <li class="on" data-tap data-sync="1" data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
+                    <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="ph"><div class="t">Saturday</div>
                 <ul class="checks">
                   <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                  <li class="on" data-tap data-sync="1" data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
+                  <li class="on" data-tap data-sync="1" data-tick data-late><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
                   <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
                 </ul>
               </div>
             </div>
-            <div class="ph"><div class="t">Saturday</div>
-              <ul class="checks">
-                <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                <li class="on" data-tap data-sync="1" data-tick data-late><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
-                <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
-              </ul>
-            </div>
           </div>
-        </div>
-      </article>
-    </div>
-  </div>
-
-  <div class="page">
-
-    <section aria-labelledby="ditto">
-      <h2 id="ditto"><span class="mark" aria-hidden="true">##</span>Hand a line to Ditto</h2>
-      <p>Ditto is for people who build software with Claude. It lives in the margin: when a line is something to do, press <kbd>⌘↩</kbd>.</p>
-      <p class="line">
-        <svg class="ditto-mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 16 C3 9 6 4 10 4 C14 4 17 9 17 16 Z" fill="currentColor"/><g class="eyes" fill="var(--paper)"><ellipse cx="8" cy="11" rx="1.1" ry="1.6"/><ellipse cx="12" cy="11" rx="1.1" ry="1.6"/></g><circle class="dot" cx="17" cy="4" r="2.2"/></svg>
-        The empty state on Projects feels like an error
-      </p>
-      <ol class="steps">
-        <li><span><strong>The line you wrote is the brief.</strong> Ditto takes it, with the lines around it, and works out what kind of job it is.</span></li>
-        <li><span><strong>Ditto does the work</strong> with Claude Code on your Mac: for code, in your project, on a branch of its own; for anything else, a draft for you to copy.</span></li>
-        <li><span><strong>It’s checked before you see it:</strong> the tests it can run, then a second look against your taste.</span></li>
-        <li><span><strong>It comes back for one call:</strong> Ship It, Ask for Changes or Discard, with what changed and what was checked.</span></li>
-      </ol>
-      <figure class="shot review">
-        <img class="light" src="assets/mac-review-light-1x.webp" srcset="assets/mac-review-light-1x.webp 1x, assets/mac-review-light.webp 2x" alt="A review on the Mac: the Projects screen after the change, the three checks passed, and Ship It, Ask for Changes and Discard" width="427" height="397" loading="lazy">
-        <img class="dark" src="assets/mac-review-dark-1x.webp" srcset="assets/mac-review-dark-1x.webp 1x, assets/mac-review-dark.webp 2x" alt="The same review on the Mac, in dark mode" width="427" height="397" loading="lazy">
-      </figure>
-    </section>
-
-    <section aria-labelledby="taste">
-      <h2 id="taste"><span class="mark" aria-hidden="true">##</span>Say it once</h2>
-      <p>Every call you make, and every reason you give, teaches Ditto your taste. Before you decide, it seals its guess at what you’ll say, and shows you how often it’s right. When it has earned it, it asks whether it may do things like that without asking. Only your yes changes that.</p>
-      <blockquote>“I expected you’d ship it. You asked for changes — noted: ‘the shadow is still heavy.’”</blockquote>
-    </section>
-
-    <section aria-labelledby="room">
-      <h2 id="room"><span class="mark" aria-hidden="true">##</span>Everything you’ve handed over</h2>
-      <p>Ditto’s room shows what needs you first, then what’s being worked on. Pause, change or stop any of it.</p>
-      <figure class="shot room">
-        <img class="light" src="assets/mac-room-light-1x.webp" srcset="assets/mac-room-light-1x.webp 1x, assets/mac-room-light.webp 2x" alt="Ditto’s room on the Mac: a place to hand Ditto something, one piece of work that needs you, and one being worked on" width="467" height="261" loading="lazy">
-        <img class="dark" src="assets/mac-room-dark-1x.webp" srcset="assets/mac-room-dark-1x.webp 1x, assets/mac-room-dark.webp 2x" alt="Ditto’s room on the Mac, in dark mode" width="467" height="261" loading="lazy">
-      </figure>
-    </section>
-  </div>
-
-  <section class="wide" aria-labelledby="iphone">
-    <div class="page">
-      <h2 id="iphone"><span class="mark" aria-hidden="true">##</span>And in your pocket</h2>
-      <p>Ink on iPhone opens on a page, too. Your folders, Ditto and Settings are a swipe away. Make Ditto’s calls in a spare minute, or hand it a line and your Mac starts it.</p>
-    <div class="phones">
-      <figure>
-        <img class="light" src="assets/iphone-room-light.webp" srcset="assets/iphone-room-light-400.webp 400w, assets/iphone-room-light.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="Ditto’s room on iPhone" width="598" height="1300" loading="lazy">
-        <img class="dark" src="assets/iphone-room-dark.webp" srcset="assets/iphone-room-dark-400.webp 400w, assets/iphone-room-dark.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="Ditto’s room on iPhone, in dark mode" width="598" height="1300" loading="lazy">
-        <figcaption>What needs you, first.</figcaption>
-      </figure>
-      <figure>
-        <img class="light" src="assets/iphone-review-light.webp" srcset="assets/iphone-review-light-400.webp 400w, assets/iphone-review-light.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="A review on iPhone, with Ship It, Ask for Changes and Discard" width="598" height="1300" loading="lazy">
-        <img class="dark" src="assets/iphone-review-dark.webp" srcset="assets/iphone-review-dark-400.webp 400w, assets/iphone-review-dark.webp 598w" sizes="(min-width: 38rem) 17rem, 45vw" alt="A review on iPhone, in dark mode" width="598" height="1300" loading="lazy">
-        <figcaption>Your call, wherever you are.</figcaption>
-      </figure>
-    </div>
+        </article>
+      </div>
     </div>
   </section>
 
-  <div class="page">
-    <section aria-labelledby="trust">
-      <h2 id="trust"><span class="mark" aria-hidden="true">##</span>Calm, and yours</h2>
-      <p>Your notes stay on your devices and in your iCloud Drive. There’s no account, and nothing comes to us.</p>
-      <p class="quiet">When you connect Ditto, it works through Claude Code on your Mac with your own Claude account, and Claude reads what the job needs: the line, the lines around it, and for code, your project. Ditto never pushes your code anywhere or messages anyone.</p>
-    </section>
+  <section class="chapter" aria-labelledby="ditto">
+    <h2 id="ditto">Hand a line to Ditto.</h2>
+    <p class="lead">For people who build software with Claude. Ditto lives in the margin of your notes, and asks you once.</p>
+    <ol class="beats">
+      <li><span class="n" aria-hidden="true">1</span><h3>Write a line.</h3><p>The line you wrote is the brief. Ditto reads it, with the lines around it.</p></li>
+      <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>Ditto does the work with Claude Code on your Mac: for code, in your project on a branch of its own; for anything else, a draft. It checks the work before you see it.</p></li>
+      <li><span class="n yours" aria-hidden="true">3</span><h3>Make one call.</h3><p>Ship It, Ask for Changes or Discard, with what changed and what was checked. Every call teaches it your taste.</p></li>
+    </ol>
+    <p class="aside">On iPhone, see what Ditto is doing and make the call from anywhere.</p>
+  </section>
 
-    <section aria-labelledby="download">
-      <h2 id="download"><span class="mark" aria-hidden="true">##</span>Download</h2>
-      <p>Ink is free. Ditto is free while it’s in early access, and uses your own Claude account.</p>
-      <div class="get">
-        <div>
-          <h3>iPhone</h3>
-          <p>On the App Store, for iOS 26 or later.</p>
-          <a class="store when-store" data-get="store" href="#download"><img data-badge alt="Download on the App Store" width="120" height="40"></a>
-          <span class="soon unless-store">Coming soon</span>
-        </div>
-        <div>
-          <h3>Mac</h3>
-          <p>A direct download for macOS 26 or later, signed by us and notarised by Apple.</p>
-          <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
-          <span class="soon unless-mac">Coming soon</span>
-        </div>
-      </div>
-    </section>
+  <section class="chapter" aria-labelledby="trust">
+    <h2 id="trust" class="statement">Plain Markdown files you own.<br>No account. Nothing comes to us.</h2>
+    <p class="lead">Your notes stay on your devices and in your iCloud Drive. There’s no AI anywhere until you connect it. When you do, Ditto works through Claude Code on your Mac with your own Claude account, and never pushes your code anywhere or messages anyone.</p>
+  </section>
 
-    <section aria-labelledby="faq">
-      <h2 id="faq"><span class="mark" aria-hidden="true">##</span>Questions</h2>
-      <div class="faq">
-        <div><h3>Do I need Ditto to use Ink?</h3><p>No. Without it, Ink is simply a calm notes app, and Ditto waits quietly until you ask for it.</p></div>
-        <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked before you see it, and you answer once. Your note remembers what became of every line.</p></div>
-        <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude Code and a Claude account. On iPhone, Ditto shows and decides the work your Mac is doing.</p></div>
-        <div><h3>Who makes it?</h3><p>Ash Bronca, in Australia. Write to <a href="mailto:support@inkandditto.com">support@inkandditto.com</a>.</p></div>
+  <section class="chapter" aria-labelledby="download">
+    <h2 id="download">Download.</h2>
+    <p class="lead">Ink is free. Ditto is free while it’s in early access, and uses your own Claude account.</p>
+    <div class="get">
+      <div>
+        <h3>iPhone</h3>
+        <p>iOS 26 or later.</p>
+        <a class="store when-store" data-get="store" href="#download"><img data-badge alt="Download on the App Store" width="120" height="40"></a>
+        <span class="soon unless-store">Coming soon</span>
       </div>
-    </section>
-  </div>
+      <div>
+        <h3>Mac</h3>
+        <p>macOS 26 or later. Signed by us, notarised by Apple.</p>
+        <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
+        <span class="soon unless-mac">Coming soon</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter" aria-labelledby="faq">
+    <h2 id="faq">Questions.</h2>
+    <div class="qa">
+      <div><h3>Do I need Ditto to use Ink?</h3><p>No. Without it, Ink is simply a calm notes app, and Ditto waits quietly until you ask for it.</p></div>
+      <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked before you see it, and you answer once. Your note remembers what became of every line.</p></div>
+      <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude Code and a Claude account. On iPhone, Ditto shows and decides the work your Mac is doing.</p></div>
+      <div><h3>Who makes it?</h3><p>Ash Bronca, in Australia. Write to <a href="mailto:support@inkandditto.com">support@inkandditto.com</a>.</p></div>
+    </div>
+  </section>
 </main>
 
-<footer class="wide">
-  <span>© 2026 Ash Bronca</span>
-  <nav aria-label="More"><a href="privacy">Privacy</a><a href="support">Support</a></nav>
+<footer class="end">
+  <p class="end-line">Write it down. It gets done<span class="om-ditto rests" aria-hidden="true"><svg viewBox="0 0 40 34">
+      <defs>
+        <linearGradient id="fdg" x1="0" y1="0" x2="0" y2="1"><stop offset="0.1" style="stop-color: var(--ditto-top)"/><stop offset="1" style="stop-color: var(--ditto-foot)"/></linearGradient>
+        <linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--ditto-rim)"/><stop offset="1" style="stop-color: var(--ditto-rim); stop-opacity: 0.3"/></linearGradient>
+        <clipPath id="fdc"><path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z"/></clipPath>
+      </defs>
+      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" style="fill: url(#fdg)"/>
+      <path d="M3 32C5.4 31.6 6.6 30 6.6 27.2V20C6.6 11.4 12.6 5 20 5s13.4 6.4 13.4 15v7.2c0 2.8 1.2 4.4 3.6 4.8Z" clip-path="url(#fdc)" fill="none" stroke="url(#fdr)" stroke-width="1.6"/>
+      <g class="eyes" style="fill: var(--ditto-eye)"><ellipse cx="16.3" cy="19.6" rx="1.55" ry="2.35"/><ellipse cx="23.7" cy="19.6" rx="1.55" ry="2.35"/></g>
+    </svg></span><span class="vh">.</span></p>
+  <p class="small">© 2026 Ash Bronca <span aria-hidden="true">·</span> <a href="privacy">Privacy</a> <span aria-hidden="true">·</span> <a href="support">Support</a></p>
 </footer>
 <script>
 (function () {
@@ -1029,56 +957,108 @@ footer a { text-decoration: none; }
     run.go(li.querySelector(".ct"), [{ opacity: 1 }, { opacity: 0.62 }], { delay: delay + 90, duration: 300 });
   }
 
-  // ———— Ditto's rig ————
-  // Ditto is drawn from a handful of numbers, as a character is: how tall it stands (s, with its width
-  // keeping its volume), where its crown leans, how far its foot flares, how high it's off the page, and
-  // how open its eyes are and where they look. Poses are authored by hand; between them, each number eases
-  // on its own, so the squash, the stretch and the follow-through come from the shape itself.
-  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1 };
+  // ———— Ditto, a soft body ————
+  // Ditto is a drop of ink, so its outline is soft: thirteen points along the dome, each on its own spring
+  // toward where the pose wants it. The base is firm, the crown loose, so it lags on take-off, keeps going
+  // on landing, spreads in a squash and bows as it moves. A fixed-step integrator on real time makes it the
+  // same at 60 Hz and 120 Hz. Poses are a handful of hand-set numbers (height with constant volume, lean,
+  // foot flare, lift, eyes), eased between with a monotone cubic so nothing ever moves at a corner.
   var EASE = {
-    l: function (u) { return u; },
-    o: function (u) { return 1 - Math.pow(1 - u, 3); },
     i: function (u) { return u * u * u; },
+    o: function (u) { return 1 - Math.pow(1 - u, 3); },
     io: function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
   };
+  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lx: 0, ly: 0, x: 0, o: 1 };
+  function outline(p) {
+    var s = p.s, h = 27 * s, w = 13.4 / Math.sqrt(s), B = 32 - p.lift, cx = 20 + p.x, f = p.foot, ys = B - h * 0.444, ry = ys - (B - h), pts = [];
+    pts.push([cx - w - f, B], [cx - w - f * 0.18, B - 1.9], [cx - w, B - h * 0.24]);
+    for (var k = 0; k <= 6; k++) { var th = Math.PI * (1 - k / 6); pts.push([cx + w * Math.cos(th) + p.lean * Math.sin(th), ys - ry * Math.sin(th)]); }
+    pts.push([cx + w, B - h * 0.24], [cx + w + f * 0.18, B - 1.9], [cx + w + f, B]);
+    return pts;
+  }
+  // How loose each point is: Hz and damping, foot to crown and back.
+  var HZ = [9, 8, 6.2, 5.4, 4.9, 4.5, 4.2, 4.5, 4.9, 5.4, 6.2, 8, 9], ZETA = [0.85, 0.8, 0.7, 0.62, 0.56, 0.52, 0.5, 0.52, 0.56, 0.62, 0.7, 0.8, 0.85];
   function Rig(svg) {
     this.svg = svg;
     this.paths = svg.querySelectorAll(".b, .r, clipPath path");
     this.eyes = svg.querySelectorAll(".eyes ellipse");
     this.dot = svg.querySelector(".dot");
     this.g = svg.querySelector(".rig");
-    this.p = Object.assign({}, REST);
+    this.p = Object.assign({}, REST); this.P = null; this.acc = 0; this.last = 0;
   }
-  Rig.prototype.set = function (p) {
-    this.p = p;
-    var r = function (n) { return Math.round(n * 100) / 100; };
-    var s = p.s, h = 27 * s, w = 13.4 / Math.sqrt(s), B = 32 - p.lift, cx = 20, f = p.foot;
-    var ys = B - h * 0.444, top = B - h, c = cx + p.lean, sb = B - Math.min(4.8, h * 0.18), k1 = (ys - top) * 0.573, k2 = w * 0.552;
-    var d = "M" + r(cx - w - f) + " " + r(B) + "C" + r(cx - w - f * 0.33) + " " + r(B - 0.4) + " " + r(cx - w) + " " + r(B - 1.6) + " " + r(cx - w) + " " + r(sb) +
-      "L" + r(cx - w) + " " + r(ys) + "C" + r(cx - w) + " " + r(ys - k1) + " " + r(c - k2) + " " + r(top) + " " + r(c) + " " + r(top) +
-      "C" + r(c + k2) + " " + r(top) + " " + r(cx + w) + " " + r(ys - k1) + " " + r(cx + w) + " " + r(ys) +
-      "L" + r(cx + w) + " " + r(sb) + "C" + r(cx + w) + " " + r(B - 1.6) + " " + r(cx + w + f * 0.33) + " " + r(B - 0.4) + " " + r(cx + w + f) + " " + r(B) + "Z";
-    this.paths.forEach(function (e) { e.setAttribute("d", d); });
-    var ey = B - h * 0.46 + p.ly, ex = 3.7 * w / 13.4, mid = cx + p.lean * 0.6 + p.lx, ry = 2.35 * Math.max(p.open, 0.08) * (0.75 + 0.25 * s);
-    [mid - ex, mid + ex].forEach(function (x, i) { var e = this.eyes[i]; e.setAttribute("cx", r(x)); e.setAttribute("cy", r(ey)); e.setAttribute("ry", r(ry)); e.setAttribute("rx", r(1.55 / Math.sqrt(s))); }, this);
-    if (this.dot) { this.dot.setAttribute("cx", r(c + w * 1.09)); this.dot.setAttribute("cy", r(top + 1.8)); }
-    if (this.g) this.g.style.opacity = p.o;
+  Rig.prototype.target = function (p) { this.p = p; };
+  Rig.prototype.snap = function (p) {
+    this.p = p; this.P = outline(p).map(function (q) { return q.slice(); }); this.V = this.P.map(function () { return [0, 0]; });
+    this.E = this.eyeAt(); this.EV = [0, 0]; this.last = 0; this.acc = 0; this.draw();
   };
-  // A pose at time t (ms) along a list of keys, each { t, e, ...the numbers it changes }.
-  function pose(keys, t) {
-    var out = Object.assign({}, REST), i;
-    // Keys carry only what they change; fill each forward so every number has a value at every key.
-    if (!keys._full) {
-      var acc = Object.assign({}, REST);
-      keys._full = keys.map(function (k) { acc = Object.assign({}, acc, k); return acc; });
+  Rig.prototype.set = Rig.prototype.snap;
+  Rig.prototype.eyeAt = function () {
+    var P = this.P, a = P[3], b = P[9], c = P[6], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+    return [mx + (c[0] - mx) * 0.45 + this.p.lx, my + (c[1] - my) * 0.03 + this.p.ly];
+  };
+  // One step of real time; returns whether it's still moving.
+  Rig.prototype.tick = function (now) {
+    if (!this.P) this.snap(this.p);
+    var dt = this.last ? Math.min((now - this.last) / 1000, 0.05) : 1 / 60, H = 1 / 240, T = outline(this.p), P = this.P, V = this.V, moving = 0;
+    this.last = now; this.acc += dt;
+    while (this.acc >= H) {
+      this.acc -= H;
+      for (var i = 0; i < P.length; i++) {
+        var w = 2 * Math.PI * HZ[i], k = w * w, c = 2 * ZETA[i] * w;
+        for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
+      }
+      // The eyes ride the body, a moment behind it.
+      var e = this.eyeAt(), we = 2 * Math.PI * 5.5;
+      for (j = 0; j < 2; j++) { this.EV[j] += (we * we * (e[j] - this.E[j]) - 2 * 0.62 * we * this.EV[j]) * H; this.E[j] += this.EV[j] * H; }
     }
-    var K = keys._full;
-    if (t <= K[0].t) return Object.assign(out, K[0]);
-    for (i = 1; i < K.length && K[i].t < t; i++);
-    if (i >= K.length) return Object.assign(out, K[K.length - 1]);
-    var a = K[i - 1], b = K[i], u = (t - a.t) / (b.t - a.t), e = EASE[keys[i].e || "io"](u);
-    for (var n in REST) out[n] = a[n] + (b[n] - a[n]) * (n === "x" ? u : e);
+    for (i = 0; i < P.length; i++) moving = Math.max(moving, Math.abs(V[i][0]) + Math.abs(V[i][1]), Math.abs(T[i][0] - P[i][0]) + Math.abs(T[i][1] - P[i][1]));
+    this.draw();
+    return moving > 0.004;
+  };
+  Rig.prototype.draw = function () {
+    var P = this.P, n = P.length, r = function (v) { return Math.round(v * 100) / 100; }, d = "M" + r(P[0][0]) + " " + r(P[0][1]);
+    // A smooth spline through the points (Catmull–Rom, as Béziers); the base closes straight along the page.
+    for (var i = 0; i < n - 1; i++) {
+      var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || P[i + 1];
+      d += "C" + r(p1[0] + (p2[0] - p0[0]) / 6) + " " + r(p1[1] + (p2[1] - p0[1]) / 6) + " " + r(p2[0] - (p3[0] - p1[0]) / 6) + " " + r(p2[1] - (p3[1] - p1[1]) / 6) + " " + r(p2[0]) + " " + r(p2[1]);
+    }
+    d += "Z";
+    this.paths.forEach(function (e) { e.setAttribute("d", d); });
+    // The eyes squash and stretch with the body.
+    var wid = P[9][0] - P[3][0], hgt = (P[0][1] + P[12][1]) / 2 - P[6][1], ex = 3.7 * wid / 26.8;
+    var ry = 2.35 * Math.max(this.p.open, 0.08) * Math.pow(Math.max(hgt, 5) / 27, 0.7), rx = 1.55 * Math.pow(Math.max(wid, 5) / 26.8, 0.6);
+    for (var k = 0; k < 2; k++) {
+      var e = this.eyes[k]; e.setAttribute("cx", r(this.E[0] + (k ? ex : -ex))); e.setAttribute("cy", r(this.E[1])); e.setAttribute("rx", r(rx)); e.setAttribute("ry", r(ry));
+    }
+    if (this.dot) { this.dot.setAttribute("cx", r(P[8][0] + 3)); this.dot.setAttribute("cy", r(P[7][1] - 0.2)); }
+    if (this.g) this.g.style.opacity = this.p.o;
+  };
+  // Keys { t, ...numbers }: each number eases through its own keys on a monotone cubic (continuous, no overshoot).
+  function tracks(keys) {
+    var out = {};
+    for (var n in REST) {
+      var pts = keys.filter(function (k) { return n in k; }).map(function (k) { return [k.t, k[n]]; });
+      if (pts.length) out[n] = pts;
+    }
     return out;
+  }
+  function mono(pts, t) {
+    if (t <= pts[0][0]) return pts[0][1];
+    var n = pts.length; if (t >= pts[n - 1][0]) return pts[n - 1][1];
+    for (var i = 0; pts[i + 1][0] < t; i++);
+    var x0 = pts[i][0], x1 = pts[i + 1][0], y0 = pts[i][1], y1 = pts[i + 1][1], h = x1 - x0, d = (y1 - y0) / h;
+    function slope(j) {
+      if (j <= 0 || j >= n - 1) return 0;
+      var a = (pts[j][1] - pts[j - 1][1]) / (pts[j][0] - pts[j - 1][0]), b = (pts[j + 1][1] - pts[j][1]) / (pts[j + 1][0] - pts[j][0]);
+      return a * b <= 0 ? 0 : 2 / (1 / a + 1 / b);
+    }
+    var m0 = slope(i), m1 = slope(i + 1), u = (t - x0) / h, u2 = u * u, u3 = u2 * u;
+    return (2 * u3 - 3 * u2 + 1) * y0 + (u3 - 2 * u2 + u) * h * m0 + (-2 * u3 + 3 * u2) * y1 + (u3 - u2) * h * m1;
+  }
+  function pose(keys, t) {
+    var tr = keys._tr || (keys._tr = tracks(keys)), p = Object.assign({}, REST);
+    for (var n in tr) p[n] = mono(tr[n], t);
+    return p;
   }
   // One frame loop for every Ditto in motion, asleep whenever nothing is.
   var actors = new Set(), looping = false;
@@ -1089,17 +1069,17 @@ footer a { text-decoration: none; }
   }
   function wake(a) { actors.add(a); if (!looping) { looping = true; requestAnimationFrame(loop); } }
   // A run of poses that behaves like an Animation, so a tile can start, pause, replay and cancel it with the rest.
-  function RigRun(rig, keys, delay) { this.rig = rig; this.keys = keys; this.delay = delay; this.t0 = performance.now(); this.end = keys[keys.length - 1].t; wake(this); }
+  function RigRun(rig, keys, delay) { this.rig = rig; this.keys = keys; this.delay = delay; this.t0 = performance.now(); this.end = keys[keys.length - 1].t; rig.snap(pose(keys, 0)); wake(this); }
   RigRun.prototype.frame = function (now) {
     if (this.paused) return false;
     var t = now - this.t0 - this.delay;
-    if (t >= this.end) { this.rig.set(Object.assign({}, REST)); return false; }
-    this.rig.set(pose(this.keys, Math.max(t, 0)));
+    this.rig.target(t >= this.end ? Object.assign({}, REST) : pose(this.keys, Math.max(t, 0)));
+    return this.rig.tick(now) || t < this.end;
   };
   RigRun.prototype.pause = function () { this.paused = true; actors.delete(this); };
-  RigRun.prototype.play = function () { this.paused = false; this.t0 = performance.now(); wake(this); };
-  RigRun.prototype.cancel = RigRun.prototype.finish = function () { this.paused = true; actors.delete(this); this.rig.set(Object.assign({}, REST)); };
-  Object.defineProperty(RigRun.prototype, "currentTime", { set: function (v) { this.rig.set(pose(this.keys, Math.max(v - this.delay, 0))); } });
+  RigRun.prototype.play = function () { this.paused = false; this.t0 = performance.now(); this.rig.last = 0; wake(this); };
+  RigRun.prototype.cancel = RigRun.prototype.finish = function () { this.paused = true; actors.delete(this); this.rig.snap(Object.assign({}, REST)); };
+  Object.defineProperty(RigRun.prototype, "currentTime", { set: function (v) { this.rig.snap(pose(this.keys, Math.max(v - this.delay, 0))); } });
 
   var demos = {
     write: function (run, t) {
@@ -1230,107 +1210,123 @@ footer a { text-decoration: none; }
   lockDemo.addEventListener("click", function () { lockDemo.classList.contains("open") ? (clearTimeout(closeTimer), lockDemo.classList.remove("open")) : unlock(); });
 
   // ———— The opening ————
-  // Paper, and Ink's caret breathing where the first word goes. It writes "Ink &". Ditto hops in from the
-  // edge, two hops with a little weight, lands where its name will end, and blinks; its name writes itself up
-  // to it, and the caret goes. Then the line and the rest of the page come up. 3.8 s; any key, tap, wheel or
-  // scroll goes straight to the last frame, which is simply the page as written.
+  // Paper, and Ink's caret, steady, then a blink: a held beat before the first key. "Ink &" is typed at a
+  // person's pace, a breath after "Ink" and after "&", each letter inking in. Ditto comes in from the edge:
+  // two hops on true arcs, a long crouch before the second, a firm landing that settles in two, and a blink.
+  // Its name is typed up to it; the caret goes; the line and the page come up. Under four seconds. The whole
+  // line is laid out from the first frame (letters present, unseen), and it waits for the serif first, so
+  // nothing moves but what's meant to. Any key, tap, wheel or scroll goes straight to the last frame.
   var h1 = document.querySelector(".hero h1"), hd = h1.querySelector(".om-ditto"), hdSvg = hd.querySelector("svg");
-  var hdEyes = hd.querySelector(".eyes"), hdLook = hd.querySelector(".look");
   var opening = [], heroRig = new Rig(hdSvg), heroHop = null, wakeHero = function () {};
   function endOpening() {
-    if (!opening.length) return;
+    if (!opening.length && !heroHop) return;
     var a = opening; opening = [];
     a.forEach(function (x) { try { x.finish(); } catch (e) { x.cancel(); } });
-    if (heroHop) { heroHop = null; hd.style.transform = ""; heroRig.set(Object.assign({}, REST)); }
+    if (heroHop) { heroHop = null; heroRig.snap(Object.assign({}, REST)); }
     ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, endOpening, true); });
+  }
+  function playOpening() {
+    var run = new Run(0), S = performance.now();
+    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b")), ALL = A.concat(B);
+    // When each key lands (ms): uneven, quicker inside a word, a breath at each space.
+    var times = [600, 712, 790, 1000, 1118, 1290, 2850, 2955, 3030, 3102, 3196], END = 3250;
+    var ink = [{ opacity: 0, filter: "blur(0.6px)" }, { opacity: 1, filter: "blur(0)" }];
+    ALL.forEach(function (l, i) { run.go(l, ink, { delay: times[i], duration: 90, easing: "cubic-bezier(.2,.8,.2,1)" }); });
+    // The caret glides to each new place in 70 ms, steady while typing, blinking at the system's rhythm when not.
+    var caret = h1.querySelector(".caret"), last = ALL[ALL.length - 1].getBoundingClientRect(), T = END + 240, glide = "cubic-bezier(.2,.8,.2,1)";
+    function at(r, edge) { return "translate(" + (r[edge] - last.right).toFixed(1) + "px," + (r.top - last.top).toFixed(1) + "px)"; }
+    var kf = [{ offset: 0, transform: at(ALL[0].getBoundingClientRect(), "left") }], prev = kf[0].transform;
+    ALL.forEach(function (l, i) {
+      var now = at(l.getBoundingClientRect(), "right");
+      kf.push({ offset: times[i] / T, transform: prev, easing: glide }, { offset: Math.min((times[i] + 70) / T, 1), transform: now }); prev = now;
+    });
+    kf.push({ offset: 1, transform: "none" });
+    run.go(caret, kf, { duration: T, easing: "linear" });
+    var blink = [[0, 0], [100, 1], [400, 1], [470, 0.08], [530, 0.08], [600, 1], [1820, 1], [1890, 0.08], [2350, 0.08], [2420, 1], [END, 1], [T, 0]];
+    run.go(caret, blink.map(function (b) { return { offset: b[0] / T, opacity: b[1] }; }), { duration: T, easing: "linear", fill: "both" });
+    // Ditto. Travel and height are worked out per hop (a true arc, held a touch at the top); the shape eases
+    // through its poses; the soft body does the rest.
+    var unit = hd.getBoundingClientRect().width / 40, from = (innerWidth - hd.getBoundingClientRect().left + 40) / unit;
+    var hops = [{ a: 1350, b: 1780, x0: from, x1: from * 0.42, h: 24 }, { a: 1960, b: 2440, x0: from * 0.42, x1: 0, h: 19 }];
+    var keys = [
+      { t: 0, s: 1.1, foot: 2, lean: -1.4, lx: -1.2 },
+      { t: 1350, s: 1.12, foot: 1.8, lean: -1.8 },                 // already leaving the ground as it comes in
+      { t: 1560, s: 1.03, foot: 1.4, lean: -1.2 },                 // the top of the first arc
+      { t: 1760, s: 1.08, foot: 1.6, lean: -1.4 },
+      { t: 1785, s: 0.87, foot: 4.8, lean: -1.9 },                 // lands
+      { t: 1870, s: 0.96, foot: 4, lean: -0.8 },
+      { t: 1945, s: 0.8, foot: 5.2, lean: -1.4 },                  // the long crouch before the second
+      { t: 2000, s: 1.15, foot: 1.6, lean: -2.2 },                 // and up
+      { t: 2200, s: 1.03, foot: 1.3, lean: -1.1 },                 // hangs at the top
+      { t: 2420, s: 1.09, foot: 1.5, lean: -1.5 },
+      { t: 2448, s: 0.82, foot: 5.6, lean: -2.4, lx: -1.2 },       // a firm landing
+      { t: 2570, s: 1.06, foot: 3.1, lean: 1.2 },                  // settles once
+      { t: 2700, s: 0.985, foot: 3.8, lean: -0.3, lx: 0 },         // and again
+      { t: 2860, s: 1, foot: 3.6, lean: 0 },
+      { t: 2450, open: 1 }, { t: 2510, open: 0.1 }, { t: 2620, open: 1 }   // blinks as it lands
+    ];
+    keys.sort(function (a, b) { return a.t - b.t; });
+    heroHop = { at: S, keys: keys, hops: hops, end: 2900 };
+    heroRig.snap(heroPose(0));
+    wakeHero();
+    // The page breathes out: the line, then the rest, quietly.
+    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1; });
+    rest.forEach(function (e, i) { run.go(e, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { delay: END + 120 + i * 140, duration: 700, easing: "cubic-bezier(.2,.8,.2,1)" }); });
+    document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
+      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: END + 400, duration: 700, easing: "ease-out" });
+    });
+    opening = run.list;
+    delete root.dataset.opening;
+    setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
+    run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
+  }
+  function heroPose(t) {
+    var p = pose(heroHop.keys, t), hops = heroHop.hops, x = hops[0].x0, lift = 0;
+    for (var i = 0; i < hops.length; i++) {
+      var h = hops[i];
+      if (t >= h.b) { x = h.x1; continue; }
+      if (t > h.a) { var u = (t - h.a) / (h.b - h.a); x = h.x0 + (h.x1 - h.x0) * u; lift = h.h * (1 - Math.pow(Math.abs(2 * u - 1), 2.2)); }
+      else x = h.x0;
+      break;
+    }
+    p.x = x; p.lift = lift;
+    return p;
   }
   if ("opening" in root.dataset) {
     if (still.matches || scrollY > 4) delete root.dataset.opening;
     else {
       try { sessionStorage.setItem("opened", "1"); } catch (e) {}
-      var run = new Run(0);
-      var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b"));
-      var caret = h1.querySelector(".caret"), times = [], t = 720;
-      A.forEach(function (l, i) { times.push(t); t += 92 + ((i * 29) % 17) - 6 + (l.textContent === " " ? 40 : 0); });
-      var hopFrom = 1250, typeB = 2560;
-      t = typeB; B.forEach(function (l, i) { times.push(t); t += 78 + ((i * 31) % 13) - 4; });
-      var ALL = A.concat(B), END = t + 60;
-      ALL.forEach(function (l, i) { run.go(l, [{ opacity: 0 }, { opacity: 1 }], { delay: times[i], duration: 1, easing: "linear" }); });
-      // The caret: steady, breathing as Ink's does, then following the letters, then gone.
-      var last = ALL[ALL.length - 1].getBoundingClientRect(), T = END + 260;
-      function at(r, edge) { return "translate(" + (r[edge] - last.right).toFixed(1) + "px," + (r.top - last.top).toFixed(1) + "px)"; }
-      var kf = [{ offset: 0, transform: at(ALL[0].getBoundingClientRect(), "left") }], prev = kf[0].transform;
-      ALL.forEach(function (l, i) {
-        var now = at(l.getBoundingClientRect(), "right");
-        kf.push({ offset: times[i] / T, transform: prev }, { offset: Math.min((times[i] + 28) / T, 1), transform: now }); prev = now;
+      // Wait for the serif (briefly), so the first frame is the last font.
+      var face = "400 " + parseFloat(getComputedStyle(h1).fontSize) + "px " + getComputedStyle(h1).fontFamily;
+      var ready = document.fonts && document.fonts.load ? document.fonts.load(face).catch(function () {}) : Promise.resolve();
+      Promise.race([ready, new Promise(function (r) { setTimeout(r, 700); })]).then(function () {
+        if (scrollY > 4) { delete root.dataset.opening; return; }
+        playOpening();
       });
-      kf.push({ offset: 1, transform: "none" });
-      run.go(caret, kf, { duration: T, easing: "linear" });
-      run.go(caret, [
-        { offset: 0, opacity: 0 }, { offset: 100 / T, opacity: 1 }, { offset: 380 / T, opacity: 1 }, { offset: 470 / T, opacity: 0.1 },
-        { offset: 560 / T, opacity: 0.1 }, { offset: 650 / T, opacity: 1 }, { offset: END / T, opacity: 1 }, { offset: 1, opacity: 0 }
-      ], { duration: T, easing: "ease-in-out", fill: "both" });
-      // Ditto, from just past the right edge: a crouch, two hops on an arc, landing in a squash that
-      // carries its crown on past and back, then still, and a blink.
-      var from = innerWidth - hd.getBoundingClientRect().left + 30;
-      heroHop = { at: performance.now() + hopFrom, keys: [
-        { t: 0, x: 1, lean: -1 },
-        { t: 90, s: 0.84, foot: 4.4, lean: -1.4 },                           // anticipation
-        { t: 170, s: 1.17, foot: 1.6, lift: 3, x: 0.96, lean: -2.2, e: "o" },   // take-off
-        { t: 330, s: 1.04, foot: 1.2, lift: 30, x: 0.7, lean: -1.4, e: "o" },   // the top of the arc
-        { t: 470, s: 1.1, foot: 1.4, lift: 5, x: 0.47, lean: -1.8, e: "i" },
-        { t: 510, s: 0.8, foot: 5.2, lift: 0, x: 0.45, lean: -1.2, e: "i" },    // land
-        { t: 600, s: 0.86, foot: 4.6, lean: -1.6, e: "o" },                    // and straight into the next
-        { t: 680, s: 1.14, foot: 1.6, lift: 3, x: 0.41, lean: -2, e: "o" },
-        { t: 810, s: 1.03, foot: 1.3, lift: 19, x: 0.2, lean: -1.2, e: "o" },
-        { t: 920, s: 1.08, foot: 1.5, lift: 3, x: 0.02, lean: -1.4, e: "i" },
-        { t: 950, s: 0.76, foot: 5.6, lift: 0, x: 0, lean: -2.6, e: "i" },     // the last landing, heavier
-        { t: 1050, s: 1.07, foot: 3, lean: 1.4, e: "o" },                      // follow-through
-        { t: 1160, s: 0.97, foot: 3.8, lean: -0.5, e: "io" },
-        { t: 1280, s: 1, foot: 3.6, lean: 0, e: "io" },
-        { t: 1430, open: 1 }, { t: 1500, open: 0.08, e: "i" }, { t: 1600, open: 1, e: "o" }   // a blink
-      ], from: from };
-      heroRig.set(pose(heroHop.keys, 0)); hd.style.transform = "translateX(" + from + "px)";
-      wakeHero();
-      // The page breathes out: the line, then the rest, quietly.
-      var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1; });
-      rest.forEach(function (e, i) { run.go(e, [{ opacity: 0, transform: "translateY(8px)" }, { opacity: 1, transform: "none" }], { delay: END + 120 + i * 140, duration: 700, easing: "cubic-bezier(.2,.8,.2,1)" }); });
-      document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
-        run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: END + 400, duration: 700, easing: "ease-out" });
-      });
-      opening = run.list;
-      delete root.dataset.opening;
-      setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
-      run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
     }
   }
 
   // ———— Ditto at rest, beside its name ————
-  // A slow breath for its first minute, a blink at a person's irregular rhythm, and its eyes on your pointer.
-  // Only while it's on screen and the page is in front; never with Reduce Motion.
+  // The same soft body: a slow breath that changes its shape for its first minute, a blink at a person's
+  // irregular rhythm, and its eyes on your pointer. Only while it's on screen and the page is in front.
   (function () {
-    var seen = true, born = 0, blinkAt = 0, tx = 0, ty = 0, lx = 0, ly = 0;
+    var seen = true, born = 0, blinkAt = 0, tx = 0, ty = 0;
     var hero = { frame: function (now) {
-      if (!seen || document.hidden) return false;
+      if (!seen || document.hidden) { heroRig.last = 0; return false; }
       if (heroHop) {
-        var t = now - heroHop.at, k = heroHop.keys;
-        if (t < k[k.length - 1].t) {
-          var p = pose(k, Math.max(t, 0));
-          hd.style.transform = p.x ? "translateX(" + (p.x * heroHop.from).toFixed(1) + "px)" : "";
-          heroRig.set(p); return;
-        }
-        heroHop = null; hd.style.transform = "";
+        var t = now - heroHop.at;
+        if (t < heroHop.end) { heroRig.target(heroPose(t)); heroRig.tick(now); return; }
+        heroHop = null; born = now;
       }
       if (!born) born = now;
       var age = now - born, p = Object.assign({}, REST), busy = false;
       // Breathing: in for 1.9 s, out for 2.9 s; it fades in, and after a minute it's still.
       var amp = Math.min(age / 1500, 1) * Math.max(0, Math.min((60000 - age) / 3000, 1));
-      if (amp > 0) { var ph = (age % 4800) / 4800, b = ph < 0.4 ? EASE.io(ph / 0.4) : 1 - EASE.io((ph - 0.4) / 0.6); p.s = 1 + 0.016 * b * amp; p.foot = 3.6 - 0.25 * b * amp; busy = true; }
+      if (amp > 0) { var ph = (age % 4800) / 4800, b = ph < 0.4 ? EASE.io(ph / 0.4) : 1 - EASE.io((ph - 0.4) / 0.6); p.s = 1 + 0.02 * b * amp; p.foot = 3.6 - 0.3 * b * amp; busy = true; }
       if (now >= blinkAt && now < blinkAt + 190) { var u = (now - blinkAt) / 190; p.open = u < 0.45 ? 1 - EASE.i(u / 0.45) * 0.92 : 0.08 + EASE.o((u - 0.45) / 0.55) * 0.92; busy = true; }
-      lx += (tx - lx) * 0.14; ly += (ty - ly) * 0.14; p.lx = lx; p.ly = ly;
-      if (Math.abs(tx - lx) > 0.01 || Math.abs(ty - ly) > 0.01) busy = true;
-      heroRig.set(p);
-      return busy;
+      p.lx = tx; p.ly = ty;
+      heroRig.target(p);
+      return heroRig.tick(now) || busy;
     } };
     wakeHero = function () { if (!still.matches) wake(hero); };
     function blink() {
@@ -1367,6 +1363,19 @@ footer a { text-decoration: none; }
     });
   }, { threshold: [0, 0.25, 0.5, 0.75] });
   tiles.forEach(function (t) { io.observe(t); });
+  // The rest of the page has one motion each, at most. Ditto's three beats arrive in order, each as it comes into view.
+  var beatIO = new IntersectionObserver(function (es) {
+    var n = 0;
+    es.forEach(function (e) { if (e.isIntersecting && e.intersectionRatio >= 0.5) { beatIO.unobserve(e.target); var r = e.target._run; r.currentTime = -(n++ * 160); r.play(); } });
+  }, { threshold: [0, 0.5, 1] });
+  document.querySelectorAll(".beats li").forEach(function (li) {
+    var r = li.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 640, easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" });
+    r.pause(); r.currentTime = 0; li._run = r; beatIO.observe(li);
+  });
+  // At the end, Ditto, resting as the last line's full stop, blinks once as you arrive.
+  var endEyes = document.querySelector(".end .eyes");
+  var endObs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { endObs.disconnect(); if (endEyes) setTimeout(function () { endEyes.animate([{ transform: "none" }, { transform: "scaleY(.1)", offset: 0.45 }, { transform: "none" }], { duration: 200, easing: "ease-in-out" }); }, 600); } }); }, { threshold: 1 });
+  endObs.observe(document.querySelector(".end-line"));
   // Reduce Motion switched on mid-visit: everything goes to its last frame at once.
   still.addEventListener("change", function () { if (still.matches) { tiles.forEach(stop); delete root.dataset.motion; } });
 })();
