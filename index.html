@@ -35,8 +35,10 @@
     // Motion is drawn by the page's script; without it, or with Reduce Motion, every demo is its last frame.
     if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "animate" in d) {
       d.dataset.motion = "";
-      var seen = true; try { seen = !!sessionStorage.getItem("opened"); } catch (e) {}
-      if (!seen && !location.hash) d.dataset.opening = "";
+      // Every fresh visit, as LoveFrom's: not on Back, not when coming from our own pages, not to a section.
+      var nav = {}; try { nav = performance.getEntriesByType("navigation")[0] || {}; } catch (e) {}
+      var fromUs = false; try { fromUs = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
+      if (!location.hash && !fromUs && nav.type !== "back_forward") d.dataset.opening = "";
     }
   })(document.documentElement);
 </script>
@@ -166,6 +168,7 @@ h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em;
 .verse { margin: clamp(4rem, 12vw, 9rem) auto clamp(5rem, 14vw, 10rem); max-width: 34rem; text-align: center;
   font: 400 clamp(1.3rem, 2.7vw, 1.65rem)/1.7 var(--serif); letter-spacing: -0.003em; }
 .verse p { max-width: none; margin: 0 auto; }
+.verse .turn { margin-top: 1.4em; }
 .verse .by { margin-top: 2.5rem; font-size: 0.68em; color: var(--ink-2); letter-spacing: 0.005em; }
 .verse em { font-style: italic; color: var(--ink); }
 /* The bar keeps only the toggle while the name fills the screen; the lockup comes back once it's gone by. */
@@ -538,12 +541,13 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 
   <section class="verse" aria-label="What Ink is for">
     <p>Ink is for<br>
-      the shopping list,<br>
-      the notes from the call,<br>
-      a novel, a page at a time,<br>
-      the idea from the shower,<br>
-      the thing you’ll do tomorrow,<br>
-      and the line you hand to Ditto.</p>
+      what you can’t forget,<br>
+      what you can’t say yet,<br>
+      what you’re still working out,<br>
+      and what you’d rather not do yourself.</p>
+    <p class="turn"><em>That one’s for Ditto.</em><br>
+      It takes the line, does the work,<br>
+      checks it, and asks you once.</p>
     <p class="by">Ink &amp; Ditto. Made by <em>Ash Bronca</em> in Australia.</p>
   </section>
 
@@ -1295,7 +1299,6 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   if ("opening" in root.dataset) {
     if (still.matches || scrollY > 4) delete root.dataset.opening;
     else {
-      try { sessionStorage.setItem("opened", "1"); } catch (e) {}
       // Wait for the serif (briefly), so the first frame is the last font.
       var face = "400 " + parseFloat(getComputedStyle(h1).fontSize) + "px " + getComputedStyle(h1).fontFamily;
       var ready = document.fonts && document.fonts.load ? document.fonts.load(face).catch(function () {}) : Promise.resolve();
