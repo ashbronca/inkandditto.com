@@ -1350,14 +1350,15 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     // The drop, as physics. The caret's ink gathers at its foot into a drop; it pops up and falls back under
     // gravity (the rise, hang and fall measured from LoveFrom's full stop), lands with a squash that's as
     // deep as it was fast, springs off into a roll, writes "Ditto" as it rolls (each letter inking in just
-    // behind it), runs a little past and rocks back to its place, and only then, still, becomes Ditto: the
+    // behind it), slows like a ball losing its roll and stops exactly in its place (critically damped: no
+    // overshoot, no slide back), and only then, still, becomes Ditto: the
     // dome rises out of the ball, and the eyes open. Worked out once, step by step, before the first frame.
     var unit = hd.getBoundingClientRect().width / 40, fr = hdSvg.getBoundingClientRect(), fx = fr.left + 20 * unit;
     var sp = A[A.length - 1].getBoundingClientRect();
     var X0 = (sp.right + unit * 1.5 - fx) / unit, Y0 = -(sp.top - last.top) / unit;
     var red = hdSvg.querySelector(".red");
     var G = 550, POP = 2400, H = 1 / 240, R0 = 14;
-    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.0, z0 = 0.55, vroll = 0, tl = 0, Reff = 1, turns = 1, rollAt = 0;
+    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.4, z0 = 1.0, vroll = 0, xs = 0, TR = 1000, tl = 0, Reff = 1, turns = 1, rollAt = 0;
     for (var tt = 0; tt <= 6200; tt += H * 1000) {
       var kk = 0.12, rnd = 1, st = 1, rot = 0;
       if (tt < POP) { kk = tt < 2150 ? 0.12 : 0.12 + 0.18 * EASE.o(Math.min((tt - 2150) / 250, 1)); }
@@ -1374,9 +1375,11 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       } else if (ph === "push") {
         // The squash gives back what it took, forward: the roll's speed arrives over 140 ms.
         var u2 = Math.min((tt - tl) / 140, 1); vx = 24 + (vroll - 24) * EASE.io(u2); x += vx * H;
-        if (u2 >= 1) { ph = "roll"; rollAt = tt; }
+        if (u2 >= 1) { ph = "roll"; rollAt = tt; xs = x; TR = Math.max(700, Math.min(1400, 3 * Math.abs(x) / Math.max(Math.abs(vx), 1) * 1000)); }
       } else if (ph === "roll") {
-        var a = -w0 * w0 * x - 2 * z0 * w0 * vx; vx += a * H; x += vx * H;
+        // Like a ball losing its roll: it slows evenly and stops exactly in its place, at a definite moment
+        // (an ease-out from the speed it had), with no overshoot, no creep and no slide back.
+        var ur = Math.min((tt - rollAt) / TR, 1), om = 1 - ur; x = xs * om * om * om; vx = 3 * -xs * om * om / (TR / 1000);
       }
       if (ph === "push" || ph === "roll") { kk = 0.45 + 0.55 * Math.max(0, Math.min((x - xl) / d, 1)); rot = (x - xl) / Reff; }
       // The squash springs back (a little under-damped), and in flight the drop stretches along its fall.
@@ -1385,12 +1388,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       // Still enough, it stops being a ball: the dome rises out of it.
       // It rolls as a true ball of ink; only once it has rocked back and is still does the dome rise out of it.
       if (ph === "push" || ph === "roll") rnd = 1;
-      if (ph === "roll" && tt - rollAt > 1450) rnd = Math.max(0, 1 - EASE.io(Math.min((tt - rollAt - 1450) / 480, 1)));
+      if (ph === "roll" && tt - rollAt > TR + 200) rnd = Math.max(0, 1 - EASE.io(Math.min((tt - rollAt - TR - 200) / 480, 1)));
       // As it becomes Ditto it comes upright, whatever is left of its rocking.
-      var up = 2 * Math.PI * turns; if (ph === "roll" && tt - rollAt > 1450) rot = up + (rot - up) * rnd;
+      var up = 2 * Math.PI * turns; if (ph === "roll" && tt - rollAt > TR + 200) rot = up + (rot - up) * rnd;
       sim.push([tt, x, Math.max(y, 0), rot, rnd, kk, Math.max(0.55, st)]);
     }
-    var SIMEND = rollAt + 1450 + 480;
+    var SIMEND = rollAt + TR + 200 + 480;
     function simAt(t) {
       var step = H * 1000, i = Math.min(sim.length - 1, Math.max(0, Math.floor(t / step))), a = sim[i], b = sim[Math.min(i + 1, sim.length - 1)], u = Math.max(0, Math.min((t - a[0]) / step, 1));
       var L = function (j) { return a[j] + (b[j] - a[j]) * u; };
