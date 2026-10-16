@@ -1601,12 +1601,20 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       run.go(l, ink, inkOpt(when));
     });
     var END = SIMEND + 800;
+    // The name is born alone, in the middle of the screen; once Ditto is itself, it rises, unhurried, to its place,
+    // and the words arrive into the room it leaves (Ash, 16 Oct). Everything below is already laid out, so the rise
+    // ends exactly where the name rests and nothing else moves.
+    var hr = h1.getBoundingClientRect(), drop = Math.round(innerHeight / 2 - (hr.top + hr.height / 2));
+    var RISE = END + 450, RD = 1250;
+    if (drop > 12) run.go(h1, [{ transform: "translateY(" + drop + "px)" },
+      { transform: "translateY(" + drop + "px)", offset: RISE / (RISE + RD), easing: "cubic-bezier(.45,0,.18,1)" },
+      { transform: "none" }], { duration: RISE + RD, easing: "linear", fill: "backwards" });
     heroHop = { at: S, keys: keys, path: path, end: END + 40 };
     heroRig.snap(heroPose(0));
     wakeHero();
     // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
     // first; the bar's controls last. Nothing arrives at once.
-    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 650;   // Ash's pacing: never hurried (16 Oct)
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = drop > 12 ? RISE + RD * 0.62 : END + 650;   // Ash's pacing: never hurried (16 Oct)
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
