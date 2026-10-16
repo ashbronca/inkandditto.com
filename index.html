@@ -280,7 +280,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 @media (min-width: 40rem) {
   .bento { grid-template-columns: repeat(2, minmax(0, 1fr));
     /* Partners in a row are paired by how tall their content is, so no tile waits on its neighbour. */
-    grid-template-areas: "write write" "check import" "search search" "links lock" "tags widget" "ditto ditto" "devices devices"; }
+    grid-template-areas: "write write" "check import" "search search" "links lock" "tags widget" "devices devices"; }
   .t-write { grid-area: write; } .t-check { grid-area: check; } .t-links { grid-area: links; } .t-search { grid-area: search; }
   .t-lock { grid-area: lock; } .t-tags { grid-area: tags; } .t-widget { grid-area: widget; } .t-import { grid-area: import; }
   .t-ditto { grid-area: ditto; } .t-devices { grid-area: devices; }
@@ -291,8 +291,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       "write write write write tags tags"
       "check check links links import import"
       "search search search lock lock lock"
-      "widget widget devices devices devices devices"
-      "ditto ditto ditto ditto ditto ditto"; }
+      "widget widget devices devices devices devices"; }
 }
 .tile { position: relative; display: flex; flex-direction: column; padding: 1.5rem;
   border-radius: 1.75rem; background: var(--tile); box-shadow: var(--tile-ring); overflow: hidden; overflow: clip;
@@ -512,6 +511,30 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   .rv-b { transition: transform 0.15s ease, filter 0.15s ease, color 0.15s ease; }
 }
 
+/* The new chapters: a plain triad (no numbers), the two people it's for, and the safety facts. */
+.beats.plain li { gap: 0.4rem; }
+.loop { margin-top: clamp(3rem, 7vw, 4.5rem); }
+.bento.solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+.bento.solo > .tile { grid-area: auto; }
+.who { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; max-width: 58rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
+@media (min-width: 48rem) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.person { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.75rem; border-radius: 1.75rem; background: var(--tile); box-shadow: var(--tile-ring); min-width: 0; }
+@media (max-width: 30rem) { .person { padding: 1.25rem; border-radius: 1.5rem; } }
+.person .role { margin: 0; font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 600; color: var(--ink-2); text-transform: uppercase; }
+.person h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
+.person > p { margin: 0; color: var(--ink-2); }
+.ex { display: grid; gap: 0.35rem; margin-top: auto; padding: 1rem 1.1rem; border-radius: 1.1rem; background: var(--sheet); box-shadow: 0 0 0 1px var(--rule); font-size: 0.9375rem; }
+.person .ex { margin-top: auto; }
+.person .needs { margin: 0.1rem 0 0; font-size: 0.875rem; }
+.ex-line { font-weight: 600; }
+.ex-to { color: var(--ink-2); font-size: 0.875rem; overflow-wrap: anywhere; }
+.ex-to::before { content: "→ "; }
+.facts { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: 58rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
+@media (min-width: 40rem) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 62rem) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.facts h3 { font: 600 1.0625rem/1.3 var(--sans); letter-spacing: -0.01em; margin: 0 0 0.3rem; }
+.facts p { margin: 0; color: var(--ink-2); font-size: 0.9375rem; }
+
 /* Download: Apple's badge as Apple draws it, and our own button beside it, the same height. */
 .when-mac, .when-store, .when-get { display: none !important; }
 :root[data-mac] .when-mac, :root[data-store] .when-store, :root[data-get] .when-get { display: inline-flex !important; }
@@ -578,135 +601,23 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
   </div>
 
-  <section class="chapter" aria-labelledby="ink">
-    <h2 id="ink">A notes app, first.</h2>
-    <p class="lead">Every note is a plain Markdown file, in step on your Mac and iPhone. Nothing on the page but your words.</p>
-    <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
-    <div class="bento-wrap">
-      <div class="bento">
-        <article class="tile big t-write" data-demo="write">
-          <div class="tx"><h3>Writing that feels like paper.</h3> <p>Plain Markdown, and nothing on the page but your words.</p></div>
-          <div class="demo d-write" aria-hidden="true" data-tap>
-            <div class="sheet">
-              <div class="w-title">Saturday</div>
-              <p class="w-p">Market first: peaches, sourdough, the good butter.</p>
-              <p class="w-p" data-type>Coffee with Sam at nine, then the long way home along the <span class="nb">water.<span class="caret-at"><i class="caret"></i></span></span></p>
-            </div>
-          </div>
-        </article>
+  <section class="chapter" aria-labelledby="problem">
+    <h2 id="problem">Your notes know what you decided.</h2>
+    <p class="lead">The work happens somewhere else, and every hand-off loses a little.</p>
+    <ul class="beats plain">
+      <li><h3>The list that never shrinks.</h3><p>Papercuts, follow-ups and “we should” lines. Agreed, written down, and saved for a quieter week that never comes.</p></li>
+      <li><h3>Every hand-off starts from scratch.</h3><p>The decision is already in your note. You type it again into a prompt, a ticket or a thread, and the context stays behind.</p></li>
+      <li><h3>The review lands on you.</h3><p>Agents make work faster to produce, not faster to trust. It comes back as a diff with no trail, and you check every line.</p></li>
+    </ul>
+  </section>
 
-        <article class="tile t-check" data-demo="check">
-          <div class="tx"><h3>Checklists.</h3> <p>Tick it, and it’s crossed off in one stroke.</p></div>
-          <div class="demo d-check" aria-hidden="true">
-            <div class="sheet">
-              <div class="sh-h">Before Friday’s release</div>
-              <ul class="checks">
-                <li class="on" data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Write the release notes<i class="strike"></i></span></li>
-                <li class="on" data-tap data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Check the empty states<i class="strike"></i></span></li>
-                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Ring Mum back<i class="strike"></i></span></li>
-                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Water the garden<i class="strike"></i></span></li>
-              </ul>
-            </div>
-          </div>
-        </article>
-
-        <article class="tile t-links" data-demo="links">
-          <div class="tx"><h3>Links that follow a rename.</h3> <p>Change a title, and every link to it changes too.</p></div>
-          <div class="demo d-links" aria-hidden="true" data-tap>
-            <div class="sheet l-a">
-              <div class="l-title"><span class="swap"><span class="old">Groceries</span><span class="new">Shopping</span></span></div>
-              <div class="l-line">Oat milk, lemons, eggs</div>
-            </div>
-            <div class="sheet l-b">
-              <div class="l-title">Weekend</div>
-              <div class="l-line ink">The list: <span class="swap"><span class="old lnk"><span class="br">[[</span>Groceries<span class="br">]]</span></span><span class="new lnk"><span class="br">[[</span>Shopping<span class="br">]]</span></span></span></div>
-              <div class="toast">Updated 1 link to “Shopping” <span class="sep">·</span> <b>Undo</b></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="tile t-search" data-demo="search">
-          <div class="tx"><h3>Files, scans and PDFs, in your notes.</h3> <p>Search reads them too, even the words in a photo.</p></div>
-          <div class="demo d-search" aria-hidden="true" data-tap>
-            <div class="photo">
-              <div class="receipt">
-                <div class="rh">BAKEHOUSE</div>
-                <div class="rr"><span>Sourdough</span><span>9.00</span></div>
-                <div class="rr hit"><span><i class="hl"></i>Croissant</span><span>4.50</span></div>
-                <div class="rr"><span>Flat white</span><span>5.00</span></div>
-                <div class="rr rt"><span>Total</span><span>18.50</span></div>
-              </div>
-            </div>
-            <div class="sheet s-panel">
-              <div class="s-field"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg><span data-type>croissant</span></div>
-              <div class="s-hit"><b>Market run</b><span>In a picture: <mark>Croissant</mark> 4.50</span></div>
-            </div>
-          </div>
-        </article>
-
-        <article class="tile t-lock" data-demo="lock">
-          <div class="tx"><h3>Locked notes.</h3> <p>Face ID or Touch ID opens them. Only the title shows.</p></div>
-          <div class="demo d-lock" aria-hidden="true" data-tap>
-            <div class="sheet">
-              <div class="k-title">Passport and visas</div>
-              <div class="k-body">
-                <p class="k-words">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
-                <p class="k-blur">Passport renews in March. The visa letter is in the blue folder, and the insurance covers the whole trip, bags and all. Spare keys are with Sam.</p>
-                <div class="k-lock">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="shackle" d="M7.8 10.5V8a4.2 4.2 0 0 1 8.4 0v2.5"/><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" stroke="none"/></svg>
-                  <span>Locked</span>
-                </div>
-              </div>
-              <svg class="faceid" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15V11a5 5 0 0 1 5-5h4M33 6h4a5 5 0 0 1 5 5v4M42 33v4a5 5 0 0 1-5 5h-4M15 42h-4a5 5 0 0 1-5-5v-4"/><path d="M17 18v3M31 18v3M24 18v9.5h-2M18.5 32.5c3 2.6 8 2.6 11 0"/></svg>
-            </div>
-          </div>
-        </article>
-
-        <article class="tile t-tags" data-demo="tags">
-          <div class="tx"><h3>Tags, nested.</h3> <p>Write #travel/japan/kyoto, and the sidebar files it.</p></div>
-          <div class="demo d-tags" aria-hidden="true" data-tap>
-            <div class="sheet g-note">Ryokan booked for April <span class="cap">#travel/japan/kyoto</span></div>
-            <ul class="g-tree">
-              <li style="--d:0"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>travel</li>
-              <li style="--d:1" data-r="1"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>japan</li>
-              <li style="--d:2" data-r="2" class="sel"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>kyoto<span class="n">3</span></li>
-              <li style="--d:2" data-r="2"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>osaka<span class="n">1</span></li>
-              <li style="--d:1" data-r="1"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>portugal<span class="n">5</span></li>
-            </ul>
-          </div>
-        </article>
-
-        <article class="tile t-widget" data-demo="widget">
-          <div class="tx"><h3>A note on your Home Screen.</h3> <p>Small, medium or large, and on the Lock Screen.</p></div>
-          <div class="demo d-widget" aria-hidden="true" data-tap>
-            <div class="hs">
-              <div class="wg"><b>Saturday</b>
-                <ul class="checks">
-                  <li class="on"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
-                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
-                </ul>
-              </div>
-              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
-              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
-            </div>
-          </div>
-        </article>
-
-        <article class="tile t-import" data-demo="import">
-          <div class="tx"><h3>Bring your notes.</h3> <p>From Bear, Obsidian or Notes’ exported files, with their folders and pictures.</p></div>
-          <div class="demo d-import" aria-hidden="true" data-tap>
-            <div class="im-stack">
-              <div class="im-card" style="--i:0"><b>Garden plans</b><span>Tomatoes along the back fence</span></div>
-              <div class="im-card" style="--i:1"><b>Reading list</b><span>The one Sam lent me, then poetry</span></div>
-              <div class="im-card" style="--i:2"><b>Recipes</b><span>Lemon cake, the good one</span></div>
-            </div>
-            <div class="toast">Imported 214 notes from Bear <span class="sep">·</span> <b>Undo</b></div>
-          </div>
-        </article>
-
+  <section class="chapter" aria-labelledby="ditto">
+    <h2 id="ditto">Hand Ditto the line.<br> Make one call.</h2>
+    <p class="lead">Ditto carries the line across: into your project with Claude Code, checked against your taste, and back to you for one decision.</p>
+    <div class="bento-wrap loop">
+      <div class="bento solo">
         <article class="tile big t-ditto" data-demo="ditto">
-          <div class="tx"><h3>Hand a line to Ditto.</h3> <p>Press ⌘↩, and Ditto does the work in your project, checks it against your taste, and brings it back for one decision.</p></div>
+          <div class="tx"><h3>Try it.</h3> <p>Make the call: Ship It, Ask for Changes or Discard.</p></div>
           <div class="demo d-ditto" aria-hidden="true" data-tap>
             <div class="sheet">
               <div class="keys"><span>⌘</span><span>↩</span></div>
@@ -724,36 +635,218 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
               <div class="rv">
                 <div class="rv-eb">Review</div>
                 <div class="rv-t">The empty state on Projects feels like an error</div>
-                <div class="rv-m">1 file changed · +5 −2</div>
-                <div class="rv-ok">No problems found in the three checks.</div>
-                <div class="rv-acts"><span class="rv-b ship" data-act="ship">Ship It <i>⌘↩</i></span><span class="rv-b" data-act="ask">Ask for Changes… <i>⌘R</i></span><span class="rv-b quiet" data-act="discard">Discard <i>⌘⌫</i></span></div>
+                <div class="rv-m">ProjectsEmpty.tsx · +5&nbsp;−2 · Tests&nbsp;pass</div>
+                <div class="rv-ok">Checked against your taste. No problems found.</div>
+                <div class="rv-acts"><span class="rv-b ship" data-act="ship">Ship It <i>⌘↩</i></span><span class="rv-b" data-act="ask">Ask for Changes… <i>⌘R</i></span><span class="rv-b quiet" data-act="discard">Discard</span></div>
               </div>
-              <div class="after s">Shipped. Tap to see it again.</div>
+              <div class="after s">Ready on ditto/projects-empty-state. Nothing was pushed or merged.</div>
               <div class="after d">Discarded. Tap to see it again.</div>
               </div>
             </div>
           </div>
         </article>
+      </div>
+    </div>
+    <ol class="beats">
+      <li><span class="n" aria-hidden="true">1</span><h3>Write a line.</h3><p>The line you wrote is the brief. Ditto reads it, with the lines around it.</p></li>
+      <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>A builder does the work with Claude Code on your Mac, in your project on a branch of its own, and runs your tests. A critic checks it against your taste before you see it. A line that isn’t code becomes a draft.</p></li>
+      <li><span class="n yours" aria-hidden="true">3</span><h3>Make one call.</h3><p>Ship It, Ask for Changes or Discard, with what changed and what was checked. Every call teaches it your taste.</p></li>
+    </ol>
+    <p class="aside">On iPhone, hand Ditto a line, see what it’s doing, and make the call from anywhere.</p>
+  </section>
+
+  <section class="chapter" aria-labelledby="who">
+    <h2 id="who">For people who build products.</h2>
+    <p class="lead">Engineers first, and the product managers who work beside them.</p>
+    <div class="who">
+      <article class="person">
+        <p class="role">Engineers</p>
+        <h3>Keep your head in the hard problem.</h3>
+        <p>Hand Ditto the papercuts. Each one comes back as a tested commit on a branch of its own, checked against your taste, ready when you are. You stay on the work only you can do.</p>
+        <div class="ex"><span class="ex-line">Retry the billing webhook with backoff, five tries at most</span><span class="ex-to">Ready on ditto/webhook-retry · 2&nbsp;files · Tests&nbsp;pass</span></div>
+        <p class="needs">Any project in git, with Claude Code on your Mac.</p>
+      </article>
+      <article class="person">
+        <p class="role">Product managers</p>
+        <h3>Stop waiting weeks for a small fix.</h3>
+        <p>Write what should change where you decided it. It comes back as a branch an engineer can merge in a minute. Ditto never merges or messages anyone, so you stay inside your team’s rules.</p>
+        <div class="ex"><span class="ex-line">Onboarding says “workspace”. Everywhere else says “project”.</span><span class="ex-to">Ready on ditto/onboarding-copy · 4&nbsp;files · Tests&nbsp;pass</span></div>
+        <p class="needs">You’ll need the project on your Mac, and Claude Code.</p>
+      </article>
+    </div>
+    <p class="aside">Designers who work in the repo: interface papercuts come back with an after picture.</p>
+  </section>
+
+  <section class="chapter" aria-labelledby="trust">
+    <h2 id="trust" class="statement">Plain Markdown files you own.<br>No account. Nothing comes to us.</h2>
+    <p class="lead">Your notes stay on your devices and in your iCloud Drive. There’s no AI anywhere until you connect it. When you do, Ditto works like this.</p>
+    <ul class="facts">
+      <li><h3>A branch of its own.</h3><p>Ditto works on a ditto/ branch. Yours is never touched.</p></li>
+      <li><h3>Your tests, run.</h3><p>The builder runs them before the work reaches you.</p></li>
+      <li><h3>A second look, made cold.</h3><p>The critic sees the work and your taste, never the builder’s reasoning.</p></li>
+      <li><h3>Nothing pushed or merged.</h3><p>Ship It commits to Ditto’s branch. What happens next is yours.</p></li>
+      <li><h3>Asks before it spends.</h3><p>If a line isn’t code, Ditto asks first. Stop any work, and nothing more is spent.</p></li>
+      <li><h3>Your own Claude account.</h3><p>Ditto runs Claude Code on your Mac. Your code never passes through us.</p></li>
+    </ul>
+  </section>
+
+  <section class="chapter" aria-labelledby="taste">
+    <h2 id="taste">It learns your taste.</h2>
+    <p class="lead">Every call, and every reason you give, teaches Ditto what you’d ship. The more you use it, the less you have to say.</p>
+    <ul class="beats plain">
+      <li><h3>Taste you can read.</h3><p>What Ditto believes about your taste is a note. Edit it like any other.</p></li>
+      <li><h3>A guess, sealed.</h3><p>Before you decide, Ditto seals its guess at your call, and shows you how often it was right.</p></li>
+      <li><h3>Trust, earned.</h3><p>Once it beats guessing, it may offer to commit one kind of work without asking. Only if you say yes, and you can take it back.</p></li>
+    </ul>
+  </section>
+
+  <section class="chapter" aria-labelledby="ink">
+    <h2 id="ink">Ink, on its own.</h2>
+    <p class="lead">Without Ditto, Ink is simply a calm notes app. Every note is a plain Markdown file, in step on your Mac and iPhone, with nothing on the page but your words.</p>
+    <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
+    <div class="bento-wrap">
+      <div class="bento">
+        <article class="tile big t-write" data-demo="write">
+          <div class="tx"><h3>Writing that feels like paper.</h3> <p>Plain Markdown, and nothing on the page but your words.</p></div>
+          <div class="demo d-write" aria-hidden="true" data-tap>
+            <div class="sheet">
+              <div class="w-title">Pricing page</div>
+              <p class="w-p">Lead with the free tier. Nobody reads the table.</p>
+              <p class="w-p" data-type>Open question: should annual be the default, or do we wait for the <span class="nb">data?<span class="caret-at"><i class="caret"></i></span></span></p>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-check" data-demo="check">
+          <div class="tx"><h3>Checklists.</h3> <p>Tick it, and it’s crossed off in one stroke.</p></div>
+          <div class="demo d-check" aria-hidden="true">
+            <div class="sheet">
+              <div class="sh-h">Before Friday’s release</div>
+              <ul class="checks">
+                <li class="on" data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Write the release notes<i class="strike"></i></span></li>
+                <li class="on" data-tap data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Check the empty states<i class="strike"></i></span></li>
+                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Update the changelog<i class="strike"></i></span></li>
+                <li data-tap><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Tell support what changed<i class="strike"></i></span></li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-links" data-demo="links">
+          <div class="tx"><h3>Links that follow a rename.</h3> <p>Change a title, and every link to it changes too.</p></div>
+          <div class="demo d-links" aria-hidden="true" data-tap>
+            <div class="sheet l-a">
+              <div class="l-title"><span class="swap"><span class="old">Auth spec</span><span class="new">Sign-in</span></span></div>
+              <div class="l-line">Passkeys first, then email links</div>
+            </div>
+            <div class="sheet l-b">
+              <div class="l-title">Roadmap</div>
+              <div class="l-line ink">Next: <span class="swap"><span class="old lnk"><span class="br">[[</span>Auth spec<span class="br">]]</span></span><span class="new lnk"><span class="br">[[</span>Sign-in<span class="br">]]</span></span></span></div>
+              <div class="toast">Updated 1 link to “Sign-in” <span class="sep">·</span> <b>Undo</b></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-search" data-demo="search">
+          <div class="tx"><h3>Files, scans and PDFs, in your notes.</h3> <p>Search reads them too, even the words in a photo.</p></div>
+          <div class="demo d-search" aria-hidden="true" data-tap>
+            <div class="photo">
+              <div class="receipt">
+                <div class="rh">RETRO · SPRINT 42</div>
+                <div class="rr"><span>Smaller PRs</span><span>keep</span></div>
+                <div class="rr hit"><span><i class="hl"></i>Webhook retries</span><span>fix</span></div>
+                <div class="rr"><span>Pair on Fridays</span><span>try</span></div>
+                <div class="rr rt"><span>Owners</span><span>Sam, Priya</span></div>
+              </div>
+            </div>
+            <div class="sheet s-panel">
+              <div class="s-field"><svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg><span data-type>webhook</span></div>
+              <div class="s-hit"><b>Retro, sprint 42</b><span>In a picture: <mark>Webhook</mark> retries</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-lock" data-demo="lock">
+          <div class="tx"><h3>Locked notes.</h3> <p>Face ID or Touch ID opens them. Only the title shows.</p></div>
+          <div class="demo d-lock" aria-hidden="true" data-tap>
+            <div class="sheet">
+              <div class="k-title">Candidate debriefs</div>
+              <div class="k-body">
+                <p class="k-words">Strong on systems design, quieter on product sense. A hire, if the panel agrees on Thursday. References are with Sam.</p>
+                <p class="k-blur">Strong on systems design, quieter on product sense. A hire, if the panel agrees on Thursday. References are with Sam.</p>
+                <div class="k-lock">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path class="shackle" d="M7.8 10.5V8a4.2 4.2 0 0 1 8.4 0v2.5"/><rect x="5" y="10.5" width="14" height="10" rx="2.6" fill="currentColor" stroke="none"/></svg>
+                  <span>Locked</span>
+                </div>
+              </div>
+              <svg class="faceid" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15V11a5 5 0 0 1 5-5h4M33 6h4a5 5 0 0 1 5 5v4M42 33v4a5 5 0 0 1-5 5h-4M15 42h-4a5 5 0 0 1-5-5v-4"/><path d="M17 18v3M31 18v3M24 18v9.5h-2M18.5 32.5c3 2.6 8 2.6 11 0"/></svg>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-tags" data-demo="tags">
+          <div class="tx"><h3>Tags, nested.</h3> <p>Write #product/billing/invoices, and the sidebar files it.</p></div>
+          <div class="demo d-tags" aria-hidden="true" data-tap>
+            <div class="sheet g-note">Invoices show the wrong tax line <span class="cap">#product/billing/invoices</span></div>
+            <ul class="g-tree">
+              <li style="--d:0"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>product</li>
+              <li style="--d:1" data-r="1"><svg class="chev" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg><span class="hash">#</span>billing</li>
+              <li style="--d:2" data-r="2" class="sel"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>invoices<span class="n">3</span></li>
+              <li style="--d:2" data-r="2"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>refunds<span class="n">1</span></li>
+              <li style="--d:1" data-r="1"><svg class="chev none" viewBox="0 0 10 10"></svg><span class="hash">#</span>onboarding<span class="n">5</span></li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="tile t-widget" data-demo="widget">
+          <div class="tx"><h3>A note on your Home Screen.</h3> <p>Small, medium or large, and on the Lock Screen.</p></div>
+          <div class="demo d-widget" aria-hidden="true" data-tap>
+            <div class="hs">
+              <div class="wg"><b>Today</b>
+                <ul class="checks">
+                  <li class="on"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">PR review<i class="strike"></i></span></li>
+                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Changelog<i class="strike"></i></span></li>
+                  <li><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Standup<i class="strike"></i></span></li>
+                </ul>
+              </div>
+              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
+              <i class="app"></i><i class="app"></i><i class="app"></i><i class="app"></i>
+            </div>
+          </div>
+        </article>
+
+        <article class="tile t-import" data-demo="import">
+          <div class="tx"><h3>Bring your notes.</h3> <p>From Bear, Obsidian or Notes’ exported files, with their folders and pictures.</p></div>
+          <div class="demo d-import" aria-hidden="true" data-tap>
+            <div class="im-stack">
+              <div class="im-card" style="--i:0"><b>Architecture</b><span>Queues before caches, always</span></div>
+              <div class="im-card" style="--i:1"><b>Interview loop</b><span>Four rounds, one take-home</span></div>
+              <div class="im-card" style="--i:2"><b>Release notes</b><span>A draft for 2.3</span></div>
+            </div>
+            <div class="toast">Imported 214 notes from Bear <span class="sep">·</span> <b>Undo</b></div>
+          </div>
+        </article>
+
 
         <article class="tile t-devices" data-demo="devices">
           <div class="tx"><h3>Mac and iPhone.</h3> <p>One way of working on both, in step through iCloud Drive.</p></div>
           <div class="demo" aria-hidden="true">
             <div class="dv">
               <div class="mw">
-                <div class="side"><div class="lights"><i></i><i></i><i></i></div><div class="srch"></div><div class="row sel">Saturday</div><div class="row">Reading list</div><div class="row">Garden plans</div></div>
-                <div class="pg"><div class="t">Saturday</div>
+                <div class="side"><div class="lights"><i></i><i></i><i></i></div><div class="srch"></div><div class="row sel">Launch</div><div class="row">Specs</div><div class="row">1:1s</div></div>
+                <div class="pg"><div class="t">Launch</div>
                   <ul class="checks">
-                    <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                    <li class="on" data-tap data-sync="1" data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
-                    <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
+                    <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Changelog<i class="strike"></i></span></li>
+                    <li class="on" data-tap data-sync="1" data-tick><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Demo video<i class="strike"></i></span></li>
+                    <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Pricing call<i class="strike"></i></span></li>
                   </ul>
                 </div>
               </div>
-              <div class="ph"><div class="t">Saturday</div>
+              <div class="ph"><div class="t">Launch</div>
                 <ul class="checks">
-                  <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Peaches<i class="strike"></i></span></li>
-                  <li class="on" data-tap data-sync="1" data-tick data-late><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Sourdough<i class="strike"></i></span></li>
-                  <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Flowers<i class="strike"></i></span></li>
+                  <li class="on" data-tap data-sync="0"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Changelog<i class="strike"></i></span></li>
+                  <li class="on" data-tap data-sync="1" data-tick data-late><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Demo video<i class="strike"></i></span></li>
+                  <li data-tap data-sync="2"><span class="box"><i class="fill"></i><svg viewBox="0 0 16 16"><path d="M4.6 8.3l2.3 2.3 4.6-4.9"/></svg></span><span class="ct">Pricing call<i class="strike"></i></span></li>
                 </ul>
               </div>
             </div>
@@ -763,22 +856,6 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     </div>
   </section>
 
-  <section class="chapter" aria-labelledby="ditto">
-    <h2 id="ditto">Your notes know what you decided.</h2>
-    <p class="lead">The work happens somewhere else, and every hand-off loses a little. Ditto carries the line across: into your project with Claude Code, to your taste, and back to you for one decision.</p>
-    <ol class="beats">
-      <li><span class="n" aria-hidden="true">1</span><h3>Write a line.</h3><p>The line you wrote is the brief. Ditto reads it, with the lines around it.</p></li>
-      <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>A builder does the work with Claude Code on your Mac, in your project on a branch of its own, and runs your tests. A critic checks it against your taste before you see it. A line that isn’t code becomes a draft.</p></li>
-      <li><span class="n yours" aria-hidden="true">3</span><h3>Make one call.</h3><p>Ship It, Ask for Changes or Discard, with what changed and what was checked. Every call teaches it your taste.</p></li>
-    </ol>
-    <p class="aside">On iPhone, hand Ditto a line, see what it’s doing, and make the call from anywhere.</p>
-    <p class="aside">Before you decide, Ditto seals its guess at your call, and shows you how often it’s right.</p>
-  </section>
-
-  <section class="chapter" aria-labelledby="trust">
-    <h2 id="trust" class="statement">Plain Markdown files you own.<br>No account. Nothing comes to us.</h2>
-    <p class="lead">Your notes stay on your devices and in your iCloud Drive. There’s no AI anywhere until you connect it. When you do, Ditto works through Claude Code on your Mac with your own Claude account, on a branch of its own, and never pushes your code anywhere or messages anyone.</p>
-  </section>
 
   <section class="chapter" aria-labelledby="download">
     <h2 id="download">Download.</h2>
@@ -802,11 +879,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   <section class="chapter" aria-labelledby="faq">
     <h2 id="faq">Questions.</h2>
     <div class="qa">
-      <div><h3>Who is it for?</h3><p>People who build products: engineers first, and product managers and designers who work in a repo. If you write down what should change, then carry it to the work yourself, it’s for you.</p></div>
-      <div><h3>Do I need Ditto to use Ink?</h3><p>No. Without it, Ink is simply a calm notes app, and Ditto waits quietly until you ask for it.</p></div>
       <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked against your taste before you see it, and you answer once. Your note remembers what became of every line.</p></div>
+      <div><h3>Is my code safe?</h3><p>Ditto works on a branch of its own, runs your tests, and commits only when you choose Ship It. It never pushes, merges or messages anyone. Your code goes only where Claude Code sends it, under your own Claude account.</p></div>
       <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude Code, a Claude account and, for code, a project in git. On iPhone, you can hand Ditto a line and decide the work your Mac is doing.</p></div>
+      <div><h3>What does it cost?</h3><p>Ink is free. Ditto is free while it’s in early access. The work itself runs on your own Claude account.</p></div>
       <div><h3>Can Ditto do more than code?</h3><p>Today it builds software, can explore a few directions before it builds, and drafts anything else for you to send. Specs, tickets, research summaries and design checks are coming.</p></div>
+      <div><h3>Do I need Ditto to use Ink?</h3><p>No. Without it, Ink is simply a calm notes app, and Ditto waits quietly until you ask for it.</p></div>
       <div><h3>Who makes it?</h3><p>Ash Bronca, in Australia. Write to <a href="mailto:support@inkandditto.com">support@inkandditto.com</a>.</p></div>
     </div>
   </section>
