@@ -236,7 +236,7 @@ p { margin: 0 0 1rem; }
 .chapter .lead { color: var(--ink-2); max-width: 33rem; margin: 0 auto; text-wrap: balance; }
 .chapter .statement { font-size: clamp(2rem, 4.8vw, 3.25rem); line-height: 1.15; margin-bottom: 1.6rem; }
 .chapter .bento-wrap { text-align: left; }
-.chapter .stage { margin-top: clamp(3rem, 7vw, 4.5rem); }
+.chapter .stage { margin-top: clamp(2.5rem, 6vw, 3.5rem); margin-bottom: clamp(2rem, 5vw, 3rem); }
 button.button { border: 0; font: inherit; font-weight: 600; cursor: pointer; -webkit-appearance: none; appearance: none; }
 .dark { display: none; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .light { display: none; } :root:not([data-theme="light"]) .dark { display: block; } }
@@ -542,7 +542,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 
 /* The new chapters: a plain triad (no numbers), the two people it's for, and the safety facts. */
 .beats.plain li { gap: 0.4rem; }
-.gap { font: 400 clamp(1.3rem, 1rem + 1.1vw, 1.65rem)/1.35 var(--serif); letter-spacing: -0.005em; max-width: 38rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-wrap: balance; }
+.gap-lead { color: var(--ink-2); max-width: 33rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-wrap: balance; }
+.gap { font: 400 clamp(1.3rem, 1rem + 1.1vw, 1.65rem)/1.35 var(--serif); letter-spacing: -0.005em; max-width: 36rem; margin: 1rem auto 0; text-wrap: balance; }
 .loop { margin-top: clamp(3rem, 7vw, 4.5rem); }
 .bento.solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
 .bento.solo > .tile { grid-area: auto; }
@@ -644,7 +645,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       <li><h3>Every hand-off starts from scratch.</h3><p>The decision is already in your note. You type it again into a prompt, a ticket or a thread, and the context stays behind.</p></li>
       <li><h3>The review lands on you.</h3><p>Agents make work faster to produce, not faster to trust. It comes back as a diff with no trail, and you check every line.</p></li>
     </ul>
-    <p class="gap">Notes apps hold the thinking. Agents and work tools do the work, from a blank prompt or a filed ticket. Nothing starts from the line where you decided, and nothing comes back for one calm decision, in your taste. Ink &amp; Ditto closes that gap.</p>
+    <p class="gap-lead">Notes apps hold the thinking. Agents and work tools do the work, from a blank prompt or a filed ticket.</p>
+    <p class="gap">Nothing starts from the line where you decided, and nothing comes back for one calm decision, in your taste. Ink &amp; Ditto closes that gap.</p>
   </section>
 
   <section class="chapter" aria-labelledby="ditto">
@@ -687,7 +689,13 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>A builder does the work with Claude&nbsp;Code on your Mac, in your project on a branch of its own, and runs your tests. A critic, who never sees the builder’s reasoning, checks it against your taste before you see it. A line that isn’t code becomes a draft, if you say&nbsp;so.</p></li>
       <li><span class="n yours" aria-hidden="true">3</span><h3>Make one call.</h3><p>Ship It, Ask for Changes or Discard, with what changed and what was checked. Every call teaches it your&nbsp;taste.</p></li>
     </ol>
-    <p class="aside">From then on, Ditto sits in the margin beside the line, and its motion shows where the work is: listening, working, your move. The note remembers what became of it.</p>
+    <p class="aside">From the moment you press ⌘↩, Ditto sits in the margin beside the line, and its motion shows where the work is: listening, working, your move. The note remembers what became of it.</p>
+    <div class="stage">
+    <img decoding="async" class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
+    <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
+    </div>
     <p class="aside">On iPhone (coming soon), hand Ditto a line, follow the work and make the call from anywhere.</p>
   </section>
 
@@ -757,12 +765,6 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   <section class="chapter" aria-labelledby="ink">
     <h2 id="ink">Ink, on its own.</h2>
     <p class="lead">Without Ditto, Ink is simply a calm notes app. Every note is a plain Markdown file, in step on your Mac and iPhone, with nothing on the page but your words. Typing never waits on Ditto.</p>
-    <div class="stage">
-    <img decoding="async" class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
-    <img decoding="async" class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
-    <img decoding="async" class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
-    <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
-  </div>
     <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
     <div class="bento-wrap">
       <div class="bento">
