@@ -1606,12 +1606,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     wakeHero();
     // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
     // first; the bar's controls last. Nothing arrives at once.
-    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 300;   // only once Ditto is itself, eyes open (Ash, 16 Oct)
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 650;   // Ash's pacing: never hurried (16 Oct)
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
       run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
-      when2 += 350;
+      when2 += dur + 450;
     });
     document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
       run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: when2 - 150, duration: 700, easing: "ease-out" });
