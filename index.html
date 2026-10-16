@@ -40,7 +40,10 @@
       // Every fresh visit, as LoveFrom's: not on Back, not when coming from our own pages, not to a section.
       var nav = {}; try { nav = performance.getEntriesByType("navigation")[0] || {}; } catch (e) {}
       var fromUs = false; try { fromUs = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
-      if (!location.hash && !fromUs && nav.type !== "back_forward") d.dataset.opening = "";
+      // A reload from partway down puts you back where you were: no opening there, the page as you left it.
+      var wasDown = false; try { wasDown = nav.type === "reload" && +sessionStorage.getItem("inkY") > 4; } catch (e) {}
+      if (!location.hash && !fromUs && nav.type !== "back_forward" && !wasDown) d.dataset.opening = "";
+      addEventListener("pagehide", function () { try { sessionStorage.setItem("inkY", String(Math.round(scrollY))); } catch (e) {} });
     }
   })(document.documentElement);
 </script>
@@ -1649,6 +1652,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     opening = run.list;
     delete root.dataset.opening;
     setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
+    // And if the browser puts the page somewhere below the name anyway (its own scroll restoring), the page shows at once.
+    (function watch(n) { if (!opening.length) return; if (scrollY > 4) return endOpening(); if (n < 120) requestAnimationFrame(function () { watch(n + 1); }); })(0);
     run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
   }
   function heroPose(t) { var p = pose(heroHop.keys, t); return Object.assign(p, heroHop.path(t)); }
