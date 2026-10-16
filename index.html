@@ -1610,6 +1610,16 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     // ends exactly where the name rests and nothing else moves.
     var hr = h1.getBoundingClientRect(), pt = parseFloat(getComputedStyle(h1).paddingTop) || 0, drop = Math.round(innerHeight / 2 - (hr.top + pt + (hr.height - pt) / 2));
     var RISE = END + 450, RD = 1250;
+    // And across: the caret starts in the middle of the screen, the words stay centred as they're typed, and as the
+    // drop rolls out "Ditto" the name eases across to its own centre, arriving as the drop comes to rest (Ash, 16 Oct:
+    // start where LoveFrom starts). Its own property (translate), so it never fights the rise.
+    var aL = A[0].getBoundingClientRect().left, aR = A[A.length - 1].getBoundingClientRect().right;
+    var nameMid = (aL + hd.getBoundingClientRect().right) / 2, X0c = Math.round(nameMid - aL), X1c = Math.round(nameMid - (aL + aR) / 2);
+    var XT = rollAt + TR, typed = timesA[timesA.length - 1] + 90, glide = "cubic-bezier(.45,0,.25,1)";
+    if (Math.abs(X0c) > 8 && XT > POP) run.go(h1, [
+      { translate: X0c + "px 0", offset: 0 }, { translate: X0c + "px 0", offset: timesA[0] / XT, easing: glide },
+      { translate: X1c + "px 0", offset: typed / XT }, { translate: X1c + "px 0", offset: POP / XT, easing: glide },
+      { translate: "0px 0", offset: 1 }], { duration: XT, easing: "linear", fill: "backwards" });
     if (drop > 12) run.go(h1, [{ transform: "translateY(" + drop + "px)" },
       { transform: "translateY(" + drop + "px)", offset: RISE / (RISE + RD), easing: "cubic-bezier(.45,0,.18,1)" },
       { transform: "none" }], { duration: RISE + RD, easing: "linear", fill: "backwards" });
