@@ -573,6 +573,11 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .gap-lead { color: var(--ink-2); max-width: 33rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-wrap: balance; }
 .gap { font: 400 clamp(1.3rem, 1rem + 1.1vw, 1.65rem)/1.35 var(--serif); letter-spacing: -0.005em; max-width: 36rem; margin: 1rem auto 0; text-wrap: balance; }
 .loop { margin-top: clamp(3rem, 7vw, 4.5rem); }
+/* The promise, inked: one hand-drawn stroke under it, drawn once as it comes into view. */
+.inked { position: relative; white-space: nowrap; }
+.inked .stroke { position: absolute; left: -2%; bottom: -0.44em; width: 104%; height: 0.42em; overflow: visible; pointer-events: none; }
+.inked .stroke path { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.82; }
+.lk-eyes { transform-box: fill-box; transform-origin: 50% 50%; }
 .bento.solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
 .bento.solo > .tile { grid-area: auto; }
 .who { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; max-width: var(--wide); margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
@@ -621,7 +626,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     <a class="home" href="#top" aria-label="Ink &amp; Ditto, to the top">
       <img decoding="async" class="light" src="assets/ink-light.png" alt="" width="398" height="287" loading="lazy">
       <img decoding="async" class="dark" src="assets/ink-dark.png" alt="" width="398" height="287" loading="lazy">
-      <svg class="ditto7 small lk-ditto" viewBox="0 0 40 34" aria-hidden="true"><path class="b" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><ellipse class="ew" cx="16.1" cy="21.01" rx="2.73" ry="4.27"/><ellipse class="ew" cx="23.9" cy="21.01" rx="2.73" ry="4.27"/></svg>
+      <svg class="ditto7 small lk-ditto" viewBox="0 0 40 34" aria-hidden="true"><path class="b" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><g class="lk-eyes"><ellipse class="ew" cx="16.1" cy="21.01" rx="2.73" ry="4.27"/><ellipse class="ew" cx="23.9" cy="21.01" rx="2.73" ry="4.27"/></g></svg>
     </a>
     <div class="bar-end">
       <a class="button small status" href="#download"><span class="unless-get">Coming soon</span><span class="when-get">Download</span></a>
@@ -675,7 +680,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       <li><h3>The review lands on you.</h3><p>Agents make work faster to produce, not faster to trust. It comes back as a diff with no trail, and you check every line.</p></li>
     </ul>
     <p class="gap-lead">Notes apps hold the thinking. Agents and work tools do the work, from a blank prompt or a filed ticket.</p>
-    <p class="gap">Nothing starts from the line where you decided, and nothing comes back for one calm decision, in your taste. Ink &amp; Ditto closes that gap.</p>
+    <p class="gap">Nothing starts from the line where you decided, and nothing comes back for one calm decision, in your taste. Ink &amp; Ditto <span class="inked">closes that gap<svg class="stroke" viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M1.5 5.6C18 3.9 38 6.4 58 4.9S88 4.1 98.5 5.3"/></svg></span>.</p>
   </section>
 
   <section class="chapter" aria-labelledby="ditto">
@@ -1882,6 +1887,39 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   });
   // Reading on: if the page moves far, Ditto goes straight home.
   addEventListener("scroll", function () { if (trip && Math.abs(scrollY - trip.y) > 60) endTrip(); }, { passive: true });
+
+  // 4. The bar's Ditto is alive too: an irregular blink, and a glance toward the pointer when it comes near.
+  (function () {
+    var eyes = document.querySelector(".bar .lk-eyes"), mark = document.querySelector(".bar .lk-ditto");
+    if (!eyes || still.matches) return;
+    var gx = 0, gy = 0;
+    function set(blink) { eyes.style.transform = "translate(" + gx.toFixed(2) + "px," + gy.toFixed(2) + "px)" + (blink ? " scaleY(0.12)" : ""); }
+    (function blink() {
+      setTimeout(function () {
+        if ("past" in root.dataset && !document.hidden) { set(true); setTimeout(function () { set(false); }, 110); }
+        blink();
+      }, 4500 + Math.random() * 6000);
+    })();
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) addEventListener("pointermove", function (e) {
+      if (!("past" in root.dataset)) return;
+      var r = mark.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height * 0.6), d = Math.hypot(dx, dy) || 1;
+      var k = Math.max(0, 1 - d / 320);
+      gx = dx / d * 1.1 * k; gy = dy / d * 0.8 * k; set(false);
+    }, { passive: true });
+  })();
+
+  // 5. The promise, inked: the stroke under "closes that gap" draws itself once, as the line comes into view.
+  (function () {
+    var path = document.querySelector(".inked .stroke path");
+    if (!path || still.matches || !("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      path.animate([{ strokeDasharray: "1 1", strokeDashoffset: 1 }, { strokeDasharray: "1 1", strokeDashoffset: 0 }],
+        { duration: 950, delay: 450, easing: "cubic-bezier(.3,.6,.2,1)", fill: "backwards" });
+    }, { threshold: 0.9 });
+    io.observe(path.closest(".gap"));
+  })();
 
   // 3. Ship It, in the Ditto tile: a tiny happy bounce, two small hops in place, before the line is done.
   window.__dittoShip = function (t, done) {
