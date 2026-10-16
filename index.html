@@ -55,6 +55,7 @@
   --ink-2: rgba(28, 26, 21, 0.62);
   --rule: rgba(28, 26, 21, 0.38);
   --fill: rgba(28, 26, 21, 0.06);
+  --diff-del: rgba(214, 69, 65, 0.12); --diff-add: rgba(52, 168, 83, 0.14);
   --your-move: #AE3F2E;
   --shadow: 0 1px 2px rgba(28, 26, 21, 0.06), 0 18px 50px rgba(28, 26, 21, 0.10);
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -80,7 +81,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #14130F; --desk: #1B1915; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
-    --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
+    --fill: rgba(242, 238, 230, 0.07); --diff-del: rgba(226, 95, 74, 0.13); --diff-add: rgba(98, 196, 120, 0.11); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
     --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
     --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
     --wall-1: #2C2822; --wall-2: #171511;
@@ -90,7 +91,7 @@
 }
 :root[data-theme="dark"] {
   --paper: #14130F; --desk: #1B1915; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
-  --fill: rgba(242, 238, 230, 0.07); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
+  --fill: rgba(242, 238, 230, 0.07); --diff-del: rgba(226, 95, 74, 0.13); --diff-add: rgba(98, 196, 120, 0.11); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
     --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
     --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
     --wall-1: #2C2822; --wall-2: #171511;
@@ -468,6 +469,22 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .dt-line { position: relative; padding: 0.12rem 0; line-height: 1.5; }
 .dt-line .wash { position: absolute; inset: 0 -0.5rem; border-radius: 0.4rem; background: var(--fill-2); opacity: 0; z-index: -1; }
 .dt-line .txt { position: relative; }
+.dt-now { display: grid; font-size: 0.8125rem; line-height: 1.4; color: var(--ink-2); margin-top: 0.1rem; }
+.dt-now .now-i { grid-area: 1 / 1; opacity: 0; }
+.dt-now .now-i.last { opacity: 1; }
+.d-ditto.shipped .now-i.last, .d-ditto.discarded .now-i.last { opacity: 0; }
+.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d { opacity: 1; }
+.d-ditto .caret { opacity: 0; }
+.rv-diff { display: grid; margin: 0.55rem 0 0.7rem; padding: 0.45rem 0; border-radius: 0.6rem; background: var(--fill); font: 500 0.75rem/1.55 var(--mono); overflow: hidden; }
+.rv-diff span { padding: 0 0.7rem; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+.rv-diff .del { background: var(--diff-del); }
+.rv-diff .add { background: var(--diff-add); }
+@container (max-width: 24rem) { .rv-diff { font-size: 0.6875rem; } .rv-diff span { padding: 0 0.55rem; } }
+.rv-diff .del::before { content: "− "; opacity: 0.6; }
+.rv-diff .add::before { content: "+ "; opacity: 0.6; }
+.rv-checks { list-style: none; padding: 0; margin: 0 0 0.85rem; display: grid; gap: 0.2rem; }
+.rv-checks li { position: relative; padding-left: 1.35rem; }
+.rv-checks li::before { content: ""; position: absolute; left: 0.1rem; top: 0.36em; width: 0.7rem; height: 0.4rem; border: solid currentColor; border-width: 0 0 2px 2px; transform: rotate(-45deg); opacity: 0.55; }
 .dt-mg { position: absolute; left: -2.45rem; top: 0.05rem; width: 1.9rem; height: 1.6rem; display: grid; place-items: end center; }
 .dt-ditto { width: 1.9rem; height: auto; overflow: visible; transform-origin: 50% 94%; }
 .dt-ditto .eyes { transform-box: fill-box; transform-origin: center; }
@@ -489,7 +506,6 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .rv-eb { font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 600; color: var(--ink-2); text-transform: uppercase; }
 .rv-t { font: 700 1.125rem/1.25 var(--sans); letter-spacing: -0.012em; margin: 0.25rem 0 0.55rem; text-wrap: balance; }
 .rv-m { color: var(--ink-2); }
-.rv-ok { margin: 0.2rem 0 0.8rem; }
 .rv-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
 .rv-b { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.45em 0.85em; border-radius: 999px; background: var(--fill-2); font-weight: 600; white-space: nowrap; }
 .rv-b i { font-style: normal; font-weight: 500; font-size: 0.85em; opacity: 0.6; }
@@ -627,7 +643,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
                   <svg class="ditto7 small dt-ditto" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="dtg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="dts" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="dtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="dtf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="dth" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="dtc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="dtl0"><path class="lp" d="M12.47 16.92Q16.1 16.92 19.73 16.92L19.73 25.09Q16.1 25.09 12.47 25.09Z"/></clipPath><clipPath id="dtl1"><path class="lp" d="M27.53 16.92Q23.9 16.92 20.27 16.92L20.27 25.09Q23.9 25.09 27.53 25.09Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#dtf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#dtg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#dtc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#dts)" filter="url(#dth)"/><path class="rim bp" clip-path="url(#dtc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#dtr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#dtl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="2.42" ry="3.78"/></g><g clip-path="url(#dtl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="2.42" ry="3.78"/></g></g><circle class="dot" cx="36.6" cy="8.8" r="3.4" style="fill: var(--your-move)"/></g></svg>
                   <svg class="dt-done" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5"/></svg>
                 </span>
-                <span class="txt">The empty state on Projects feels like an error</span>
+                <span class="txt" data-type>The empty state on Projects feels like an error<span class="caret-at"><i class="caret"></i></span></span>
+                <span class="dt-now"><span class="now-i">Ditto read your line and briefed a builder.</span><span class="now-i">Builder is making the change…</span><span class="now-i">Builder is running your tests…</span><span class="now-i">Critic is checking it against your taste…</span><span class="now-i last">Ready for your call.</span><span class="now-i s">Shipped to a branch of its own.</span><span class="now-i d">Discarded. Nothing was merged.</span></span>
               </div>
               <div class="dt-line"><span class="txt">Dense tables on mobile need a second look</span></div>
               <div class="dt-line"><span class="txt">Tidy the billing copy</span></div>
@@ -635,11 +652,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
               <div class="rv">
                 <div class="rv-eb">Review</div>
                 <div class="rv-t">The empty state on Projects feels like an error</div>
-                <div class="rv-m">ProjectsEmpty.tsx · +5&nbsp;−2 · Tests&nbsp;pass</div>
-                <div class="rv-ok">Checked against your taste. No problems found.</div>
+                <div class="rv-m">ProjectsEmpty.tsx · +5&nbsp;−2</div>
+                <div class="rv-diff"><span class="del">&lt;p&gt;No projects found.&lt;/p&gt;</span><span class="add">&lt;h2&gt;Your first project&lt;/h2&gt;</span><span class="add">&lt;Button&gt;New project&lt;/Button&gt;</span></div>
+                <ul class="rv-checks"><li>Your tests pass</li><li>Reads as an invitation, not an error</li><li>One action, as you like it</li></ul>
                 <div class="rv-acts"><span class="rv-b ship" data-act="ship">Ship It <i>⌘↩</i></span><span class="rv-b" data-act="ask">Ask for Changes… <i>⌘R</i></span><span class="rv-b quiet" data-act="discard">Discard</span></div>
               </div>
-              <div class="after s">Ready on ditto/projects-empty-state. Nothing was pushed or merged.</div>
+              <div class="after s">Ready on ditto/projects-empty-state. Nothing was pushed or merged.<br>Tap to see it again.</div>
               <div class="after d">Discarded. Tap to see it again.</div>
               </div>
             </div>
@@ -1023,7 +1041,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   }
 
   // Ink's caret, following the words as they're typed: solid while typing, then it breathes a few times and rests.
-  function caretAlong(run, caret, typed) {
+  function caretAlong(run, caret, typed, quiet) {
     var ls = typed.letters, last = ls[ls.length - 1].getBoundingClientRect(), T = typed.end + 40;
     function at(r, edge) { return "translate(" + (r[edge] - last.right).toFixed(1) + "px," + (r.top - last.top).toFixed(1) + "px)"; }
     var first = ls[0].getBoundingClientRect(), kf = [{ offset: 0, transform: at(first, "left") }], prev = kf[0].transform;
@@ -1033,6 +1051,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     });
     kf.push({ offset: 1, transform: "none" });
     run.go(caret, kf, { duration: T, easing: "linear" });
+    if (quiet) return;
     run.go(caret, [{ opacity: 1 }, { opacity: 1, offset: 0.42 }, { opacity: 0.1, offset: 0.58 }, { opacity: 0.1, offset: 0.88 }, { opacity: 1 }],
       { delay: T + 550, duration: 1200, iterations: 2, easing: "ease-in-out", fill: "none" });
   }
@@ -1309,19 +1328,33 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     ditto: function (run, t) {
       var d = t.querySelector(".d-ditto"), ditto = t.querySelector(".dt-ditto");
       d.classList.remove("shipped", "discarded", "asked");
-      run.go(t.querySelector(".keys"), [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none", offset: 0.18 }, { opacity: 1, transform: "none", offset: 0.8 }, { opacity: 0, transform: "none" }], { delay: 250, duration: 1500, easing: "ease-out" });
-      t.querySelectorAll(".keys span").forEach(function (k, i) { run.go(k, [{ transform: "none" }, { transform: "translateY(2px) scale(.94)" }, { transform: "none" }], { delay: 800 + i * 70, duration: 220 }); });
-      // Ditto rises in the margin beside the line, leans toward it, and works.
-      // Ditto gathers from a spot of ink in the margin, rises, overshoots, settles; works with one slow breath;
+      // 1. You write the line.
+      var typed = type(run, t.querySelector("[data-type]"), 450, 38), caret = t.querySelector(".d-ditto .caret");
+      caretAlong(run, caret, typed, true);
+      var K = typed.end + 350, D = K + 450;
+      run.go(caret, [{ opacity: 1 }, { opacity: 1, offset: 0.92 }, { opacity: 0 }], { delay: 450, duration: K - 450 + 80, easing: "linear", fill: "none" });
+      // 2. ⌘↩: the keys go down, and Ditto gathers in the margin beside the line.
+      run.go(t.querySelector(".keys"), [{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none", offset: 0.18 }, { opacity: 1, transform: "none", offset: 0.8 }, { opacity: 0, transform: "none" }], { delay: K - 300, duration: 1500, easing: "ease-out" });
+      t.querySelectorAll(".keys span").forEach(function (k, i) { run.go(k, [{ transform: "none" }, { transform: "translateY(2px) scale(.94)" }, { transform: "none" }], { delay: K + i * 70, duration: 220 }); });
+      // Ditto gathers from a spot of ink, rises, overshoots, settles; then works, leaning into it, with slow breaths;
       // then it's your move: the red mark, and the review.
       t._rig = t._rig || new Rig(ditto);
       run.list.push(new RigRun(t._rig, [
         { t: 0, s: 0.12, foot: 8, open: 0, o: 0 }, { t: 120, o: 1, e: "l" }, { t: 260, s: 0.42, foot: 7, e: "o" },
         { t: 430, s: 1.16, foot: 2.2, open: 0.2, e: "o" }, { t: 560, s: 0.9, foot: 4.6, open: 1, e: "io" }, { t: 680, s: 1.04, foot: 3.3 },
-        { t: 800, s: 1, foot: 3.6 }, { t: 1100, lean: 0.4 }, { t: 1650, s: 1.035, foot: 3.1, lean: 1.2 }, { t: 2200, s: 1, foot: 3.6, lean: 0 }
-      ], run.at + 1050));
-      run.spring(t.querySelector(".dt-ditto .dot"), [{ opacity: 0, transform: "scale(0)" }, { opacity: 1, transform: "none" }], 2850, POP);
-      run.spring(t.querySelector(".rv"), [{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "none" }], 2950);
+        { t: 800, s: 1, foot: 3.6 }, { t: 1150, lean: 0.4 }, { t: 1700, s: 1.035, foot: 3.1, lean: 1.2 }, { t: 2300, s: 1, foot: 3.6, lean: 0.5 },
+        { t: 2900, s: 1.035, foot: 3.1, lean: 1.1 }, { t: 3500, s: 1, foot: 3.6, lean: 0.4 }, { t: 4100, s: 1.03, foot: 3.2, lean: 0.9 },
+        { t: 4800, s: 1, foot: 3.6, lean: 0 }
+      ], run.at + D));
+      // 3. The margin says what's happening, in the app's own words, one sentence at a time.
+      var now = t.querySelectorAll(".now-i"), at = [D + 500, D + 1550, D + 2650, D + 3750], ready = D + 4900;
+      at.forEach(function (a, i) {
+        var b = (i + 1 < at.length ? at[i + 1] : ready), len = b - a + 160;
+        run.go(now[i], [{ opacity: 0, transform: "translateY(3px)" }, { opacity: 1, transform: "none", offset: 220 / len }, { opacity: 1, transform: "none", offset: (len - 160) / len }, { opacity: 0, transform: "translateY(-3px)" }], { delay: a, duration: len, easing: "linear", fill: "none" });
+      });
+      run.go(now[4], [{ opacity: 0, transform: "translateY(3px)" }, { opacity: 1, transform: "none" }], { delay: ready + 120, duration: 320 });
+      run.spring(t.querySelector(".dt-ditto .dot"), [{ opacity: 0, transform: "scale(0)" }, { opacity: 1, transform: "none" }], ready, POP);
+      run.spring(t.querySelector(".rv"), [{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "none" }], ready + 100);
     }
   };
 
@@ -1374,7 +1407,11 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         return;
       }
       if (t.dataset.demo === "lock") return;
-      if (e.target.closest(".demo[data-tap]")) play(t, 0, false);
+      if (e.target.closest(".demo[data-tap]")) {
+        // Back to the review, whatever was decided — with Reduce Motion too, where nothing replays.
+        var dd = t.querySelector(".d-ditto"); if (dd) dd.classList.remove("shipping", "shipped", "discarded", "asked");
+        play(t, 0, false);
+      }
     });
   });
 
