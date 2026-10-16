@@ -248,9 +248,9 @@ p { margin: 0 0 1rem; }
 @media (min-width: 48rem) { .beats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
 .beats li { display: grid; gap: 0.5rem; align-content: start; max-width: 22rem; }
 @media (max-width: 47.99rem) { .beats li { margin-inline: auto; width: 100%; max-width: 26rem; } }
-.beats .n { font: 400 2.75rem/1 var(--serif); font-variant-numeric: oldstyle-nums; color: var(--ink-2); margin-bottom: 0.35rem; }
+.beats .n { font: 400 2.75rem/1 var(--serif); font-variant-numeric: lining-nums; color: var(--ink-2); margin-bottom: 0.35rem; }
 .beats .n.yours { color: var(--your-move); }
-.beats h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; }
+.beats h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
 .beats p { color: var(--ink-2); margin: 0; }
 .chapter .aside { color: var(--ink-2); margin: 3rem auto 0; max-width: 30rem; font-size: 0.9375rem; text-wrap: balance; }
 .chapter .aside + .aside { margin-top: 0.6rem; }
@@ -266,7 +266,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .get .soon { display: inline-flex; align-items: center; height: 2.75rem; font-size: 0.9375rem; font-weight: 500; color: var(--ink-2); }
 
 .qa { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: 26rem; margin: 3rem auto 0; text-align: left; overflow-wrap: anywhere; }
-.qa h3 { font: 400 1.25rem/1.3 var(--serif); margin: 0 0 0.4rem; }
+.qa h3 { font: 400 1.25rem/1.3 var(--serif); margin: 0 0 0.4rem; text-wrap: balance; }
 .qa p { margin: 0; color: var(--ink-2); }
 
 /* The end echoes the beginning: the line, and Ditto resting as its full stop. */
@@ -479,10 +479,13 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .d-ditto .again { font-weight: 600; color: var(--ink); white-space: nowrap; cursor: pointer; }
 .d-ditto .caret-at .keys { position: absolute; left: 0.55rem; top: -0.3em; right: auto; bottom: auto; gap: 0.25rem; white-space: nowrap; }
 .d-ditto .caret-at .keys span { min-width: 1.75rem; height: 1.75rem; font-size: 0.875rem; border-radius: 0.45rem; }
-.dt-now .now-i { grid-area: 1 / 1; opacity: 0; }
+.dt-now .now-i { grid-area: 1 / 1; opacity: 0; pointer-events: none; }
+.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d { pointer-events: auto; }
 .dt-now .now-i.last { opacity: 1; }
 .d-ditto.shipped .now-i.last, .d-ditto.discarded .now-i.last { opacity: 0; }
-.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d { opacity: 1; }
+.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d, .d-ditto.asked .now-i.a { opacity: 1; }
+.d-ditto.asked .now-i.last { opacity: 0; }
+.d-ditto .branch { white-space: nowrap; }
 .d-ditto .caret { opacity: 0; }
 .rv-diff { display: grid; margin: 0.55rem 0 0.7rem; padding: 0.45rem 0; border-radius: 0.6rem; background: var(--fill); font: 500 0.75rem/1.55 var(--mono); overflow: hidden; }
 .rv-diff span { padding: 0 0.7rem; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
@@ -522,7 +525,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 @media (hover: hover) { .rv-b:hover { filter: brightness(1.08); } .rv-b.quiet:hover { color: var(--ink); } }
 .rv-b:active { transform: scale(0.97); }
 @container (max-width: 33rem) { .rv-b i { display: none; } .d-ditto .sheet { --mg: 3.1rem; } }
-@container (max-width: 24rem) { .rv-b { padding: 0.45em 0.7em; } .rv-b.quiet { margin-left: 0; } .rv-acts { gap: 0.3rem; } .rv-slot { margin-left: calc(0.75rem - var(--mg)); } }
+@container (max-width: 24rem) { .rv-acts { gap: 0.4rem; } .rv-b.ship { flex: 1 0 100%; box-sizing: border-box; justify-content: center; padding-block: 0.6em; } .rv-slot { margin-left: calc(0.75rem - var(--mg)); } }
 .d-ditto .after { position: absolute; left: 1.2rem; top: 1rem; font-size: 0.875rem; color: var(--ink-2); opacity: 0; }
 /* After a call: the review goes; the line keeps what became of it. */
 .d-ditto.shipping .rv, .d-ditto.shipped .rv, .d-ditto.discarded .rv, .d-ditto.asked .rv { opacity: 0; transform: translateY(1.25rem) scale(0.98); pointer-events: none; }
@@ -537,11 +540,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 
 /* The new chapters: a plain triad (no numbers), the two people it's for, and the safety facts. */
 .beats.plain li { gap: 0.4rem; }
+.gap { font: 400 clamp(1.3rem, 1rem + 1.1vw, 1.65rem)/1.35 var(--serif); letter-spacing: -0.005em; max-width: 38rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-wrap: balance; }
 .loop { margin-top: clamp(3rem, 7vw, 4.5rem); }
 .bento.solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
 .bento.solo > .tile { grid-area: auto; }
 .who { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; max-width: var(--wide); margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
-@media (min-width: 48rem) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 48rem) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 0; } .who .person { display: grid; grid-row: span 5; grid-template-rows: subgrid; align-content: start; } .who .person .ex { margin-top: 0.6rem; align-self: start; } }
 .person { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.75rem; border-radius: 1.75rem; background: var(--tile); box-shadow: var(--tile-ring); min-width: 0; }
 @media (max-width: 30rem) { .person { padding: 1.25rem; border-radius: 1.5rem; } }
 .person .role { margin: 0; font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 600; color: var(--ink-2); text-transform: uppercase; }
@@ -554,7 +558,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .ex-to { color: var(--ink-2); font-size: 0.875rem; overflow-wrap: anywhere; }
 .ex-to::before { content: "→ "; }
 .facts { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: var(--wide); margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
-@media (min-width: 48rem) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 48rem) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 0; } .facts li { display: grid; grid-row: span 2; grid-template-rows: subgrid; } .facts h3 { margin: 0; } }
 .facts h3 { font: 400 1.25rem/1.25 var(--serif); letter-spacing: -0.005em; margin: 0 0 0.35rem; }
 .facts p { margin: 0; color: var(--ink-2); font-size: 0.9375rem; }
 
@@ -565,7 +569,8 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .when-ios { display: none !important; }
 :root[data-ios] .when-ios { display: block !important; }
 :root[data-ios] button.when-ios { display: inline-flex !important; }
-:root[data-ios] .when-mac, :root[data-ios]:not([data-store]) .hero .actions { display: none !important; }
+:root[data-ios] .when-mac, :root[data-ios]:not([data-store]) .hero .actions, :root[data-ios]:not([data-store]) .bar a.button.status { display: none !important; }
+.bar .share { margin-top: 0; }
 .get-note { margin: 0.9rem 0 0; font-size: 0.875rem; color: var(--ink-2); }
 .hero .get-note { margin-top: 0.85rem; }
 .hero .get-note.when-ios { margin-top: 0; }
@@ -588,6 +593,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     </a>
     <div class="bar-end">
       <a class="button small status" href="#download"><span class="unless-get">Coming soon</span><span class="when-get">Download</span></a>
+      <button class="button small status when-ios" type="button" data-share>Send to Mac</button>
       <button class="theme" type="button" aria-label="Dark mode" aria-pressed="false">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <mask id="eclipse"><rect width="24" height="24" fill="#fff"/><circle class="bite" cx="30" cy="0" r="7" fill="#000"/></mask>
@@ -605,12 +611,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   <div class="hero" id="hero">
     <h1><span class="vh">Ink &amp; Ditto</span><span class="om-a" aria-hidden="true">Ink &amp; </span><span class="om-b" aria-hidden="true">Ditto<span class="caret-at" aria-hidden="true"><i class="caret"></i></span><span class="om-ditto" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="hdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="hds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="hdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="hdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="hdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="hdl0"><path class="lp" d="M13.18 17.71Q16.1 17.71 19.03 17.71L19.03 24.3Q16.1 24.3 13.18 24.3Z"/></clipPath><clipPath id="hdl1"><path class="lp" d="M26.83 17.71Q23.9 17.71 20.98 17.71L20.98 24.3Q23.9 24.3 26.83 24.3Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#hdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#hdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#hdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#hds)" filter="url(#hdh)"/><path class="rim bp" clip-path="url(#hdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#hdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#hdl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="1.95" ry="3.05"/></g><g clip-path="url(#hdl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="1.95" ry="3.05"/></g></g></g></svg></span></span></h1>
     <p class="line">Write it down. It gets done.</p>
-    <p class="lede">Calm Markdown notes for people who build products. Hand Ditto a line, and Claude Code does the work in your project, on a branch of its own, checked and ready for one decision.<span class="unless-get"> Coming soon.</span></p>
+    <p class="lede">Calm Markdown notes for people who build products. Hand Ditto a line, and Claude&nbsp;Code does the work in your project, on a branch of its own, checked and ready for one decision.<span class="unless-get"> Coming soon.</span></p>
     <div class="actions when-get">
       <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
       <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
     </div>
-    <p class="get-note when-mac">Free. macOS 26 or later. Ditto needs Claude Code.</p>
+    <p class="get-note when-mac">Free. macOS 26 or later. Ditto needs Claude&nbsp;Code.</p>
     <p class="get-note when-ios">Ink for Mac is ready now. iPhone is coming soon.</p>
     <button class="button small share when-ios" type="button" data-share>Send the link to your Mac</button>
     <a class="cue" href="#verse" aria-label="Read on"><svg viewBox="0 0 22 13" aria-hidden="true"><path pathLength="1" d="M1.5 1.75 11 11.25 20.5 1.75"/></svg></a>
@@ -636,15 +642,16 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       <li><h3>Every hand-off starts from scratch.</h3><p>The decision is already in your note. You type it again into a prompt, a ticket or a thread, and the context stays behind.</p></li>
       <li><h3>The review lands on you.</h3><p>Agents make work faster to produce, not faster to trust. It comes back as a diff with no trail, and you check every line.</p></li>
     </ul>
+    <p class="gap">Notes apps hold the thinking, and agents do the work. Nothing starts from the line where you decided, and nothing comes back for one calm decision. Ink &amp; Ditto closes that gap.</p>
   </section>
 
   <section class="chapter" aria-labelledby="ditto">
     <h2 id="ditto">Hand Ditto the line.<br> Make one call.</h2>
-    <p class="lead">Ditto carries the line across: into your project with Claude Code, checked against your taste, and back to you for one decision.</p>
+    <p class="lead">Ditto carries the line across: into your project with Claude&nbsp;Code, checked against your taste, and back to you for one decision.</p>
     <div class="bento-wrap loop">
       <div class="bento solo">
         <article class="tile big t-ditto" data-demo="ditto">
-          <div class="tx"><h3>Watch one line.</h3> <p>Ditto takes it to Claude Code, checks it, and brings it back for your call.</p></div>
+          <div class="tx"><h3>Watch one line.</h3> <p>Ditto takes it to Claude&nbsp;Code, checks it, and brings it back for your call.</p></div>
           <div class="demo d-ditto" aria-hidden="true" data-tap>
             <div class="sheet">
               <div class="dt-h">This week</div>
@@ -654,7 +661,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
                   <svg class="dt-done" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5"/></svg>
                 </span>
                 <span class="txt" data-type>The empty state on Projects feels like an error<span class="caret-at"><i class="caret"></i><span class="keys"><span>⌘</span><span>↩</span></span></span></span>
-                <span class="dt-now"><span class="now-i">Ditto read your line and briefed a builder.</span><span class="now-i">Builder is making the change…</span><span class="now-i">Builder is running your tests…</span><span class="now-i">Critic is checking it against your taste…</span><span class="now-i last">Ready for your call.</span><span class="now-i s">Committed to ditto/projects-empty-state. <span class="again">See it again</span></span><span class="now-i d">Discarded. Nothing was merged. <span class="again">See it again</span></span></span>
+                <span class="dt-now"><span class="now-i">Ditto read your line and briefed a builder.</span><span class="now-i">Builder is making the change…</span><span class="now-i">Builder is running your tests…</span><span class="now-i">Critic is checking it against your taste…</span><span class="now-i last">Ready for your call.</span><span class="now-i s">Committed to <span class="branch">ditto/projects-empty-state</span>. <span class="again">See it again</span></span><span class="now-i d">Discarded. Nothing was merged. <span class="again">See it again</span></span><span class="now-i a">Asked for changes. Ditto goes again with your note.</span></span>
               </div>
               <div class="dt-line"><span class="txt">Dense tables on mobile need a second look</span></div>
               <div class="dt-line"><span class="txt">Tidy the billing copy</span></div>
@@ -675,7 +682,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     </div>
     <ol class="beats">
       <li><span class="n yours" aria-hidden="true">1</span><h3>Write a line.</h3><p>The line you wrote is the brief. Ditto reads it, with the lines around it.</p></li>
-      <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>A builder does the work with Claude Code on your Mac, in your project on a branch of its own, and runs your tests. A critic checks it against your taste before you see it. A line that isn’t code becomes a draft, if you say so.</p></li>
+      <li><span class="n" aria-hidden="true">2</span><h3>Press <kbd>⌘↩</kbd>.</h3><p>A builder does the work with Claude&nbsp;Code on your Mac, in your project on a branch of its own, and runs your tests. A critic checks it against your taste before you see it. A line that isn’t code becomes a draft, if you say so.</p></li>
       <li><span class="n yours" aria-hidden="true">3</span><h3>Make one call.</h3><p>Ship It, Ask for Changes or Discard, with what changed and what was checked. Every call teaches it your taste.</p></li>
     </ol>
     <p class="aside">On iPhone (coming soon), hand Ditto a line, follow the work and make the call from anywhere.</p>
@@ -689,15 +696,15 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         <p class="role">Engineers</p>
         <h3>Keep your head in the hard problem.</h3>
         <p>Hand Ditto the papercuts. Each one comes back as a change on its own branch, with your tests run and checked against your taste. You stay on the work only you can do.</p>
-        <div class="ex"><span class="ex-line">Retry the billing webhook, five tries at most</span><span class="ex-to">Ready on ditto/webhook-retry · 2&nbsp;files · Tests&nbsp;pass</span></div>
-        <p class="needs">Needs: a project in git and Claude Code on your Mac.</p>
+        <div class="ex"><span class="ex-line">Retry the billing webhook, five tries at most</span><span class="ex-to">Ready on ditto/webhook-retry&nbsp;· 2&nbsp;files&nbsp;· Tests&nbsp;pass</span></div>
+        <p class="needs">Needs: a project in git and Claude&nbsp;Code on your Mac.</p>
       </article>
       <article class="person">
         <p class="role">Product managers</p>
         <h3>Stop waiting weeks for a small fix.</h3>
         <p>Write what should change where you decided it. Make the call, and it’s a branch an engineer can merge in a minute. Ditto never merges or messages anyone, so you stay inside your team’s rules.</p>
-        <div class="ex"><span class="ex-line">Onboarding says “workspace”. Everywhere else says “project”.</span><span class="ex-to">Ready on ditto/onboarding-copy · 4&nbsp;files · Tests&nbsp;pass</span></div>
-        <p class="needs">Needs: the project on your Mac and Claude Code.</p>
+        <div class="ex"><span class="ex-line">Onboarding says “workspace”. Everywhere else says “project”.</span><span class="ex-to">Ready on ditto/onboarding-copy&nbsp;· 4&nbsp;files&nbsp;· Tests&nbsp;pass</span></div>
+        <p class="needs">Needs: the project on your Mac and Claude&nbsp;Code.</p>
       </article>
     </div>
     <p class="aside">Designers who work in the repo: interface papercuts come back with an after picture.</p>
@@ -709,7 +716,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     <ul class="facts">
       <li><h3>Nothing pushed or merged.</h3><p>Ship It commits to Ditto’s branch. What happens next is yours.</p></li>
       <li><h3>Asks before it spends.</h3><p>If a line isn’t code, Ditto asks first. Stop any work, and nothing more is spent.</p></li>
-      <li><h3>Your own Claude account.</h3><p>Ditto runs Claude Code on your Mac. Your code never passes through us.</p></li>
+      <li><h3>Your own Claude account.</h3><p>Ditto runs Claude&nbsp;Code on your Mac. Your code never passes through us.</p></li>
     </ul>
   </section>
 
@@ -743,16 +750,15 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     </div>
   </section>
 
-  <div class="stage">
+  <section class="chapter" aria-labelledby="ink">
+    <h2 id="ink">Ink, on its own.</h2>
+    <p class="lead">Without Ditto, Ink is simply a calm notes app. Every note is a plain Markdown file, in step on your Mac and iPhone, with nothing on the page but your words.</p>
+    <div class="stage">
     <img decoding="async" class="mac light" src="assets/mac-ink-light-1600.webp" srcset="assets/mac-ink-light-800.webp 800w, assets/mac-ink-light-1200.webp 1200w, assets/mac-ink-light-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac: a launch plan, with Ditto in the margin beside the lines it’s working on" width="1600" height="1054" loading="lazy" fetchpriority="high">
     <img decoding="async" class="mac dark" src="assets/mac-ink-dark-1600.webp" srcset="assets/mac-ink-dark-800.webp 800w, assets/mac-ink-dark-1200.webp 1200w, assets/mac-ink-dark-1600.webp 1600w" sizes="(min-width: 59rem) 800px, 86vw" alt="Ink on the Mac, in dark mode" width="1600" height="1054" loading="lazy" fetchpriority="high">
     <img decoding="async" class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
     <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
   </div>
-
-  <section class="chapter" aria-labelledby="ink">
-    <h2 id="ink">Ink, on its own.</h2>
-    <p class="lead">Without Ditto, Ink is simply a calm notes app. Every note is a plain Markdown file, in step on your Mac and iPhone, with nothing on the page but your words.</p>
     <!-- The bento. Each tile's words are its text; its demo is a decoration that plays once, then rests. -->
     <div class="bento-wrap">
       <div class="bento">
@@ -910,10 +916,10 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   <section class="chapter" aria-labelledby="faq">
     <h2 id="faq">Questions.</h2>
     <div class="qa">
-      <div><h3>Why not just use Claude Code?</h3><p>Ditto runs on Claude Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked against your taste before you see it, and you answer once. Your note remembers what became of every line.</p></div>
-      <div><h3>Is my code safe?</h3><p>Yes. It works on its own branch, and never pushes, merges or messages anyone.</p></div>
-      <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude Code, a Claude account and, for code, a project in git. On iPhone, you can hand Ditto a line and decide the work your Mac is doing.</p></div>
-      <div><h3>What does it cost?</h3><p>Ink is free. Ditto is free during early access; Claude Code runs on your own Claude plan.</p></div>
+      <div><h3>Why not just use Claude&nbsp;Code?</h3><p>Ditto runs on Claude&nbsp;Code. It adds what a terminal can’t: the brief is the line you already wrote, the work is checked against your taste before you see it, and you answer once. Your note remembers what became of every line.</p></div>
+      <div><h3>Is my code safe?</h3><p>Yes. Ditto works on its own branch, and never pushes, merges or messages anyone.</p></div>
+      <div><h3>What do I need for Ditto?</h3><p>A Mac with Claude&nbsp;Code, a Claude account and, for code, a project in git. On iPhone, you can hand Ditto a line and decide the work your Mac is doing.</p></div>
+      <div><h3>What does it cost?</h3><p>Ink is free. Ditto is free during early access; Claude&nbsp;Code runs on your own Claude account.</p></div>
       <div><h3>Can Ditto do more than code?</h3><p>Today it builds software, can explore a few directions before it builds, and drafts anything else for you to send. Specs, tickets, research summaries and design checks are coming.</p></div>
       <div><h3>Do I need Ditto to use Ink?</h3><p>No. Ink stands on its own, and Ditto stays out of sight until you connect it.</p></div>
       <div><h3>Who makes it?</h3><p>Ash Bronca, in Australia. Write to <a href="mailto:support@inkandditto.com">support@inkandditto.com</a>.</p></div>
@@ -922,7 +928,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 </main>
 
 <footer class="end">
-  <p class="end-line">Write it down. It gets done<span class="om-ditto rests" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="fdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="fds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="fdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="fdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="fdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="fdl0"><path class="lp" d="M13.18 17.71Q16.1 17.71 19.03 17.71L19.03 24.3Q16.1 24.3 13.18 24.3Z"/></clipPath><clipPath id="fdl1"><path class="lp" d="M26.83 17.71Q23.9 17.71 20.98 17.71L20.98 24.3Q23.9 24.3 26.83 24.3Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#fdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#fdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#fdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#fds)" filter="url(#fdh)"/><path class="rim bp" clip-path="url(#fdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#fdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#fdl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="1.95" ry="3.05"/></g><g clip-path="url(#fdl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="1.95" ry="3.05"/></g></g></g></svg></span><span class="vh">.</span></p>
+  <p class="end-line">Write it down. It&nbsp;gets&nbsp;done<span class="om-ditto rests" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="fdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="fds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="fdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="fdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="fdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="fdl0"><path class="lp" d="M13.18 17.71Q16.1 17.71 19.03 17.71L19.03 24.3Q16.1 24.3 13.18 24.3Z"/></clipPath><clipPath id="fdl1"><path class="lp" d="M26.83 17.71Q23.9 17.71 20.98 17.71L20.98 24.3Q23.9 24.3 26.83 24.3Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#fdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#fdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#fdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#fds)" filter="url(#fdh)"/><path class="rim bp" clip-path="url(#fdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#fdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#fdl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="1.95" ry="3.05"/></g><g clip-path="url(#fdl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="1.95" ry="3.05"/></g></g></g></svg></span><span class="vh">.</span></p>
   <p class="end-get when-mac"><a class="button tall" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a></p>
   <p class="small">© 2026 Ash Bronca <span aria-hidden="true">·</span> <a href="privacy">Privacy</a> <span aria-hidden="true">·</span> <a href="support">Support</a></p>
 </footer>
@@ -1428,12 +1434,12 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
         if (a === "ask") {
           var dt = t.querySelector(".dt-ditto");
           if (!still.matches) dt.animate([{ transform: "none" }, { transform: "scale(1.03, .96)" }, { transform: "none" }], { duration: 700, iterations: 2, easing: "ease-in-out" });
-          setTimeout(function () { d.classList.remove("asked"); }, still.matches ? 600 : 1500);
+          setTimeout(function () { d.classList.remove("asked"); }, still.matches ? 1800 : 2600);
         }
         return;
       }
       if (t.dataset.demo === "lock") return;
-      if (e.target.closest(".demo[data-tap]")) {
+      if (e.target.closest(".demo[data-tap]") && !e.target.closest(".rv")) {
         // Back to the review, whatever was decided — with Reduce Motion too, where nothing replays.
         var dd = t.querySelector(".d-ditto"); if (dd) dd.classList.remove("shipping", "shipped", "discarded", "asked");
         play(t, 0, false);
@@ -1569,7 +1575,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     wakeHero();
     // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
     // first; the bar's controls last. Nothing arrives at once.
-    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = SIMEND + 50;
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = rollAt + TR * 0.6;
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
