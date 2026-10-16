@@ -581,7 +581,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 .film-link .dur { opacity: 0.7; font-weight: 400; }
 @media (hover: hover) { .film-link:hover { color: var(--ink); } }
 .film-link:active { transform: scale(0.965); transition-duration: 0.06s; }
-dialog.film { width: min(92vw, 1280px); max-width: none; padding: 0; border: 0; border-radius: 16px; background: #000; overflow: visible;
+dialog.film { width: min(92vw, 1280px, calc((100dvh - 7rem) * 16 / 9)); max-width: none; padding: 0; border: 0; border-radius: 16px; background: #000; overflow: visible;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45); }
 dialog.film::backdrop { background: rgba(10, 9, 7, 0.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 16px; background: #000; }
@@ -589,6 +589,8 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
   background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; }
 .film-close svg { width: 0.95rem; height: 0.95rem; }
 @media (hover: hover) { .film-close:hover { background: rgba(255, 255, 255, 0.24); } }
+/* A short screen (a phone on its side): the close button comes inside the picture, always reachable. */
+@media (max-height: 30rem) { .film-close { top: 0.5rem; right: 0.5rem; z-index: 1; } }
 @media (prefers-reduced-motion: no-preference) {
   dialog.film[open] { animation: film-in 0.38s cubic-bezier(.2,.8,.2,1); }
   dialog.film[open]::backdrop { animation: film-fade 0.3s ease; }
@@ -1069,6 +1071,9 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
     if (!video.src) video.src = "assets/film-" + (Math.min(screen.width, screen.height) * (devicePixelRatio || 1) >= 1500 && innerWidth >= 900 ? "1080" : "720") + ".mp4";
     dlg.showModal();
     var p = video.play(); if (p && p.catch) p.catch(function () {});
+    // On a phone, the film is too small inline: it goes full screen, as Apple's own films do there.
+    if (matchMedia("(pointer: coarse)").matches && video.webkitEnterFullscreen) { try { video.webkitEnterFullscreen(); } catch (e) {} }
+    video.addEventListener("webkitendfullscreen", function () { close(); }, { once: true });
   });
   function close() { video.pause(); dlg.close(); }
   dlg.querySelector(".film-close").addEventListener("click", close);
