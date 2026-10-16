@@ -126,7 +126,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   background: var(--paper); }
 .bar-inner { max-width: var(--wide); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; }
 /* The lockup is trimmed to its ink, so its left edge is the glyph's. */
-.bar a.home { display: block; border-radius: 6px; }
+.bar a.home { display: flex; align-items: flex-end; border-radius: 6px; --u: calc(1.9rem / 287); }
+/* The lockup: "ink" as drawn, and Ditto, refined, small (a flat body, eyes ×1.4), sitting on the same baseline and
+   in the same slot the old full stop had: its body 143 units wide, 22 units after the k. */
+.bar .home .lk-ditto { flex: none; width: calc(183 * var(--u)); height: calc(155.55 * var(--u)); margin: 0 0 calc(-4.1 * var(--u)) calc(2 * var(--u)); overflow: visible; }
 .bar img { height: 1.9rem; width: auto; }
 .bar-end { display: flex; align-items: center; gap: 0.5rem; }
 
@@ -616,8 +619,9 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
 <header class="bar" id="top">
   <div class="bar-inner">
     <a class="home" href="#top" aria-label="Ink &amp; Ditto, to the top">
-      <img decoding="async" class="light" src="assets/lockup-light.png" alt="" width="563" height="287" loading="lazy">
-      <img decoding="async" class="dark" src="assets/lockup-dark.png" alt="" width="563" height="287" loading="lazy">
+      <img decoding="async" class="light" src="assets/ink-light.png" alt="" width="398" height="287" loading="lazy">
+      <img decoding="async" class="dark" src="assets/ink-dark.png" alt="" width="398" height="287" loading="lazy">
+      <svg class="ditto7 small lk-ditto" viewBox="0 0 40 34" aria-hidden="true"><path class="b" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><ellipse class="ew" cx="16.1" cy="21.01" rx="2.73" ry="4.27"/><ellipse class="ew" cx="23.9" cy="21.01" rx="2.73" ry="4.27"/></svg>
     </a>
     <div class="bar-end">
       <a class="button small status" href="#download"><span class="unless-get">Coming soon</span><span class="when-get">Download</span></a>
