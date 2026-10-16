@@ -166,6 +166,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
    line is already set in it; then Iowan, Charter, Georgia. Tight tracking only because it's this big. */
 h1 { font: 400 min(clamp(3.25rem, 13vw, 8.5rem), 16.5vw)/1 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 0 1.75rem;
   font-kerning: normal; text-rendering: optimizeLegibility; }
+/* Room above the name for the drop's arc. While the name rises, Safari draws it on a layer of its own, and a layer
+   clips whatever is painted outside its box (the drop vanished at the top of its flight). Padding gives the layer that
+   room; the equal negative margin keeps every line exactly where it was. */
+.hero h1 { padding-top: 1.6em; margin-top: -1.6em; }
 h1 .om-b { white-space: nowrap; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* Ditto is the name's full stop: a drop of ink standing on the baseline, a hair after the o. */
@@ -1604,7 +1608,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     // The name is born alone, in the middle of the screen; once Ditto is itself, it rises, unhurried, to its place,
     // and the words arrive into the room it leaves (Ash, 16 Oct). Everything below is already laid out, so the rise
     // ends exactly where the name rests and nothing else moves.
-    var hr = h1.getBoundingClientRect(), drop = Math.round(innerHeight / 2 - (hr.top + hr.height / 2));
+    var hr = h1.getBoundingClientRect(), pt = parseFloat(getComputedStyle(h1).paddingTop) || 0, drop = Math.round(innerHeight / 2 - (hr.top + pt + (hr.height - pt) / 2));
     var RISE = END + 450, RD = 1250;
     if (drop > 12) run.go(h1, [{ transform: "translateY(" + drop + "px)" },
       { transform: "translateY(" + drop + "px)", offset: RISE / (RISE + RD), easing: "cubic-bezier(.45,0,.18,1)" },
@@ -1616,13 +1620,16 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     // first; the bar's controls last. Nothing arrives at once.
     var soft = "cubic-bezier(.25,.6,.3,1)", when2 = drop > 12 ? RISE + RD * 0.62 : END + 650;   // Ash's pacing: never hurried (16 Oct)
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
+    var lastLine = when2;
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
+      if (i <= 2) lastLine = when2;   // the bar comes with the hero's button, its twin
       run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
       when2 += dur + 450;
     });
+    // The bar's controls come with the hero's Download button, not after every line (Ash, 16 Oct: a touch too long).
     document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
-      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: when2 - 150, duration: 700, easing: "ease-out" });
+      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: lastLine, duration: 700, easing: "ease-out" });
     });
     opening = run.list;
     delete root.dataset.opening;
@@ -1866,7 +1873,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
   };
 
   // ———— Read on ————
-  // Once the name and both lines have arrived and the reader has been still for a moment and a half, a
+  // Once the name and both lines have arrived and the reader has been still for a moment, a
   // hairline chevron writes itself in as one stroke, settles once, and rests; Ditto glances down at it. The
   // first scroll takes it away for the visit. Only when the name is the first screen.
   (function () {
@@ -1884,7 +1891,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
       if (gone) return;
       if (!settled()) { since = 0; return setTimeout(wait, 250); }
       if (!since) since = performance.now();
-      if (performance.now() - Math.max(last, since) < 1500) return setTimeout(wait, 100);
+      if (performance.now() - Math.max(last, since) < 700) return setTimeout(wait, 100);
       cue.classList.add("on");
       if (still.matches) return;
       var path = cue.querySelector("path");
