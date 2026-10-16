@@ -1606,7 +1606,7 @@ kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35e
     wakeHero();
     // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
     // first; the bar's controls last. Nothing arrives at once.
-    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = rollAt + TR * 0.6;
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = END + 300;   // only once Ditto is itself, eyes open (Ash, 16 Oct)
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
