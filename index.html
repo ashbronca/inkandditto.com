@@ -266,7 +266,12 @@ button.button { border: 0; font: inherit; font-weight: 600; cursor: pointer; -we
 .beats p, .person > p, .facts p, .qa p, .chapter .aside, .ex-line { text-wrap: pretty; }
 @media (min-width: 48rem) { .beats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
 .beats li { display: grid; gap: 0.5rem; align-content: start; max-width: 22rem; }
-@media (max-width: 47.99rem) { .beats li { margin-inline: auto; width: 100%; max-width: 26rem; } }
+@media (max-width: 47.99rem) {
+  /* Stacked on a phone, a list shares its heading's axis: centred, not snapped to the left edge (Ash, 16 Oct). */
+  .beats li { margin-inline: auto; width: 100%; max-width: 24rem; justify-items: center; text-align: center; }
+  .beats p, .facts p { text-wrap: balance; }
+  .chapter .facts { text-align: center; max-width: 24rem; }
+}
 .beats .n { font: 400 2.75rem/1 var(--serif); font-variant-numeric: lining-nums; color: var(--ink-2); margin-bottom: 0.35rem; }
 .beats .n.yours { color: var(--your-move); }
 .beats h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
