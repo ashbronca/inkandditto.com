@@ -1,0 +1,1687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ink &amp; Ditto: opening B</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F7F4EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130F" media="(prefers-color-scheme: dark)">
+<script>
+  // Opening B, an unlisted preview to set beside the live opening. The same flags as the live page.
+  var MAC_DOWNLOAD_URL = "https://github.com/ashbronca/inkandditto.com/releases/latest/download/Ink-and-Ditto.dmg";
+  var SHOW_MAC_DOWNLOAD = true;
+  var APP_STORE_URL = "";
+  var SHOW_APP_STORE = false;
+  var APP_STORE_BADGE = "https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg";
+
+  try { var t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+  (function (d) {
+    if (SHOW_MAC_DOWNLOAD && MAC_DOWNLOAD_URL) d.dataset.mac = "";
+    if (SHOW_APP_STORE && APP_STORE_URL) d.dataset.store = "";
+    d.dataset.js = "";
+    if ("mac" in d.dataset || "store" in d.dataset) d.dataset.get = "";
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) d.dataset.ios = "";
+    // A preview: the opening plays on every load (and on Replay), unless Reduce Motion is on.
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "animate" in d) { d.dataset.motion = ""; d.dataset.opening = ""; }
+  })(document.documentElement);
+
+  // ?capture: a clock that only moves when it's told to (window.__step), so every frame can be recorded at
+  // an exact 60 fps. The page's own frames, timers it schedules for motion and its animations all follow it.
+  if (/[?&]capture\b/.test(location.search)) (function () {
+    var vt = 0, queue = [], animate = Element.prototype.animate;
+    performance.now = function () { return vt; };
+    window.requestAnimationFrame = function (f) { queue.push(f); return queue.length; };
+    Element.prototype.animate = function (k, o) { var a = animate.call(this, k, o); a.__born = vt; a.pause(); a.currentTime = 0; return a; };
+    window.__step = function (ms) {
+      vt += ms; var q = queue; queue = [];
+      q.forEach(function (f) { f(vt); });
+      document.getAnimations().forEach(function (a) { if (a.__born != null && a.playState !== "finished") { a.pause(); a.currentTime = vt - a.__born; } });
+      return vt;
+    };
+  })();
+</script>
+<link rel="icon" href="../assets/icon.png">
+<link rel="apple-touch-icon" href="../assets/icon.png">
+<style>
+/* The page is a note: one column of words, the Markdown marks (##, -, [ ]) hanging in a margin to its
+   left as they do in the app, and Ditto standing in that margin beside the line it's working on.
+   Paper and ink, one accent that means "your move", nothing brighter than the paper. */
+:root {
+  --paper: #F7F4EE;
+  --desk: #EFEBE3;
+  --ink: #1C1A15;
+  --ink-2: rgba(28, 26, 21, 0.62);
+  --rule: rgba(28, 26, 21, 0.38);
+  --fill: rgba(28, 26, 21, 0.06);
+  --diff-del: rgba(214, 69, 65, 0.12); --diff-add: rgba(52, 168, 83, 0.14);
+  --your-move: #AE3F2E;
+  --shadow: 0 1px 2px rgba(28, 26, 21, 0.06), 0 18px 50px rgba(28, 26, 21, 0.10);
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --serif: ui-serif, "New York", "Iowan Old Style", "Charter", Georgia, serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --column: 40rem;
+  --hang: 3.25rem;
+  --wide: 57rem;
+  /* The bento: the app's own two surfaces, the chrome (a tile) and the page (a sheet on it). */
+  --tile: var(--desk);
+  --sheet: var(--paper);
+  --tile-ring: inset 0 0 0 1px rgba(28, 26, 21, 0.035);
+  --sheet-shadow: 0 0 0 1px rgba(28, 26, 21, 0.05), 0 1px 2px rgba(28, 26, 21, 0.05), 0 12px 32px rgba(28, 26, 21, 0.07);
+  --fill-2: rgba(28, 26, 21, 0.12);
+  --hl: rgba(252, 214, 84, 0.55);
+  --glass: rgba(247, 244, 238, 0.74);
+  --wall-1: #E9E2D5; --wall-2: #D3C8B5;
+  /* Ditto's material (docs/ditto-character/ditto-7-final.json) */
+  --dm0: #46423B; --dm1: #23211C; --dm2: #151410; --dm3: #0D0C0A; --dsh: 0.5; --drim: #DCE2EC; --drim-a: 0; --dbleed: #14120F; --dbleed-a: 0.5; --deye: #F7F4EE; --dpupil: #100F0C; --dflat: #1C1A16;
+  color-scheme: light;
+}
+:root[data-theme="light"] { color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14130F; --desk: #1B1915; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
+    --fill: rgba(242, 238, 230, 0.07); --diff-del: rgba(226, 95, 74, 0.13); --diff-add: rgba(98, 196, 120, 0.11); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
+    --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
+    --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
+    --wall-1: #2C2822; --wall-2: #171511;
+    /* Ditto's material, dark */ --dm0: #5A5650; --dm1: #2E2C27; --dm2: #22201C; --dm3: #1A1915; --dsh: 0.36; --drim: #EEEAE2; --drim-a: 0.5; --dbleed: #050504; --dbleed-a: 0.85; --deye: #F2EEE6; --dpupil: #100F0C; --dflat: #3A3731;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14130F; --desk: #1B1915; --ink: #F2EEE6; --ink-2: rgba(242, 238, 230, 0.66); --rule: rgba(242, 238, 230, 0.4);
+  --fill: rgba(242, 238, 230, 0.07); --diff-del: rgba(226, 95, 74, 0.13); --diff-add: rgba(98, 196, 120, 0.11); --your-move: #E25F4A; --shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 18px 50px rgba(0, 0, 0, 0.5);
+    --tile-ring: inset 0 0 0 1px rgba(242, 238, 230, 0.07); --sheet-shadow: 0 0 0 1px rgba(242, 238, 230, 0.08), 0 12px 32px rgba(0, 0, 0, 0.45);
+    --fill-2: rgba(242, 238, 230, 0.12); --hl: rgba(255, 204, 77, 0.24); --glass: rgba(36, 34, 29, 0.72);
+    --wall-1: #2C2822; --wall-2: #171511;
+  /* Ditto's material, dark */ --dm0: #5A5650; --dm1: #2E2C27; --dm2: #22201C; --dm3: #1A1915; --dsh: 0.36; --drim: #EEEAE2; --drim-a: 0.5; --dbleed: #050504; --dbleed-a: 0.85; --deye: #F2EEE6; --dpupil: #100F0C; --dflat: #3A3731;
+  color-scheme: dark;
+}
+
+/* The page's own colour on the root too: on a phone the safe areas (behind the status bar and the home
+   indicator) are painted from it, and they must follow the toggle with the rest. */
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; background: var(--paper); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+  padding-inline: 1rem;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
+/* The ring follows each control's own shape (a pill stays a pill, the toggle stays round). */
+a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* The bar: the lockup, the toggle and where things stand, and nothing else. */
+.bar { position: sticky; top: 0; z-index: 2; margin-inline: -1rem; padding: 0.75rem 1rem;
+  padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+  /* Solid: Safari on iOS 26 colours the strip under the status bar from a bar pinned to the top, and only
+     from a solid one; see-through, it fell back to black in light mode on a dark iPhone. */
+  background: var(--paper); }
+.bar-inner { max-width: var(--wide); margin-inline: auto; display: flex; align-items: center; justify-content: space-between; }
+/* The lockup is trimmed to its ink, so its left edge is the glyph's. */
+.bar a.home { display: flex; align-items: flex-end; border-radius: 6px; --u: calc(1.9rem / 287); }
+/* The lockup: "ink" as drawn, and Ditto, refined, small (a flat body, eyes ×1.4), sitting on the same baseline and
+   in the same slot the old full stop had: its body 143 units wide, 22 units after the k. */
+.bar .home .lk-ditto { flex: none; width: calc(183 * var(--u)); height: calc(155.55 * var(--u)); margin: 0 0 calc(-4.1 * var(--u)) calc(2 * var(--u)); overflow: visible; }
+.bar img { height: 1.9rem; width: auto; }
+.bar-end { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Paper or ink: a sun that eclipses into a moon. The page itself changes in a circle that grows from
+   the button (a view transition); without one, or with reduced motion, it simply changes. */
+.theme { width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 0; padding: 0; display: grid; place-items: center;
+  background: transparent; color: var(--ink); cursor: pointer; }
+/* Only with a pointer: on a touch screen :hover sticks after a tap, a pressed look that outlives the press. */
+@media (hover: hover) { .theme:hover { background: var(--fill); } }
+.theme svg { width: 1.3rem; height: 1.3rem; overflow: visible; }
+.theme .body { transition: r 0.5s cubic-bezier(.2,.8,.2,1); }
+.theme .bite { transition: cx 0.5s cubic-bezier(.2,.8,.2,1), cy 0.5s cubic-bezier(.2,.8,.2,1); }
+.theme .rays { transition: transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease; transform-origin: 12px 12px; }
+:root[data-theme="dark"] .theme .body { r: 9px; }
+:root[data-theme="dark"] .theme .bite { cx: 17px; cy: 6px; }
+:root[data-theme="dark"] .theme .rays { transform: rotate(45deg) scale(0.5); opacity: 0; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme .body { r: 9px; }
+  :root:not([data-theme="light"]) .theme .bite { cx: 17px; cy: 6px; }
+  :root:not([data-theme="light"]) .theme .rays { transform: rotate(45deg) scale(0.5); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .theme .body, .theme .bite, .theme .rays { transition: none; } }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+
+/* The first screen is the name on paper, and nothing else until it has been written. */
+.hero { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  min-height: 34rem; min-height: calc(100svh - 4.4rem - env(safe-area-inset-top, 0px)); padding-bottom: 6svh; box-sizing: border-box;
+  overflow-x: hidden; overflow-x: clip; }
+.hero .actions { justify-content: center; }
+/* Read on: a hairline chevron at the foot of the first screen, written in once the name has settled. */
+.hero { position: relative; }
+.cue { position: absolute; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); width: 2.75rem; height: 2.75rem; margin-left: -1.375rem;
+  display: grid; place-items: center; border-radius: 50%; color: var(--ink); transition: opacity 0.35s ease, visibility 0.35s; }
+.cue svg { width: 22px; height: 13px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-js] .cue { opacity: 0; visibility: hidden; }
+:root[data-js] .cue.on { opacity: 1; visibility: visible; }
+@media (hover: hover) { .cue:hover { color: var(--ink-2); } }
+/* The name, set as display type: New York (Apple's serif, with optical sizes) on Apple devices, the brand's
+   line is already set in it; then Iowan, Charter, Georgia. Tight tracking only because it's this big. */
+h1 { font: 400 min(clamp(3.25rem, 13vw, 8.5rem), 16.5vw)/1 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 0 1.75rem;
+  font-kerning: normal; text-rendering: optimizeLegibility; }
+/* Room above the name for the drop's arc. While the name rises, Safari draws it on a layer of its own, and a layer
+   clips whatever is painted outside its box (the drop vanished at the top of its flight). Padding gives the layer that
+   room; the equal negative margin keeps every line exactly where it was. */
+.hero h1 { padding-top: 1.6em; margin-top: -1.6em; }
+h1 .om-b { white-space: nowrap; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Ditto is the name's full stop: a drop of ink standing on the baseline, a hair after the o. */
+.om-ditto { display: inline-block; width: 1.13em; margin-left: 0.01em; vertical-align: -0.069em; }  /* on the baseline, plus the round letters' overshoot, so it sits as low as the "o" beside it */
+.om-ditto svg { display: block; width: 100%; height: auto; overflow: visible; transform-origin: 50% 94%; }
+.om-ditto .eyes { transform-box: fill-box; transform-origin: center; }
+/* Ditto on a visit (⌘↩), and what it says when it takes a line. Neither ever takes a click or a selection. */
+.visitor { position: fixed; left: 0; top: 0; z-index: 5; display: none; pointer-events: none; }
+.visitor svg { display: block; width: 100%; height: auto; overflow: visible; }
+.onit { position: fixed; left: 0; top: 0; z-index: 5; pointer-events: none; user-select: none; -webkit-user-select: none; opacity: 0; white-space: nowrap;
+  padding: 0.38em 0.85em; border-radius: 999px; font: 500 0.8125rem/1.2 var(--sans); color: var(--ink); background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 0 0 0.5px var(--rule), 0 6px 20px rgba(0, 0, 0, 0.12); }
+.end .om-ditto { vertical-align: -0.069em; }
+h1 .caret-at { height: 0.74em; vertical-align: 0; }
+/* The caret only writes the name; the page at rest has none. */
+h1 .caret { width: max(2px, 0.03em); height: 0.98em; top: -0.12em; left: 0.04em; border-radius: 99px; opacity: 0; transform-origin: 50% 100%; }
+/* Ditto, refined: its material, eyes and the ink's bleed. Small (40 px and under) it's flat, with bigger eyes. */
+.ditto7 .red { opacity: 0; fill: var(--your-move); }
+.ditto7 .ew { fill: var(--deye); }
+.ditto7 .bl { fill: var(--dbleed); fill-opacity: var(--dbleed-a); }
+.ditto7.small .b:not(.red) { fill: var(--dflat); }
+.ditto7.small .sh, .ditto7.small .rim, .ditto7.small .bl { display: none; }
+.line { font: 400 clamp(1.35rem, 3vw, 1.75rem)/1.3 var(--serif); letter-spacing: -0.005em; margin: 0 0 0.6rem; max-width: none; text-wrap: balance; }
+.lede { color: color-mix(in srgb, var(--ink) 82%, transparent); margin: 0 0 2rem; max-width: 34rem; text-wrap: balance; font-size: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem); line-height: 1.45; }
+/* The verse: one serif, centred, generous leading; the maker's name in its italic. */
+.verse { margin: clamp(4rem, 12vw, 9rem) auto clamp(5rem, 14vw, 10rem); max-width: 34rem; text-align: center;
+  font: 400 clamp(1.3rem, 2.7vw, 1.65rem)/1.7 var(--serif); letter-spacing: -0.003em; }
+.verse p { max-width: none; margin: 0 auto; }
+.verse .turn { margin-top: 1.4em; }
+/* Lines the page brings in one by one (the script makes them; without it they're simply lines). */
+.vl { display: inline-block; }
+.statement .vl { display: block; }
+.mk { display: block; }
+.verse .by { margin-top: 2.5rem; font-size: 0.68em; color: var(--ink-2); letter-spacing: 0.005em; }
+.verse em { font-style: italic; color: var(--ink); }
+/* The bar keeps only the toggle while the name fills the screen; the lockup comes back once it's gone by. */
+.bar .home, .bar .status { transition: opacity 0.35s ease, visibility 0.35s; }
+:root[data-js]:not([data-past]) .bar .home, :root[data-js]:not([data-past]) .bar .status { opacity: 0; visibility: hidden; }
+/* The opening, before the script takes it: nothing but the paper. If the script never comes, it shows anyway. */
+:root[data-opening] .bar-inner, :root[data-opening] .hero > *, :root[data-opening] main > :not(.hero), :root[data-opening] footer {
+  opacity: 0; animation: om-safe 0.4s ease 3s forwards; }
+@keyframes om-safe { to { opacity: 1; } }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; }
+.button { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border-radius: 999px;
+  background: var(--ink); color: var(--paper); font-weight: 600; text-decoration: none; font-size: 0.95rem; }
+.button.small { padding: 0.45rem 0.95rem; font-size: 0.875rem; }
+/* Where things stand, not an action: a ring, not a fill. */
+.button.status { background: transparent; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--rule); font-weight: 600; }
+@media (hover: hover) { .button.status:hover { color: var(--ink); } }
+/* Touch: a button gives under your finger at once, and springs back the moment you let go. Only what you can press reacts. */
+.button, .rv-b, .theme { -webkit-tap-highlight-color: transparent; }
+.button { transition: transform 0.42s var(--spring, cubic-bezier(.2,.8,.2,1)), background-color 0.2s ease, color 0.2s ease; }
+.button:active { transform: scale(0.965); transition-duration: 0.06s; }
+@media (hover: hover) { .button:not(.status):hover { background: color-mix(in srgb, var(--ink) 86%, var(--paper)); } }
+@keyframes dip { 0% { transform: none; } 45% { transform: translateY(2.5px); } 100% { transform: none; } }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) { .button[data-get="mac"]:hover svg { animation: dip 0.5s cubic-bezier(.3,.7,.3,1); } }
+.end .small a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.3s cubic-bezier(.2,.8,.2,1), color 0.2s ease; padding-bottom: 1px; }
+@media (hover: hover) { .end .small a:hover { background-size: 100% 1px; } }
+.beats kbd { display: inline-block; transition: transform 0.3s var(--spring, ease), box-shadow 0.3s ease; }
+@media (hover: hover) { .beats kbd:hover { transform: translateY(1.5px); box-shadow: 0 0 0 1px var(--rule), 0 0 0 var(--rule); transition-duration: 0.08s; } }
+.hero .om-ditto, .end .om-ditto { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .button, .beats kbd, .end .small a { transition: none; } .button:active { transform: none; } }
+
+/* The hero picture: the Mac's window, and the iPhone in front of its corner. The Mac is shown no wider
+   than it was captured (800 points), so it stays sharp on a Retina screen. */
+.stage { position: relative; margin: 0 auto; max-width: var(--wide); padding-bottom: 4%; }
+.stage .mac { width: 88%; margin-left: -1.5%; }
+.stage .phone { position: absolute; right: 0; bottom: 0; width: 24%; border-radius: 12.5% / 5.75%; box-shadow: var(--shadow); }
+/* On a phone, the phone: its note alone, at a size you can read. */
+@media (max-width: 34rem) {
+  .stage { padding-bottom: 0; margin-top: 0.5rem; }
+  .stage .mac { display: none !important; }
+  .stage .phone { position: static; width: min(15rem, 66%); margin-inline: auto; }
+}
+
+/* Chapters: the hero's voice all the way down. A serif headline, centred; a quieter line under it; then
+   whatever the chapter shows, with room to breathe between. */
+p { margin: 0 0 1rem; }
+.chapter { max-width: 64rem; margin: clamp(7rem, 17vw, 12rem) auto 0; text-align: center; }
+.chapter h2 { font: 400 clamp(2.2rem, 5.4vw, 3.5rem)/1.08 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 auto 1.1rem; text-wrap: balance; }
+.chapter .lead { color: var(--ink-2); max-width: 33rem; margin: 0 auto; text-wrap: balance; }
+.chapter .statement { font-size: clamp(2rem, 4.8vw, 3.25rem); line-height: 1.15; margin-bottom: 1.6rem; }
+.chapter .bento-wrap { text-align: left; }
+.chapter .stage { margin-top: clamp(2.5rem, 6vw, 3.5rem); margin-bottom: clamp(2rem, 5vw, 3rem); }
+button.button { border: 0; font: inherit; font-weight: 600; cursor: pointer; -webkit-appearance: none; appearance: none; }
+.dark { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .light { display: none; } :root:not([data-theme="light"]) .dark { display: block; } }
+:root[data-theme="dark"] .light { display: none; }
+:root[data-theme="dark"] .dark { display: block; }
+
+/* Ditto, in three beats. The numerals are the serif's; the third is red, because it's your move. */
+.beats { list-style: none; padding: 0; margin: clamp(3rem, 7vw, 4.5rem) auto 0; display: grid; gap: 2.5rem; max-width: var(--wide); text-align: left; }
+@media (min-width: 48rem) { .beats li { grid-row: span 3; grid-template-rows: subgrid; } .beats.plain li { grid-row: span 2; } .beats { row-gap: 0; } }
+.beats p, .person > p, .facts p, .qa p, .chapter .aside, .ex-line { text-wrap: pretty; }
+@media (min-width: 48rem) { .beats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; } }
+.beats li { display: grid; gap: 0.5rem; align-content: start; max-width: 22rem; }
+@media (max-width: 47.99rem) {
+  /* Stacked on a phone, a list shares its heading's axis: centred, not snapped to the left edge (Ash, 16 Oct). */
+  .beats li { margin-inline: auto; width: 100%; max-width: 24rem; justify-items: center; text-align: center; }
+  .beats p, .facts p { text-wrap: balance; }
+  .chapter .facts { text-align: center; max-width: 24rem; }
+}
+.beats .n { font: 400 2.75rem/1 var(--serif); font-variant-numeric: lining-nums; color: var(--ink-2); margin-bottom: 0.35rem; }
+.beats .n.yours { color: var(--your-move); }
+.beats h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
+.beats p { color: var(--ink-2); margin: 0; }
+.chapter .aside { color: var(--ink-2); margin: 3rem auto 0; max-width: 30rem; font-size: 0.9375rem; text-wrap: balance; }
+.chapter .aside + .aside { margin-top: 0.6rem; }
+kbd { font: 500 0.82em var(--sans); padding: 0.08em 0.38em; border-radius: 0.35em; background: var(--sheet); box-shadow: 0 0 0 1px var(--rule), 0 1.5px 0 var(--rule); }
+
+/* Download: two quiet columns, each saying plainly where it stands. */
+.get { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; max-width: 38rem; margin: 3rem auto 0; }
+@media (min-width: 34rem) { .get { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.get div { display: flex; flex-direction: column; align-items: center; }
+.get h3 { font: 400 1.5rem/1.2 var(--serif); margin: 0 0 0.3rem; }
+.get p { margin: 0 0 1.1rem; color: var(--ink-2); font-size: 0.9375rem; text-wrap: balance; }
+.get .store, .get .button, .get .soon { margin-top: auto; }
+.get .soon { display: inline-flex; align-items: center; height: 2.75rem; font-size: 0.9375rem; font-weight: 500; color: var(--ink-2); }
+
+.qa { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: 26rem; margin: 3rem auto 0; text-align: left; overflow-wrap: anywhere; }
+.qa h3 { font: 400 1.25rem/1.3 var(--serif); margin: 0 0 0.4rem; text-wrap: balance; }
+.qa p { margin: 0; color: var(--ink-2); }
+
+/* The end echoes the beginning: the line, and Ditto resting as its full stop. */
+.end { text-align: center; margin: clamp(8rem, 20vw, 14rem) auto 0; padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px)); }
+.end-line { font: 400 clamp(2rem, 6.4vw, 4.5rem)/1.1 var(--serif); font-optical-sizing: auto; letter-spacing: -0.012em; margin: 0 0 clamp(4rem, 10vw, 6rem); text-wrap: balance; }
+.end .small { font-size: 0.875rem; color: var(--ink-2); margin: 0; }
+.end-get { margin: 0 0 clamp(3rem, 8vw, 4.5rem); }
+:root[data-mac]:not([data-ios]) .end-get { display: block !important; }
+.end a { text-decoration: none; }
+@media (hover: hover) { .end .small a:hover { color: var(--ink); } }
+
+/* ———— The bento: one idea per tile, each a small working piece of the app, drawn in the page. ————
+   A tile is the app's chrome; a sheet on it is the app's page. Every demo is authored at its last frame,
+   so without script, with Reduce Motion, or before it plays, it reads complete. The script only ever
+   animates transform and opacity, from a first frame back to this one. */
+.bento-wrap { max-width: 64rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; }
+.bento { display: grid; gap: 0.75rem; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 40rem) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Partners in a row are paired by how tall their content is, so no tile waits on its neighbour. */
+    grid-template-areas: "write write" "check import" "search search" "links lock" "tags widget" "devices devices"; }
+  .t-write { grid-area: write; } .t-check { grid-area: check; } .t-links { grid-area: links; } .t-search { grid-area: search; }
+  .t-lock { grid-area: lock; } .t-tags { grid-area: tags; } .t-widget { grid-area: widget; } .t-import { grid-area: import; }
+  .t-ditto { grid-area: ditto; } .t-devices { grid-area: devices; }
+}
+@media (min-width: 62rem) {
+  .bento { gap: 1rem; grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-areas:
+      "write write write write tags tags"
+      "check check links links import import"
+      "search search search lock lock lock"
+      "widget widget devices devices devices devices"; }
+}
+.tile { position: relative; display: flex; flex-direction: column; padding: 1.5rem;
+  border-radius: 1.75rem; background: var(--tile); box-shadow: var(--tile-ring); overflow: hidden; overflow: clip;
+  container-type: inline-size; isolation: isolate; -webkit-tap-highlight-color: transparent; }
+@media (max-width: 30rem) { .tile { padding: 1.25rem; border-radius: 1.5rem; } }
+/* Apple's way with a tile's words: its name in ink, then one short line in the quieter ink, run together. */
+.tx { overflow-wrap: anywhere; font: 600 1.1875rem/1.32 var(--sans); letter-spacing: -0.014em; max-width: 25em; text-wrap: pretty; position: relative; z-index: 1; }
+.tx h3, .tx p { display: inline; font: inherit; margin: 0; }
+.tx p { color: var(--ink-2); }
+.tile.big .tx { font-size: clamp(1.1875rem, 0.9rem + 1.3cqi, 1.5rem); }
+.demo { position: relative; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; margin-top: 1.25rem;
+  font-size: 1rem; line-height: 1.45; user-select: none; -webkit-user-select: none; }
+.sheet { position: relative; isolation: isolate; background: var(--sheet); border-radius: 0.875rem; box-shadow: var(--sheet-shadow); }
+.demo [data-tap] { cursor: pointer; }
+
+/* The caret: Ink's own, a 2 pt stroke of margin red with round ends, as tall as the letters, softly wet. */
+.caret-at { position: relative; display: inline-block; width: 0; height: 1em; vertical-align: -0.14em; }
+.caret { position: absolute; left: 0.06em; top: -0.06em; width: 2px; height: 1.12em; border-radius: 1px;
+  background: var(--your-move); box-shadow: 0 0 3.5px color-mix(in srgb, var(--your-move) 30%, transparent); }
+.nb { white-space: nowrap; }
+
+/* The glass at the foot of a page: what just happened, with Undo. */
+.toast { position: absolute; left: 50%; bottom: 0.9rem; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 0.45em;
+  padding: 0.5em 0.95em; border-radius: 1.2em; white-space: nowrap; font-size: 0.8125rem; font-weight: 500; max-width: calc(100% - 1.5rem); box-sizing: border-box;
+  background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: 0 0 0 0.5px var(--rule), 0 6px 20px rgba(0, 0, 0, 0.12); }
+.toast b { font-weight: 650; }
+@media (max-width: 30rem) { .toast { white-space: normal; flex-wrap: wrap; justify-content: center; text-align: center; width: max-content; } }
+.toast .sep { color: var(--rule); }
+
+/* Writing */
+.d-write .sheet { padding: 1.75rem 2rem 1.6rem; }
+.w-title { font: 700 1.625rem/1.2 var(--sans); letter-spacing: -0.02em; margin-bottom: 1rem; }
+.w-p { font-size: 1.1875rem; line-height: 1.6; margin: 0 0 0.7rem; max-width: 30em; }
+@container (min-width: 34rem) { .d-write .sheet { padding: 2.5rem 2.75rem 2.25rem; } .w-title { font-size: 2.5rem; margin-bottom: 1.4rem; } .w-p { font-size: 1.5rem; line-height: 1.55; margin-bottom: 0.9rem; } }
+@container (max-width: 22rem) { .d-write .sheet { padding: 1.4rem 1.4rem 1.2rem; } .w-p { font-size: 1.0625rem; } }
+
+/* Checklists: the box fills, the words are crossed off in one stroke. */
+.d-check .sheet { padding: 1.1rem 1.25rem 1.2rem; }
+.sh-h { font: 700 1.0625rem/1.3 var(--sans); letter-spacing: -0.01em; margin-bottom: 0.55rem; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+.checks li { display: flex; align-items: center; gap: 0.6em; min-width: 0; }
+.box { position: relative; flex: none; width: 1.05em; height: 1.05em; border-radius: 0.3em; box-shadow: inset 0 0 0 1.5px var(--rule); }
+.box .fill { position: absolute; inset: 0; border-radius: inherit; background: var(--ink-2); opacity: 0; transform: scale(0.5); }
+.box svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--paper); stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transform: scale(0.4); }
+.ct { position: relative; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ct .strike { position: absolute; left: 0; right: 0; top: 54%; height: 1.5px; margin-top: -0.75px; background: currentColor; border-radius: 1px;
+  transform: scaleX(0); transform-origin: left center; }
+.on .fill, .on .box svg { opacity: 1; transform: none; }
+.on .ct { opacity: 0.62; }
+.on .ct .strike { transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .box .fill, .box svg { transition: transform 0.42s var(--spring, cubic-bezier(.2,.8,.2,1)), opacity 0.2s ease; }
+  .ct { transition: opacity 0.3s ease; }
+  .ct .strike { transition: transform 0.3s cubic-bezier(.2,.8,.2,1); }
+}
+
+/* Links that follow a rename */
+.d-links { gap: 0; }
+.l-a { padding: 0.9rem 1.15rem 1rem; width: 78%; }
+.l-b { padding: 0.9rem 1.15rem 3.4rem; margin: -0.6rem 0 0 auto; width: 82%; }
+.l-title { font: 700 1.0625rem/1.3 var(--sans); letter-spacing: -0.01em; }
+.l-line { font-size: 0.9375rem; color: var(--ink-2); margin-top: 0.2rem; }
+.l-line.ink { color: var(--ink); }
+.swap { display: inline-grid; vertical-align: bottom; }
+.swap > * { grid-area: 1 / 1; }
+.swap .old { opacity: 0; }
+.lnk { position: relative; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 0.2em; }
+.lnk .br { color: var(--rule); text-decoration: none; }
+.d-links .toast { bottom: 0.75rem; }
+
+/* Search reads pictures */
+.d-search { flex-direction: row; align-items: center; justify-content: center; gap: 1rem; }
+.photo { position: relative; flex: 0 0 42%; max-width: 15rem; aspect-ratio: 1 / 1.08; border-radius: 0.875rem; overflow: hidden;
+  background: radial-gradient(120% 90% at 30% 20%, #8A7A66, #4E4336 70%); box-shadow: var(--sheet-shadow); }
+.receipt { position: absolute; left: 14%; top: 9%; width: 74%; padding: 0.8rem 0.75rem 1.1rem; background: #FBF9F3; color: #2A2620;
+  font: 500 0.6875rem/1.6 var(--mono); transform: rotate(-5deg); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35); border-radius: 2px; }
+.receipt .rh { font-weight: 700; text-align: center; letter-spacing: 0.08em; margin-bottom: 0.45rem; }
+.receipt .rr { display: flex; justify-content: space-between; gap: 0.4rem; }
+.receipt .rt { border-top: 1px dashed rgba(42, 38, 32, 0.4); margin-top: 0.35rem; padding-top: 0.3rem; font-weight: 700; }
+.receipt .hit { position: relative; }
+.receipt .hit .hl { position: absolute; inset: -0.05em -0.2em; background: rgba(252, 214, 84, 0.75); border-radius: 2px; z-index: -1; transform-origin: left; }
+.receipt .hit > span:first-child { position: relative; z-index: 0; isolation: isolate; }
+.s-panel { flex: 1 1 auto; min-width: 0; max-width: 24rem; padding: 0.75rem; display: grid; gap: 0.6rem; }
+.s-field { display: flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.7rem; border-radius: 999px; background: var(--fill-2); font-size: 0.9375rem; min-height: 1.4em; }
+.s-field svg { flex: none; width: 0.95rem; height: 0.95rem; stroke: var(--ink-2); fill: none; stroke-width: 2; stroke-linecap: round; }
+.s-hit { padding: 0.55rem 0.7rem; border-radius: 0.6rem; background: var(--fill); }
+.s-hit b { display: block; font-weight: 650; font-size: 0.9375rem; }
+.s-hit span { display: block; font-size: 0.8125rem; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s-hit mark { background: var(--hl); color: var(--ink); border-radius: 0.2em; padding: 0 0.1em; }
+@container (max-width: 24rem) { .d-search { flex-direction: column; align-items: stretch; } .photo { flex: none; aspect-ratio: 16 / 10; } .receipt { left: 22%; width: 56%; top: 8%; } }
+
+/* Locked notes */
+.d-lock .sheet { padding: 1.1rem 1.25rem 1.4rem; overflow: hidden; }
+.k-body { min-height: 7.4em; }
+.k-title { font: 700 1.0625rem/1.3 var(--sans); letter-spacing: -0.01em; margin-bottom: 0.45rem; }
+.k-body { position: relative; font-size: 0.9375rem; line-height: 1.55; }
+.k-body p { margin: 0; max-width: none; }
+.k-words { opacity: 0; }
+.k-blur { position: absolute; inset: 0; filter: blur(6px); opacity: 0.7; }
+.k-lock { position: absolute; left: 50%; top: 50%; display: grid; justify-items: center; gap: 0.35rem; transform: translate(-50%, -38%); padding: 0.9rem 1.6rem;
+  background: radial-gradient(closest-side, var(--sheet) 55%, color-mix(in srgb, var(--sheet) 0%, transparent));
+  font-size: 0.8125rem; font-weight: 600; color: var(--ink-2); }
+.k-lock svg { width: 1.6rem; height: 1.6rem; color: var(--ink); overflow: visible; }
+.k-lock .shackle { transform-box: fill-box; transform-origin: 85% 100%; }
+.faceid { position: absolute; left: 50%; top: 50%; width: 3rem; height: 3rem; margin: -1.15rem 0 0 -1.5rem; color: var(--ink); opacity: 0; pointer-events: none; }
+.d-lock.open .k-words { opacity: 1; }
+.d-lock.open .k-blur { opacity: 0; }
+.d-lock.open .k-lock { opacity: 0; transform: translate(-50%, -38%) scale(0.9); }
+@media (prefers-reduced-motion: no-preference) {
+  .k-words, .k-blur { transition: opacity 0.45s ease; }
+  .k-lock { transition: opacity 0.3s ease, transform 0.45s var(--spring, cubic-bezier(.2,.8,.2,1)); }
+}
+
+/* Tags, nested: the sidebar's own outline, on the tile's chrome. */
+.g-note { padding: 0.75rem 1rem; font-size: 0.9375rem; margin-bottom: 0.9rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; }
+.cap { display: inline-block; padding: 0.05em 0.55em 0.1em; border-radius: 999px; background: var(--fill-2); font-weight: 500; font-size: 0.875rem; white-space: nowrap; }
+.g-tree { list-style: none; margin: 0; padding: 0; font-size: 0.9375rem; display: grid; gap: 0.1rem; }
+.g-tree li { display: flex; align-items: center; gap: 0.4rem; padding: 0.22rem 0.5rem; padding-left: calc(0.5rem + var(--d, 0) * 1.1rem); border-radius: 0.5rem; }
+.g-tree li.sel { background: var(--fill-2); font-weight: 600; }
+.g-tree .hash { color: var(--ink-2); width: 0.7rem; text-align: center; }
+.chev { width: 0.7rem; height: 0.7rem; flex: none; color: var(--ink-2); transform: rotate(90deg); }
+.chev.none { visibility: hidden; }
+.g-tree .n { margin-left: auto; color: var(--ink-2); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+
+/* A note on the Home Screen */
+.hs { position: relative; width: 100%; max-width: 21rem; margin-inline: auto; box-sizing: border-box; padding: 1rem; border-radius: 1.4rem; background: linear-gradient(165deg, var(--wall-1), var(--wall-2));
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem 0.9rem; align-content: start; }
+.hs .wg { grid-column: span 2; grid-row: span 2; aspect-ratio: 1; border-radius: 1.35rem; background: var(--sheet); padding: 0.8rem 0.85rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14); font-size: 0.75rem; line-height: 1.35; overflow: hidden; }
+.hs .wg b { display: block; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.35rem; }
+.hs .wg .checks { gap: 0.28rem; }
+.hs .app { aspect-ratio: 1; border-radius: 26%; background: color-mix(in srgb, var(--sheet) 38%, transparent); }
+@container (max-width: 22rem) { .hs { gap: 0.8rem 0.7rem; } }
+
+/* Import */
+.t-import .demo { align-items: center; }
+.im-stack { position: relative; align-self: stretch; height: 5.6rem; margin: 0 0.5rem; }
+.im-card { position: absolute; left: 0; right: 0; top: calc(var(--i) * 0.85rem); padding: 0.75rem 0.95rem; border-radius: 0.8rem;
+  background: var(--sheet); box-shadow: var(--sheet-shadow); transform: scale(calc(1 - (2 - var(--i)) * 0.05)); transform-origin: 50% 0; font-size: 0.875rem; }
+.im-card b { display: block; font-weight: 650; font-size: 0.9375rem; }
+.im-card span { color: var(--ink-2); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-import .toast { position: relative; left: auto; bottom: auto; transform: none; margin-top: 1.25rem; }
+
+/* Mac and iPhone */
+.t-devices .demo { justify-content: center; }
+.dv { position: relative; width: 100%; max-width: 30rem; margin-inline: auto; aspect-ratio: 1 / 1.12; font-size: clamp(7px, 2.75cqi, 12.5px); }
+@container (min-width: 30rem) {
+  .dv { max-width: 26rem; aspect-ratio: 1 / 0.6; font-size: clamp(7px, 1.55cqi, 10px); }
+  .dv .mw { width: 84%; height: 92%; }
+  .dv .ph { width: 23%; right: 0; }
+}
+.mw { position: absolute; left: 0; top: 0; width: 100%; height: 56%; border-radius: 1em; background: var(--sheet); box-shadow: var(--sheet-shadow); overflow: hidden; display: flex; }
+.mw .side { width: 29%; background: var(--desk); padding: 1.1em 0.9em; display: grid; align-content: start; gap: 0.5em; }
+.lights { display: flex; gap: 0.45em; margin-bottom: 0.6em; }
+.lights i { width: 0.75em; height: 0.75em; border-radius: 50%; background: var(--fill-2); }
+.side .srch { height: 1.8em; border-radius: 0.6em; background: var(--fill-2); margin-bottom: 0.4em; }
+.side .row { font-size: 1.05em; padding: 0.35em 0.6em; border-radius: 0.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side .row.sel { background: var(--fill-2); font-weight: 650; }
+.mw .pg { flex: 1; padding: 2.6em 2em 1em; min-width: 0; }
+.pg .t { font: 700 1.9em/1.2 var(--sans); letter-spacing: -0.02em; margin-bottom: 0.6em; }
+.pg .checks { font-size: 1.25em; gap: 0.45em; }
+.ph { position: absolute; right: 2%; bottom: 0; width: 31%; aspect-ratio: 9 / 19.5; border-radius: 2.6em; background: var(--sheet);
+  box-shadow: 0 0 0 0.45em var(--ink), var(--sheet-shadow); padding: 4.2em 1.4em 1em; overflow: hidden; }
+.ph::before { content: ""; position: absolute; top: 0.9em; left: 50%; width: 32%; height: 1.5em; margin-left: -16%; border-radius: 999px; background: var(--ink); }
+.ph .t { font: 700 1.6em/1.2 var(--sans); letter-spacing: -0.02em; margin-bottom: 0.6em; }
+.ph .checks { font-size: 1.08em; gap: 0.45em; }
+.ph .ct, .pg .ct { overflow: visible; }
+
+/* Ditto */
+.d-ditto .sheet { --mg: 3.6rem; padding: 1.75rem 1.25rem 1.25rem var(--mg); font-size: 1.0625rem; }
+.dt-h { font: 700 1.3125rem/1.25 var(--sans); letter-spacing: -0.015em; margin-bottom: 0.4rem; }
+.dt-line { position: relative; padding: 0.12rem 0; line-height: 1.5; }
+.dt-line .wash { position: absolute; inset: 0 -0.5rem; border-radius: 0.4rem; background: var(--fill-2); opacity: 0; z-index: -1; }
+.dt-line .txt { position: relative; }
+.dt-now { display: grid; font-size: 0.9375rem; line-height: 1.4; color: color-mix(in srgb, var(--ink) 75%, transparent); margin-top: 0.15rem; text-wrap: pretty; }
+.d-ditto .again { font-weight: 600; color: var(--ink); white-space: nowrap; cursor: pointer; }
+.d-ditto .caret-at .keys { position: absolute; left: 0.55rem; top: -0.3em; right: auto; bottom: auto; gap: 0.25rem; white-space: nowrap; }
+.d-ditto .caret-at .keys span { min-width: 1.75rem; height: 1.75rem; font-size: 0.875rem; border-radius: 0.45rem; }
+.dt-now .now-i { grid-area: 1 / 1; opacity: 0; pointer-events: none; }
+.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d { pointer-events: auto; }
+.dt-now .now-i.last { opacity: 1; }
+.d-ditto.shipped .now-i.last, .d-ditto.discarded .now-i.last { opacity: 0; }
+.d-ditto.shipped .now-i.s, .d-ditto.discarded .now-i.d, .d-ditto.asked .now-i.a { opacity: 1; }
+.d-ditto.asked .now-i.last { opacity: 0; }
+.d-ditto .branch { white-space: nowrap; }
+.d-ditto .caret { opacity: 0; }
+.rv-diff { display: grid; margin: 0.55rem 0 0.7rem; padding: 0.45rem 0; border-radius: 0.6rem; background: var(--fill); font: 500 0.75rem/1.55 var(--mono); overflow: hidden; }
+.rv-diff span { padding: 0 0.7rem; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+.rv-diff .del { background: var(--diff-del); }
+.rv-diff .add { background: var(--diff-add); }
+@container (max-width: 24rem) { .rv-diff { font-size: 0.6875rem; } .rv-diff span { padding: 0 0.55rem; } }
+.rv-diff .del::before { content: "− "; opacity: 0.6; }
+.rv-diff .add::before { content: "+ "; opacity: 0.6; }
+.rv-checks { list-style: none; padding: 0; margin: 0 0 0.85rem; display: grid; gap: 0.2rem; }
+.rv-checks li { position: relative; padding-left: 1.35rem; }
+.rv-checks li::before { content: ""; position: absolute; left: 0.1rem; top: 0.36em; width: 0.7rem; height: 0.4rem; border: solid currentColor; border-width: 0 0 2px 2px; transform: rotate(-45deg); opacity: 0.55; }
+.dt-mg { position: absolute; left: -2.45rem; top: 0.05rem; width: 1.9rem; height: 1.6rem; display: grid; place-items: end center; }
+.dt-ditto { width: 1.9rem; height: auto; overflow: visible; transform-origin: 50% 94%; }
+.dt-ditto .eyes { transform-box: fill-box; transform-origin: center; }
+.dt-ditto .dot { transform-box: fill-box; transform-origin: center; }
+.dt-done { position: absolute; left: 0.45rem; bottom: 0.15rem; width: 1rem; height: 1rem; stroke: var(--ink-2); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.keys { position: absolute; right: 1.5rem; top: 1.5rem; display: flex; gap: 0.35rem; opacity: 0; }
+.keys span { display: grid; place-items: center; min-width: 2.2rem; height: 2.2rem; padding: 0 0.4rem; border-radius: 0.55rem; background: var(--sheet);
+  font: 500 1rem var(--sans); box-shadow: 0 0 0 1px var(--rule), 0 2px 0 var(--rule); }
+.rv-slot { position: relative; margin: 1.5rem 0 0 calc(1.25rem - var(--mg)); }
+/* Wide: the note on the left, the review beside it, as it arrives on a Mac's wide window. */
+@container (min-width: 54rem) {
+  .d-ditto .sheet { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 27rem); grid-template-rows: repeat(4, auto) 1fr; column-gap: 2.5rem; align-items: start; padding-right: 1.5rem; }
+  .d-ditto .sheet > :not(.rv-slot):not(.keys) { grid-column: 1; }
+  .d-ditto .rv-slot { grid-column: 2; grid-row: 1 / -1; margin: 0; align-self: center; }
+}
+.rv { position: relative; padding: 1.1rem 1.2rem 1.15rem; border-radius: 1.1rem; background: var(--sheet);
+  box-shadow: 0 0 0 1px var(--rule), 0 18px 44px rgba(0, 0, 0, 0.16); font-size: 0.875rem; z-index: 2; }
+.rv-eb { font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 600; color: var(--ink-2); text-transform: uppercase; }
+.rv-t { font: 700 1.125rem/1.25 var(--sans); letter-spacing: -0.012em; margin: 0.25rem 0 0.55rem; text-wrap: balance; }
+.rv-m { color: var(--ink-2); }
+.rv-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+.rv-b { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.45em 0.85em; border-radius: 999px; background: var(--fill-2); font-weight: 600; white-space: nowrap; }
+.rv-b i { font-style: normal; font-weight: 500; font-size: 0.85em; opacity: 0.6; }
+.rv-b.ship { background: var(--ink); color: var(--paper); }
+.rv-b.quiet { background: none; margin-left: auto; color: var(--ink-2); }
+@media (hover: hover) { .rv-b:hover { filter: brightness(1.08); } .rv-b.quiet:hover { color: var(--ink); } }
+.rv-b:active { transform: scale(0.97); }
+@container (max-width: 33rem) { .rv-b i { display: none; } .d-ditto .sheet { --mg: 3.1rem; } }
+@container (max-width: 24rem) { .rv-acts { gap: 0.4rem; } .rv-b.ship { flex: 1 0 100%; box-sizing: border-box; justify-content: center; padding-block: 0.6em; } .rv-slot { margin-left: calc(0.75rem - var(--mg)); } }
+.d-ditto .after { position: absolute; left: 1.2rem; top: 1rem; font-size: 0.875rem; color: var(--ink-2); opacity: 0; }
+/* After a call: the review goes; the line keeps what became of it. */
+.d-ditto.shipping .rv, .d-ditto.shipped .rv, .d-ditto.discarded .rv, .d-ditto.asked .rv { opacity: 0; transform: translateY(1.25rem) scale(0.98); pointer-events: none; }
+.d-ditto.shipped .dt-ditto, .d-ditto.discarded .dt-ditto { opacity: 0; transform: translateY(40%) scale(0.8); }
+.d-ditto.asked .dt-ditto .dot, .d-ditto.shipping .dt-ditto .dot, .d-ditto.shipped .dt-ditto .dot { opacity: 0; transform: scale(0); }
+.d-ditto.shipped .dt-done { opacity: 1; }
+.d-ditto.shipped .after.s, .d-ditto.discarded .after.d { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .rv, .dt-ditto, .dt-ditto .dot, .dt-done, .d-ditto .after { transition: opacity 0.3s ease, transform 0.45s var(--spring, cubic-bezier(.2,.8,.2,1)); }
+  .rv-b { transition: transform 0.15s ease, filter 0.15s ease, color 0.15s ease; }
+}
+
+/* The new chapters: a plain triad (no numbers), the two people it's for, and the safety facts. */
+.beats.plain li { gap: 0.4rem; }
+.gap-lead { color: var(--ink-2); max-width: 33rem; margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-wrap: balance; }
+.gap { font: 400 clamp(1.3rem, 1rem + 1.1vw, 1.65rem)/1.35 var(--serif); letter-spacing: -0.005em; max-width: 36rem; margin: 1rem auto 0; text-wrap: balance; }
+.loop { margin-top: clamp(3rem, 7vw, 4.5rem); }
+/* The film: a quiet link under the hero's actions; a player that opens only when asked, with sound. */
+.film-link { display: inline-flex; align-items: center; gap: 0.45rem; margin-top: 1.1rem; padding: 0.35rem 0.6rem; border: 0; border-radius: 999px;
+  background: none; color: var(--ink-2); font: 500 0.9375rem var(--sans); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease, transform 0.42s var(--spring, cubic-bezier(.2,.8,.2,1)); }
+.film-link svg { width: 1.05em; height: 1.05em; }
+.film-link .dur { opacity: 0.7; font-weight: 400; }
+@media (hover: hover) { .film-link:hover { color: var(--ink); } }
+.film-link:active { transform: scale(0.965); transition-duration: 0.06s; }
+dialog.film { width: min(92vw, 1280px, calc((100dvh - 7rem) * 16 / 9)); max-width: none; padding: 0; border: 0; border-radius: 16px; background: #000; overflow: visible;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45); }
+dialog.film::backdrop { background: rgba(10, 9, 7, 0.78); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 16px; background: #000; }
+.film-close { position: absolute; top: -2.6rem; right: -0.2rem; width: 2.1rem; height: 2.1rem; display: grid; place-items: center; border: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; }
+.film-close svg { width: 0.95rem; height: 0.95rem; }
+@media (hover: hover) { .film-close:hover { background: rgba(255, 255, 255, 0.24); } }
+/* A short screen (a phone on its side): the close button comes inside the picture, always reachable. */
+@media (max-height: 30rem) { .film-close { top: 0.5rem; right: 0.5rem; z-index: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  dialog.film[open] { animation: film-in 0.38s cubic-bezier(.2,.8,.2,1); }
+  dialog.film[open]::backdrop { animation: film-fade 0.3s ease; }
+}
+@keyframes film-in { from { opacity: 0; transform: translateY(10px) scale(0.985); } }
+@keyframes film-fade { from { opacity: 0; } }
+/* The promise, inked: one hand-drawn stroke under it, drawn once as it comes into view. */
+.inked { position: relative; white-space: nowrap; }
+.inked .stroke { position: absolute; left: -2%; bottom: -0.44em; width: 104%; height: 0.42em; overflow: visible; pointer-events: none; }
+.inked .stroke path { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.82; }
+.lk-eyes { transform-box: fill-box; transform-origin: 50% 50%; }
+.bento.solo { grid-template-columns: minmax(0, 1fr); grid-template-areas: none; }
+.bento.solo > .tile { grid-area: auto; }
+.who { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; max-width: var(--wide); margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
+@media (min-width: 48rem) { .who { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 0; } .who .person { display: grid; grid-row: span 5; grid-template-rows: subgrid; align-content: start; } .who .person .ex { margin-top: 0.6rem; align-self: start; } }
+.person { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.75rem; border-radius: 1.75rem; background: var(--tile); box-shadow: var(--tile-ring); min-width: 0; }
+@media (max-width: 30rem) { .person { padding: 1.25rem; border-radius: 1.5rem; } }
+.person .role { margin: 0; font-size: 0.6875rem; letter-spacing: 0.14em; font-weight: 600; color: var(--ink-2); text-transform: uppercase; }
+.person h3 { font: 400 1.5rem/1.2 var(--serif); letter-spacing: -0.005em; margin: 0; text-wrap: balance; }
+.person > p { margin: 0; color: var(--ink-2); }
+.ex { display: grid; gap: 0.35rem; margin-top: auto; padding: 1rem 1.1rem; border-radius: 1.1rem; background: var(--sheet); box-shadow: 0 0 0 1px var(--rule); font-size: 0.9375rem; }
+.person .ex { margin-top: auto; }
+.person .needs { margin: 0.1rem 0 0; font-size: 0.875rem; }
+.ex-line { font-weight: 600; }
+.ex-to { color: var(--ink-2); font-size: 0.875rem; overflow-wrap: anywhere; }
+.ex-to::before { content: "→ "; }
+.facts { list-style: none; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem 3rem; max-width: var(--wide); margin: clamp(3rem, 7vw, 4.5rem) auto 0; text-align: left; }
+@media (min-width: 48rem) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 0; } .facts li { display: grid; grid-row: span 2; grid-template-rows: subgrid; } .facts h3 { margin: 0; } }
+.facts h3 { font: 400 1.25rem/1.25 var(--serif); letter-spacing: -0.005em; margin: 0 0 0.35rem; }
+.facts p { margin: 0; color: var(--ink-2); font-size: 0.9375rem; }
+
+/* Download: Apple's badge as Apple draws it, and our own button beside it, the same height. */
+.when-mac, .when-store, .when-get { display: none !important; }
+:root[data-mac] .when-mac, :root[data-store] .when-store, :root[data-get] .when-get { display: inline-flex !important; }
+:root[data-mac] .unless-mac, :root[data-store] .unless-store, :root[data-get] .unless-get { display: none !important; }
+.when-ios { display: none !important; }
+:root[data-ios] .when-ios { display: block !important; }
+:root[data-ios] button.when-ios { display: inline-flex !important; }
+:root[data-ios] .when-mac, :root[data-ios]:not([data-store]) .hero .actions, :root[data-ios]:not([data-store]) .bar a.button.status { display: none !important; }
+.bar .share { margin-top: 0; }
+.get-note { margin: 0.9rem 0 0; font-size: 0.875rem; color: var(--ink-2); }
+.hero .get-note { margin-top: 0.85rem; }
+.hero .get-note.when-ios { margin-top: 0; }
+.share { margin-top: 0.9rem; }
+:root[data-get] .bar .button.status { background: var(--ink); color: var(--paper); box-shadow: none; }
+:root[data-get] .actions .how { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule); }
+.store { display: inline-flex; border-radius: 9px; }
+.store img { height: 2.75rem; width: auto; }
+.button.tall { height: 2.75rem; padding-block: 0; box-sizing: border-box; }
+.button svg { width: 1em; height: 1em; }
+/* ———— Opening B ———— */
+/* The ink while it writes: a layer over the whole window, so the drop is never clipped by the name's own box. */
+.ink-layer { position: fixed; left: 0; top: 0; z-index: 4; display: none; pointer-events: none; }
+/* Replay, for setting B beside the live opening. It keeps out of the way, and out of the opening. */
+.replay { position: fixed; z-index: 3; right: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); }
+:root[data-opening] .replay { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .replay { display: none; } }
+</style>
+</head>
+<body>
+<header class="bar" id="top">
+  <div class="bar-inner">
+    <a class="home" href="#top" aria-label="Ink &amp; Ditto, to the top">
+      <img decoding="async" class="light" src="../assets/ink-light.png" alt="" width="398" height="287" loading="lazy">
+      <img decoding="async" class="dark" src="../assets/ink-dark.png" alt="" width="398" height="287" loading="lazy">
+      <svg class="ditto7 small lk-ditto" viewBox="0 0 40 34" aria-hidden="true"><path class="b" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><g class="lk-eyes"><ellipse class="ew" cx="16.1" cy="21.01" rx="2.73" ry="4.27"/><ellipse class="ew" cx="23.9" cy="21.01" rx="2.73" ry="4.27"/></g></svg>
+    </a>
+    <div class="bar-end">
+      <a class="button small status" href="#download"><span class="unless-get">Coming soon</span><span class="when-get">Download</span></a>
+      <button class="button small status when-ios" type="button" data-share>Send to Mac</button>
+      <button class="theme" type="button" aria-label="Dark mode" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <mask id="eclipse"><rect width="24" height="24" fill="#fff"/><circle class="bite" cx="30" cy="0" r="7" fill="#000"/></mask>
+          <circle class="body" cx="12" cy="12" r="5" fill="currentColor" mask="url(#eclipse)"/>
+          <g class="rays" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 1.5v2M12 20.5v2M1.5 12h2M20.5 12h2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M4.6 19.4L6 18M18 6l1.4-1.4"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero" id="hero">
+    <h1><span class="vh">Ink &amp; Ditto</span><span class="om-a" aria-hidden="true">Ink &amp; </span><span class="om-b" aria-hidden="true">Ditto<span class="caret-at" aria-hidden="true"><i class="caret"></i></span><span class="om-ditto" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="hdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="hds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="hdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="hdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="hdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="hdl0"><path class="lp" d="M13.18 17.71Q16.1 17.71 19.03 17.71L19.03 24.3Q16.1 24.3 13.18 24.3Z"/></clipPath><clipPath id="hdl1"><path class="lp" d="M26.83 17.71Q23.9 17.71 20.98 17.71L20.98 24.3Q23.9 24.3 26.83 24.3Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#hdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#hdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#hdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#hds)" filter="url(#hdh)"/><path class="rim bp" clip-path="url(#hdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#hdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#hdl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="1.95" ry="3.05"/></g><g clip-path="url(#hdl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="1.95" ry="3.05"/></g></g></g></svg></span></span></h1>
+    <p class="line">Write it down. It gets done.</p>
+    <p class="lede">Calm Markdown notes for people who build products. Hand Ditto a line, and Claude&nbsp;Code does the work in your project, on a branch of its own. It’s checked against your taste before you see it, and you decide once.<span class="unless-get"> Coming soon.</span></p>
+    <div class="actions when-get">
+      <a class="button tall when-mac" data-get="mac" href="#download"><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>Download for Mac</a>
+      <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
+    </div>
+    <p class="get-note when-mac">Free. macOS 26 or later. Ditto needs Claude&nbsp;Code.</p>
+    <p class="get-note when-ios">Ink for Mac is ready now. iPhone is coming soon.</p>
+    <button class="button small share when-ios" type="button" data-share>Send to Mac</button>
+    <button class="film-link" type="button" data-film><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 5.4v5.2L10.9 8z" fill="currentColor"/></svg>Watch the film <span class="dur">1 min</span></button>
+    <a class="cue" href="#verse" aria-label="Read on"><svg viewBox="0 0 22 13" aria-hidden="true"><path pathLength="1" d="M1.5 1.75 11 11.25 20.5 1.75"/></svg></a>
+  </div>
+</main>
+
+<dialog class="film" aria-label="The Ink &amp; Ditto film">
+  <button class="film-close" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <video controls playsinline preload="none" poster="../assets/film-poster.jpg" width="1280" height="720"></video>
+</dialog>
+
+<canvas class="ink-layer" aria-hidden="true"></canvas>
+<button class="button small status replay" type="button">Replay</button>
+
+<script>
+(function () {
+  var root = document.documentElement, button = document.querySelector(".theme");
+  var dark = matchMedia("(prefers-color-scheme: dark)"), still = matchMedia("(prefers-reduced-motion: reduce)");
+  // The page's own pair of theme colours, kept so following the system again can put them back.
+  var pair = Array.prototype.map.call(document.querySelectorAll('meta[name="theme-color"]'), function (m) { return m.cloneNode(); });
+  function system() { return dark.matches ? "dark" : "light"; }
+  function now() { return root.dataset.theme || system(); }
+  function show() {
+    // The label names the control; the pressed state says whether it's on. Neither flips the other.
+    button.setAttribute("aria-pressed", String(now() === "dark"));
+    // With a choice of its own, one theme colour with no media query: Safari keeps tinting its bars from a
+    // media-qualified tag even after its content changes. Following the system, the pair comes back.
+    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.remove(); });
+    if (root.dataset.theme) {
+      var m = document.createElement("meta"); m.name = "theme-color"; m.content = now() === "dark" ? "#14130F" : "#F7F4EE";
+      document.head.appendChild(m);
+    } else pair.forEach(function (m) { document.head.appendChild(m.cloneNode()); });
+  }
+  // Choosing the system's own look again goes back to following the system.
+  function set(t) {
+    if (t === system()) { delete root.dataset.theme; try { localStorage.removeItem("theme"); } catch (e) {} }
+    else { root.dataset.theme = t; try { localStorage.setItem("theme", t); } catch (e) {} }
+    show();
+    document.dispatchEvent(new CustomEvent("inktheme", { detail: t }));
+  }
+  // Only the look on show is downloaded. The other look's pictures near the screen are fetched when a
+  // change looks likely (a pointer over the toggle, a touch, focus), so the change never shows a blank.
+  function other() { return now() === "dark" ? "light" : "dark"; }
+  function warm() {
+    var want = other(), have = now(), near = [];
+    document.querySelectorAll("img." + want).forEach(function (img) {
+      // Each pair is two neighbours, the light one first.
+      var twin = want === "dark" ? img.previousElementSibling : img.nextElementSibling;
+      if (!twin || !twin.classList.contains(have)) return;
+      var r = twin.getBoundingClientRect();
+      if (r.bottom > -innerHeight && r.top < innerHeight * 2 && r.width) { img.loading = "eager"; near.push(img); }
+    });
+    return near;
+  }
+  ["pointerenter", "touchstart", "focus"].forEach(function (e) { button.addEventListener(e, warm, { passive: true }); });
+  button.addEventListener("click", function () {
+    var next = other(), ready = warm().map(function (img) { return img.decode().catch(function () {}); });
+    var wait = Promise.race([Promise.all(ready), new Promise(function (r) { setTimeout(r, 350); })]);
+    wait.then(function () {
+      if (!document.startViewTransition || still.matches) { set(next); return; }
+      var r = button.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      var far = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      document.startViewTransition(function () { set(next); }).ready.then(function () {
+        root.animate({ clipPath: ["circle(0px at " + x + "px " + y + "px)", "circle(" + far + "px at " + x + "px " + y + "px)"] },
+          { duration: 620, easing: "cubic-bezier(.2,.8,.2,1)", pseudoElement: "::view-transition-new(root)" });
+      });
+    });
+  });
+  dark.addEventListener("change", show);
+  show();
+})();
+</script>
+<script>
+// The film: opened only when asked, with sound; the smaller file on smaller screens; closing pauses it.
+(function () {
+  var link = document.querySelector("[data-film]"), dlg = document.querySelector("dialog.film");
+  if (!link || !dlg || !dlg.showModal) { if (link) link.hidden = true; return; }
+  var video = dlg.querySelector("video");
+  link.addEventListener("click", function () {
+    if (!video.src) video.src = "../assets/film-" + (Math.min(screen.width, screen.height) * (devicePixelRatio || 1) >= 1500 && innerWidth >= 900 ? "1080" : "720") + ".mp4";
+    dlg.showModal();
+    var p = video.play(); if (p && p.catch) p.catch(function () {});
+    // On a phone, the film is too small inline: it goes full screen, as Apple's own films do there.
+    if (matchMedia("(pointer: coarse)").matches && video.webkitEnterFullscreen) { try { video.webkitEnterFullscreen(); } catch (e) {} }
+    video.addEventListener("webkitendfullscreen", function () { close(); }, { once: true });
+  });
+  function close() { video.pause(); dlg.close(); }
+  dlg.querySelector(".film-close").addEventListener("click", close);
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) close(); });
+  dlg.addEventListener("close", function () { video.pause(); });
+})();
+
+// Where to get it: the links and Apple's badge, only when they're switched on at the top of the page.
+(function () {
+  var d = document.documentElement;
+  // On an iPhone or iPad: send this page to your Mac (the share sheet has AirDrop and Messages); else copy the link.
+  document.querySelectorAll("[data-share]").forEach(function (b) {
+    var label = b.textContent;
+    b.addEventListener("click", function () {
+      var url = location.origin + "/";
+      if (navigator.share) { navigator.share({ title: "Ink & Ditto", url: url }).catch(function () {}); return; }
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () {
+        b.textContent = "Link copied"; setTimeout(function () { b.textContent = label; }, 1800);
+      }, function () {});
+    });
+  });
+  document.querySelectorAll("a[data-get]").forEach(function (a) {
+    var mac = a.dataset.get === "mac";
+    if (!(mac ? "mac" in d.dataset : "store" in d.dataset)) return;
+    a.href = mac ? MAC_DOWNLOAD_URL : APP_STORE_URL;
+    var img = a.querySelector("[data-badge]");
+    if (img) img.src = APP_STORE_BADGE;
+  });
+})();
+
+// ———— Opening B ————
+// One drop of warm ink falls onto the page where the "I" begins and writes the name, in the hero's own serif,
+// the way a hand would: each stroke in its order, the nib lifting between them on a little arc. The ink it
+// leaves soaks in behind a wet bead, and the bead spends itself as it goes. What's left pools in the last o,
+// spills out of its side, runs along the line and gathers where Ditto sits; the ball rises into Ditto's dome
+// and opens its eyes. Then the page arrives exactly as the live one does.
+(function () {
+  var root = document.documentElement, still = matchMedia("(prefers-reduced-motion: reduce)");
+  var CAPTURE = /[?&]capture\b/.test(location.search);
+  // While recording, Ditto's idle blink and the read-on cue (both on real timers) stay out of the frames.
+  var setTimeout = CAPTURE ? function () {} : window.setTimeout.bind(window);
+
+  var OUT = "cubic-bezier(.2,.8,.2,1)";
+
+  // A spring, as Apple's are specified (response, damping), sampled into linear() where it's understood.
+  function spring(response, damping, fallback) {
+    if (!(window.CSS && CSS.supports && CSS.supports("transition-timing-function", "linear(0, 1)"))) return { e: fallback || OUT, d: response * 1250 };
+    var w = 2 * Math.PI / response, z = damping, wd = w * Math.sqrt(1 - z * z);
+    var T = Math.log(400) / (z * w), n = 36, pts = [];
+    for (var i = 0; i <= n; i++) {
+      var t = T * i / n, x = 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + z * w / wd * Math.sin(wd * t));
+      pts.push(i === n ? "1" : (Math.round(x * 1000) / 1000) + "");
+    }
+    return { e: "linear(" + pts.join(", ") + ")", d: Math.round(T * 1000) };
+  }
+  var SPR = spring(0.42, 0.86), POP = spring(0.36, 0.62, "cubic-bezier(.3,1.5,.5,1)");
+  root.style.setProperty("--spring", SPR.e);
+
+  function Run(at) { this.at = at; this.list = []; }
+  Run.prototype.go = function (el, frames, o) {
+    if (!el) return;
+    o = o || {};
+    var a = el.animate(frames, { duration: o.duration || 400, delay: this.at + (o.delay || 0), easing: o.easing || OUT,
+      fill: o.fill || "backwards", iterations: o.iterations || 1 });
+    this.list.push(a); return a;
+  };
+  Run.prototype.spring = function (el, frames, delay, s) { s = s || SPR; return this.go(el, frames, { delay: delay, duration: s.d, easing: s.e }); };
+  var rise = function (y, s) { return [{ opacity: 0, transform: "translateY(" + (y || 10) + "px)" + (s ? " scale(" + s + ")" : "") }, { opacity: 1, transform: "none" }]; };
+  var fadeIn = [{ opacity: 0 }, { opacity: 1 }];
+
+  // Characters revealed one by one where the line already lies, so nothing moves while it's typed.
+  function letters(el) {
+    if (el._letters) return el._letters;
+    var out = [], walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
+    // Only the words: never a drawing's insides, never the spaces between tags.
+    while (walk.nextNode()) { var n = walk.currentNode; if (n.data.trim() && !n.parentNode.closest("svg, .vh, .keys")) nodes.push(n); }
+    nodes.forEach(function (n) {
+      var f = document.createDocumentFragment();
+      Array.from(n.data).forEach(function (ch) { var s = document.createElement("span"); s.textContent = ch; f.appendChild(s); out.push(s); });
+      n.parentNode.replaceChild(f, n);
+    });
+    return (el._letters = out);
+  }
+
+  // ———— Ditto, a soft body ————
+  // Ditto is a drop of ink, so its outline is soft: thirteen points along the dome, each on its own spring
+  // toward where the pose wants it. The base is firm, the crown loose, so it lags on take-off, keeps going
+  // on landing, spreads in a squash and bows as it moves. A fixed-step integrator on real time makes it the
+  // same at 60 Hz and 120 Hz. Poses are a handful of hand-set numbers (height with constant volume, lean,
+  // foot flare, lift, eyes), eased between with a monotone cubic so nothing ever moves at a corner.
+  var EASE = {
+    i: function (u) { return u * u * u; },
+    o: function (u) { return 1 - Math.pow(1 - u, 3); },
+    io: function (u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
+  };
+  // ———— Ditto ————
+  // Ditto, refined (docs/ditto-character/ditto-7-final.json): thirteen points on the 40 × 34 grid, standing on
+  // y 32, drawn as a closed B-spline whose base leaves the page with no corner; eyes seen between lids, with a
+  // pupil and a catchlight; a highlight and the ink's bleed into the paper. Each point is on its own spring
+  // toward where the pose wants it: the base firm, the crown loose. A fixed step on real time makes it the same
+  // at 60 Hz and 120 Hz. A pose is a handful of numbers: height at constant volume (s), lean, foot spread
+  // (foot), lift, travel (x), size (k), roundness and roll (round, rot), eyes (open, lid, smile, lx, ly).
+  var D7 = {
+    pts: [[11.2, 32], [5.9, 31.7], [4.3, 27.4], [3.9, 22.4], [6.1, 14.2], [11, 8.9], [20.2, 6.4], [28.9, 9], [33.6, 14.5], [36.1, 22.6], [35.7, 27.5], [34.2, 31.7], [28.9, 32]],
+    eyes: [[16.1, 20.9], [23.9, 20.9]], erx: 1.95, ery: 3.05, lid: 0, gy: 0.15,
+    sheen: "M9.9 17.9C10.1 14.6 12.0 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13.0 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z"
+  };
+  var B0 = 32, CXD = 20, DH = 25.6;
+  var REST = { s: 1, lean: 0, lift: 0, foot: 3.6, open: 1, lid: 0, smile: 0, lx: 0, ly: 0, x: 0, o: 1, k: 1, rot: 0, round: 0, firm: 1 };
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  // Where the pose puts a point given at rest (outline, eyes and highlight alike).
+  function place(p, x, y) {
+    var u = clamp01((B0 - y) / DH), s = p.s, spread = (p.foot - 3.6) / 2, B = B0 - p.lift;
+    var dx = (x - CXD) / Math.sqrt(s) * (1 + spread * 0.2 * (1 - u) * (1 - u));
+    return [CXD + p.x + dx + p.lean * u, B - (B0 - y) * s * (1 - spread * 0.07)];
+  }
+  // As a drop it's round (a ball of ink), and it can roll; and it has a size. The same for whatever is drawn.
+  function finish(p, pts, roundable) {
+    var s = p.s, B = B0 - p.lift, cx = CXD + p.x, R = 14;
+    if (roundable && p.round > 0) {
+      var u = p.round, rx = R / Math.sqrt(s), ryy = R * s, rc = B - ryy * Math.cos(Math.PI / 13);   // the smooth outline runs along the chord at the bottom: sit that on the line
+      pts = pts.map(function (q, i) { var a = -Math.PI / 2 + (i - 6) * 2 * Math.PI / 13; return [q[0] + (cx + rx * Math.cos(a) - q[0]) * u, q[1] + (rc + ryy * Math.sin(a) - q[1]) * u]; });
+    }
+    // A round ball of ink looks the same at any angle, so while it's a ball it stays upright (its foot rides
+    // exactly on the line); turning only shows once it has a shape to turn.
+    if (p.rot && !(roundable && p.round > 0)) {
+      var oy = B - (DH * s * 0.45) * (1 - p.round) - R * s * p.round, cr = Math.cos(p.rot), sr = Math.sin(p.rot);
+      pts = pts.map(function (q) { var dx = q[0] - cx, dy = q[1] - oy; return [cx + dx * cr - dy * sr, oy + dx * sr + dy * cr]; });
+    }
+    if (p.k !== 1) pts = pts.map(function (q) { return [cx + (q[0] - cx) * p.k, B + (q[1] - B) * p.k]; });
+    return pts;
+  }
+  function outline(p) { return finish(p, D7.pts.map(function (q) { return place(p, q[0], q[1]); }), true); }
+  function attach(p, pts) { return finish(p, pts.map(function (q) { return place(p, q[0], q[1]); }), false); }
+  var r2 = function (v) { return Math.round(v * 100) / 100; };
+  // A closed uniform cubic B-spline through the 13 points, with two helpers on the base: straight along the
+  // page, leaving it with zero curvature.
+  function bodyPath(P) {
+    var n = P.length, a = P[n - 1], b = P[0], d = "";
+    var Q = P.concat([[a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3], [a[0] + 2 * (b[0] - a[0]) / 3, a[1] + 2 * (b[1] - a[1]) / 3]]), m = Q.length;
+    for (var i = 0; i < m; i++) {
+      var q0 = Q[(i - 1 + m) % m], q1 = Q[i], q2 = Q[(i + 1) % m], q3 = Q[(i + 2) % m];
+      if (!i) d = "M" + r2((q0[0] + 4 * q1[0] + q2[0]) / 6) + " " + r2((q0[1] + 4 * q1[1] + q2[1]) / 6);
+      d += "C" + r2((2 * q1[0] + q2[0]) / 3) + " " + r2((2 * q1[1] + q2[1]) / 3) + " " + r2((q1[0] + 2 * q2[0]) / 3) + " " + r2((q1[1] + 2 * q2[1]) / 3) + " " + r2((q1[0] + 4 * q2[0] + q3[0]) / 6) + " " + r2((q1[1] + 4 * q2[1] + q3[1]) / 6);
+    }
+    return d + "Z";
+  }
+  // The eyes, from the pose and the body's wobble: plain soft white ovals between lids (lid, and a blink is
+  // "not open") and lower lids (smile). Gaze moves the whole eye within the face. Small Dittos have bigger eyes.
+  function eyeShapes(q, dev, small) {
+    var out = [], sq = Math.sqrt(q.s), sc = small ? (small === 2 ? 1.4 : 1.24) : 1;
+    var lid = clamp01(Math.max(D7.lid, q.lid || 0, 1 - q.open)), sm = Math.max(0, Math.min(1.2, q.smile || 0));
+    var gx = q.lx * 0.32, gy = D7.gy + q.ly * 0.3;
+    var C = attach(q, D7.eyes);
+    for (var k = 0; k < 2; k++) {
+      var side = k ? 1 : -1, ex = C[k][0] + dev[0] + gx * 0.88 * q.k, ey = C[k][1] + dev[1] + gy * 0.72 * q.k;
+      var rx = D7.erx * Math.pow(1 / sq, 0.6) * q.k * sc, ry = D7.ery * Math.pow(q.s, 0.7) * q.k * sc;
+      var top = ey - ry * 1.08 + lid * ry * 2.16, yTo = top + lid * ry * 0.3, yTi = top - lid * ry * 0.08, yTc = top + lid * ry * 0.7;
+      var bot = ey + ry * 1.08, yBs = bot - sm * ry * 0.55, yBc = bot - sm * ry * 2.2, xo = ex + side * rx * 1.5, xi = ex - side * rx * 1.5;
+      var e = { ex: ex, ey: ey, rx: rx, ry: lid > 0.97 ? 0 : ry,
+        clip: "M" + r2(xo) + " " + r2(yTo) + "Q" + r2(ex) + " " + r2(yTc) + " " + r2(xi) + " " + r2(yTi) + "L" + r2(xi) + " " + r2(yBs) + "Q" + r2(ex) + " " + r2(yBc) + " " + r2(xo) + " " + r2(yBs) + "Z" };
+      out.push(e);
+    }
+    return out;
+  }
+  // How loose each point is: Hz and damping, foot to crown and back.
+  var HZ = [9, 8, 6.2, 5.4, 4.9, 4.5, 4.2, 4.5, 4.9, 5.4, 6.2, 8, 9], ZETA = [0.85, 0.8, 0.7, 0.62, 0.56, 0.52, 0.5, 0.52, 0.56, 0.62, 0.7, 0.8, 0.85];
+  function Rig(svg) {
+    this.svg = svg;
+    this.paths = svg.querySelectorAll(".bp"); this.sh = svg.querySelector(".sh"); this.bl = svg.querySelector(".bl");
+    this.ew = svg.querySelectorAll(".ew"); this.lp = svg.querySelectorAll(".lp");
+    this.dot = svg.querySelector(".dot"); this.g = svg.querySelector(".rig");
+    this.small = svg.classList.contains("tiny") ? 2 : svg.classList.contains("small") ? 1 : 0;
+    this.p = Object.assign({}, REST); this.P = null; this.acc = 0; this.last = 0;
+  }
+  Rig.prototype.target = function (p) { this.p = p; };
+  Rig.prototype.snap = function (p) {
+    this.p = p; this.cur = null; this.P = outline(p).map(function (q) { return q.slice(); }); this.V = this.P.map(function () { return [0, 0]; });
+    this.last = 0; this.acc = 0; this.draw();
+  };
+  Rig.prototype.set = Rig.prototype.snap;
+  // A moment played over whatever Ditto is doing (a trip, a nod, sleepy eyes, a bounce): pose keys for the
+  // numbers it changes, and optionally a path (x, lift) it travels. The springs still do the moving.
+  Rig.prototype.play = function (keys, path, onEnd) {
+    keys.sort(function (a, b) { return a.t - b.t; });
+    if (this.fx && this.fx.onEnd) { var f = this.fx.onEnd; this.fx = null; f(true); }
+    this.fx = { at: performance.now(), keys: keys, path: path, end: keys[keys.length - 1].t, onEnd: onEnd };
+    wakeRig(this);
+  };
+  Rig.prototype.stopFx = function () { var f = this.fx; this.fx = null; if (f && f.onEnd) f.onEnd(true); };
+  // One step of real time; returns whether it's still moving.
+  Rig.prototype.tick = function (now) {
+    if (!this.P) this.snap(this.p);
+    var q = this.p, fx = this.fx;
+    if (fx) {
+      var ft = now - fx.at;
+      if (ft >= fx.end) { this.fx = null; if (fx.onEnd) fx.onEnd(false); }
+      else {
+        var tr = fx.keys._tr || (fx.keys._tr = tracks(fx.keys));
+        q = Object.assign({}, q);
+        for (var nm in tr) q[nm] = mono(tr[nm], ft);
+        if (fx.path) Object.assign(q, fx.path(ft));
+      }
+    }
+    this.cur = q;
+    var dt = this.last ? Math.min((now - this.last) / 1000, 0.05) : 1 / 60, H = 1 / 240, T = outline(q), P = this.P, V = this.V, moving = 0;
+    this.last = now; this.acc += dt;
+    while (this.acc >= H) {
+      this.acc -= H;
+      for (var i = 0; i < P.length; i++) {
+        // Firm (a ball of ink in motion): it holds its exact shape. The springs only soften it once it relaxes.
+        if ((q.firm || 1) >= 1.6) { P[i][0] = T[i][0]; P[i][1] = T[i][1]; V[i][0] = V[i][1] = 0; continue; }
+        var w = 2 * Math.PI * HZ[i] * (q.firm || 1), k = w * w, c = 2 * ZETA[i] * w;
+        for (var j = 0; j < 2; j++) { V[i][j] += (k * (T[i][j] - P[i][j]) - c * V[i][j]) * H; P[i][j] += V[i][j] * H; }
+      }
+    }
+    for (i = 0; i < P.length; i++) moving = Math.max(moving, Math.abs(V[i][0]) + Math.abs(V[i][1]), Math.abs(T[i][0] - P[i][0]) + Math.abs(T[i][1] - P[i][1]));
+    this.draw(T);
+    return moving > 0.004 || !!this.fx || !!this._blBusy;
+  };
+  Rig.prototype.draw = function (T) {
+    var P = this.P, q = this.cur || this.p, d = bodyPath(P);
+    T = T || outline(q);
+    this.paths.forEach(function (e) { e.setAttribute("d", d); });
+    // The face rides the body's wobble: the shoulders' and crown's lag behind the pose.
+    var dev = [0, 0]; for (var i = 3; i <= 9; i++) { dev[0] += (P[i][0] - T[i][0]) / 7; dev[1] += (P[i][1] - T[i][1]) / 7; }
+    if (this.sh) this.sh.setAttribute("d", D7.sheen.replace(/(-?\d*\.?\d+)[ ,](-?\d*\.?\d+)/g, function (m, a, b) { var p = attach(q, [[+a, +b]])[0]; return r2(p[0] + dev[0]) + " " + r2(p[1] + dev[1]); }));
+    if (this.bl) {
+      // Ink soaking into the paper, not a shadow: while the drop moves there is none; once it has come to
+      // rest, the stain soaks in beneath it (about 0.6 s), and it lifts quickly when the drop moves again.
+      var a0 = P[0], a1 = P[12], mx = (a0[0] + a1[0]) / 2, now = performance.now();
+      var dt = this._bt ? Math.min((now - this._bt) / 1000, 0.05) : 0; this._bt = now;
+      var speed = this._bx == null || !dt ? 0 : Math.abs(mx - this._bx) / dt; this._bx = mx;
+      var still = speed < 0.6 && q.lift < 0.05 && q.round < 0.05;
+      var goal = still ? 1 : 0, rate = still ? 1 / 0.6 : 1 / 0.12;
+      this._blo = this._blo == null ? goal : this._blo + Math.max(-rate * dt, Math.min(rate * dt, goal - this._blo));
+      if (!dt) this._blo = goal;   // a still drawing (reduced motion, first frame): as it rests
+      this.bl.setAttribute("cx", r2(mx)); this.bl.setAttribute("cy", r2((a0[1] + a1[1]) / 2 - 0.12));
+      this.bl.setAttribute("rx", r2(Math.max(0, (a1[0] - a0[0]) / 2 + 4.6 * q.k))); this.bl.setAttribute("ry", r2(0.42 * q.k));
+      this.bl.style.opacity = r2(this._blo * this._blo * (3 - 2 * this._blo));
+      this._blBusy = Math.abs(goal - this._blo) > 0.005;
+    }
+    var E = eyeShapes(q, dev, this.small);
+    for (var k = 0; k < 2; k++) {
+      var e = E[k];
+      if (this.lp[k]) this.lp[k].setAttribute("d", e.clip);
+      if (this.ew[k]) { this.ew[k].setAttribute("cx", r2(e.ex)); this.ew[k].setAttribute("cy", r2(e.ey)); this.ew[k].setAttribute("rx", r2(e.ry ? e.rx : 0)); this.ew[k].setAttribute("ry", r2(e.ry)); }
+    }
+    if (this.dot) { this.dot.setAttribute("cx", r2(P[8][0] + 3)); this.dot.setAttribute("cy", r2(P[7][1] - 0.2)); }
+    if (this.g) this.g.style.opacity = q.o;
+  };
+  // Keys { t, ...numbers }: each number eases through its own keys on a monotone cubic (continuous, no overshoot).
+  function tracks(keys) {
+    var out = {};
+    for (var n in REST) {
+      var pts = keys.filter(function (k) { return n in k; }).map(function (k) { return [k.t, k[n]]; }).filter(function (q, i, a) { return !a[i + 1] || a[i + 1][0] > q[0]; });
+      if (pts.length) out[n] = pts;
+    }
+    return out;
+  }
+  function mono(pts, t) {
+    if (t <= pts[0][0]) return pts[0][1];
+    var n = pts.length; if (t >= pts[n - 1][0]) return pts[n - 1][1];
+    for (var i = 0; pts[i + 1][0] < t; i++);
+    var x0 = pts[i][0], x1 = pts[i + 1][0], y0 = pts[i][1], y1 = pts[i + 1][1], h = x1 - x0, d = (y1 - y0) / h;
+    function slope(j) {
+      if (j <= 0 || j >= n - 1) return 0;
+      var a = (pts[j][1] - pts[j - 1][1]) / (pts[j][0] - pts[j - 1][0]), b = (pts[j + 1][1] - pts[j][1]) / (pts[j + 1][0] - pts[j][0]);
+      return a * b <= 0 ? 0 : 2 / (1 / a + 1 / b);
+    }
+    var m0 = slope(i), m1 = slope(i + 1), u = (t - x0) / h, u2 = u * u, u3 = u2 * u;
+    return (2 * u3 - 3 * u2 + 1) * y0 + (u3 - 2 * u2 + u) * h * m0 + (-2 * u3 + 3 * u2) * y1 + (u3 - u2) * h * m1;
+  }
+  function pose(keys, t) {
+    var tr = keys._tr || (keys._tr = tracks(keys)), p = Object.assign({}, REST);
+    for (var n in tr) p[n] = mono(tr[n], t);
+    return p;
+  }
+  // One frame loop for every Ditto in motion, asleep whenever nothing is.
+  var actors = new Set(), looping = false;
+  function loop(now) {
+    actors.forEach(function (a) { if (a.frame(now) === false) actors.delete(a); });
+    looping = actors.size > 0;
+    if (looping) requestAnimationFrame(loop);
+  }
+  function wake(a) { actors.add(a); if (!looping) { looping = true; requestAnimationFrame(loop); } }
+  // A Ditto with a moment to play and nobody else moving it ticks itself until it's still.
+  function wakeRig(rig) { rig._actor = rig._actor || { frame: function (now) { return rig.tick(now); } }; wake(rig._actor); }
+  // A run of poses that behaves like an Animation, so a tile can start, pause, replay and cancel it with the rest.
+  function RigRun(rig, keys, delay) { this.rig = rig; this.keys = keys; this.delay = delay; this.t0 = performance.now(); this.end = keys[keys.length - 1].t; rig.snap(pose(keys, 0)); wake(this); }
+  RigRun.prototype.frame = function (now) {
+    if (this.paused) return false;
+    var t = now - this.t0 - this.delay;
+    this.rig.target(t >= this.end ? Object.assign({}, REST) : pose(this.keys, Math.max(t, 0)));
+    return this.rig.tick(now) || t < this.end;
+  };
+  RigRun.prototype.pause = function () { this.paused = true; actors.delete(this); };
+  RigRun.prototype.play = function () { this.paused = false; this.t0 = performance.now(); this.rig.last = 0; wake(this); };
+  RigRun.prototype.cancel = RigRun.prototype.finish = function () { this.paused = true; actors.delete(this); this.rig.snap(Object.assign({}, REST)); };
+  Object.defineProperty(RigRun.prototype, "currentTime", { set: function (v) { this.rig.snap(pose(this.keys, Math.max(v - this.delay, 0))); } });
+
+  // ———— The opening ————
+  var h1 = document.querySelector(".hero h1"), hd = h1.querySelector(".om-ditto"), hdSvg = hd.querySelector("svg");
+  var opening = [], heroRig = new Rig(hdSvg), heroHop = null, wakeHero = function () {}, pen = null;
+  var layer = document.querySelector(".ink-layer"), lc = layer.getContext("2d"), replay = document.querySelector(".replay"), replayOn = 0;
+  function endOpening() {
+    if (!opening.length && !heroHop && !pen) return;
+    var a = opening; opening = [];
+    a.forEach(function (x) { try { x.finish(); } catch (e) { x.cancel(); } });
+    if (pen) pen.stop();
+    clearTimeout(replayOn); replay.style.pointerEvents = "";
+    if (heroHop) { heroHop = null; heroRig.snap(Object.assign({}, REST)); }
+    ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, endOpening, true); });
+  }
+
+  // The strokes, as a hand writes them. Each point is [letter, across, down] inside that letter's own ink box,
+  // so the same strokes fit New York, Iowan or Georgia. "run" is the nib going back over ink it has just laid
+  // (up the n's stem into its arch); between strokes that don't meet, it lifts and arcs across.
+  var O = [];
+  for (var th = -60; th >= -420; th -= 15) O.push([8, 0.5 + 0.4 * Math.cos(th * Math.PI / 180), 0.5 + 0.46 * Math.sin(th * Math.PI / 180)]);
+  var SEQ = [
+    { ink: 1, p: [[0, .5, .02], [0, .5, .98]] },                                                                   // I
+    { ink: 1, p: [[1, .21, .04], [1, .21, .97]] },                                                                 // n: the stem,
+    { run: 1, p: [[1, .21, .97], [1, .21, .42]] },                                                                 // back up it,
+    { ink: 1, p: [[1, .21, .42], [1, .31, .14], [1, .5, .03], [1, .69, .1], [1, .79, .3], [1, .8, .56], [1, .8, .97]] }, // and the arch
+    { word: 1 },
+    { ink: 1, p: [[2, .22, .02], [2, .22, .97]] },                                                                 // k: the stem,
+    { ink: 1, p: [[2, .9, .39], [2, .64, .51], [2, .42, .62], [2, .6, .78], [2, .84, .97]] },                       // the arm into the leg
+    { word: 1 },
+    { ink: 1, amp: 1, p: [[3, .92, .97], [3, .7, .78], [3, .5, .58], [3, .38, .44], [3, .29, .3], [3, .2, .18], [3, .25, .07], [3, .38, .02], [3, .52, .07],
+      [3, .59, .18], [3, .55, .3], [3, .44, .39], [3, .3, .46], [3, .16, .55], [3, .08, .7], [3, .12, .88], [3, .27, .98], [3, .45, .95], [3, .6, .8],
+      [3, .7, .63], [3, .8, .48], [3, .9, .39]] }, // & in one stroke
+    { word: 1 },
+    { ink: 1, p: [[4, .13, .02], [4, .13, .98]] },                                                                 // D: the stem,
+    { run: 1, p: [[4, .13, .98], [4, .13, .2], [4, .2, .02]] },                                                                // back up,
+    { ink: 1, p: [[4, .2, .02], [4, .5, .03], [4, .8, .18], [4, .94, .5], [4, .82, .82], [4, .5, .98], [4, .2, .98]] }, // the bowl
+    { ink: 1, p: [[5, .55, .3], [5, .55, .98]] },                                                                  // i, and its dot last
+    { dot: 1, p: [[5, .55, .08]] },
+    { ink: 1, p: [[6, .3, .04], [6, .3, .7], [6, .35, .91], [6, .57, .98], [6, .93, .86]] },                       // t
+    { ink: 1, p: [[7, .3, .04], [7, .3, .7], [7, .35, .91], [7, .57, .98], [7, .93, .86]] },                       // t
+    { ink: 1, p: [[6, .03, .2], [6, .6, .19], [7, .6, .19], [7, .98, .18]] },                                      // one bar across both
+    { ink: 1, p: O, loop: 1 }                                                                                      // o
+  ];
+
+  // A stroke's pace: it gathers speed, travels, and eases to a stop (a smooth trapezoid of speed), so the
+  // nib never moves at a corner in time and never races at its peak.
+  var MJ = (function () { var a = 0.24, v = [], c = [0], n = 512, i; for (i = 0; i <= n; i++) { var u = i / n, e = u < a ? u / a : u > 1 - a ? (1 - u) / a : 1; v.push(Math.pow(Math.sin(Math.PI / 2 * e), 2)); }
+    for (i = 1; i <= n; i++) c.push(c[i - 1] + (v[i - 1] + v[i]) / 2); return c.map(function (x) { return x / c[n]; }); })();
+  // The & of an old-style face (Iowan, Georgia: the leg ends in a tail that turns up) is written the same way,
+  // from the tail, up the diagonal, round the loop, round the bowl and out along the arm.
+  var AMP_OLD = [[3, .97, .83], [3, .86, .95], [3, .71, .91], [3, .46, .63], [3, .26, .36], [3, .17, .16], [3, .32, .02], [3, .47, .12], [3, .44, .3],
+    [3, .3, .42], [3, .12, .55], [3, .04, .75], [3, .15, .94], [3, .33, .99], [3, .52, .88], [3, .66, .6], [3, .76, .39], [3, .95, .34]];
+  function minjerk(u) { u = u < 0 ? 0 : u > 1 ? 1 : u; var x = u * 512, i = Math.min(511, x | 0); return MJ[i] + (MJ[i + 1] - MJ[i]) * (x - i); }
+  function unjerk(f) { var lo = 0, hi = 512; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (MJ[m] < f) lo = m; else hi = m; } var a = MJ[lo], b = MJ[hi]; return (lo + (b > a ? Math.max(0, Math.min(1, (f - a) / (b - a))) : 0)) / 512; }
+  function rgb(s) { var m = s.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2]]; }
+  function mix(a, b, k) { return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]; }
+  function css(c, a) { return "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + "," + (a == null ? 1 : a) + ")"; }
+  function sstep(u) { u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * (3 - 2 * u); }
+  function dist(a, b) { return Math.hypot(b[0] - a[0], b[1] - a[1]); }
+  // A smooth line through the points (uniform Catmull–Rom), every few pixels.
+  function spline(P, step) {
+    var out = [P[0].slice()];
+    for (var i = 0; i < P.length - 1; i++) {
+      var p0 = P[Math.max(i - 1, 0)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(i + 2, P.length - 1)];
+      var n = Math.max(2, Math.ceil(dist(p1, p2) / step));
+      for (var k = 1; k <= n; k++) {
+        var t = k / n, t2 = t * t, t3 = t2 * t, q = [];
+        for (var j = 0; j < 2; j++) q.push(0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2 + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3));
+        out.push(q);
+      }
+    }
+    return out;
+  }
+
+  // ———— Everything worked out before the first frame ————
+  function prepare() {
+    var cs = getComputedStyle(h1), fs = parseFloat(cs.fontSize), fam = cs.fontFamily, dpr = Math.min(Math.max(devicePixelRatio || 1, 1), 3);
+    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b"));
+    var asc = h1.querySelector(".caret-at").getBoundingClientRect().bottom - B[0].getBoundingClientRect().top;
+    var m = document.createElement("canvas").getContext("2d"); m.font = "400 " + fs + "px " + fam;
+    var G = A.concat(B).filter(function (s) { return s.textContent.trim(); }).map(function (s) {
+      var r = s.getBoundingClientRect(), base = r.top + asc, mm = m.measureText(s.textContent);
+      return { span: s, ch: s.textContent, x: r.left, base: base, l: r.left - mm.actualBoundingBoxLeft, r: r.left + mm.actualBoundingBoxRight, t: base - mm.actualBoundingBoxAscent, b: base + mm.actualBoundingBoxDescent };
+    });
+    var sr = hdSvg.getBoundingClientRect(), unit = sr.width / 40;
+    // Across: the written words centred on the screen while they're written (Ditto's place is still empty).
+    var dx = G.length ? Math.round(document.documentElement.clientWidth / 2 - (G[0].l + G[G.length - 1].r) / 2) : 0;
+    if (Math.abs(dx) <= 2) dx = 0;
+    G.forEach(function (g) { g.x += dx; g.l += dx; g.r += dx; });
+    // Which & the page is showing: New York's, or an old-style one.
+    var amp = m.measureText("&").width, oldAmp = ['"Iowan Old Style"', "Georgia", "Charter"].some(function (f) { var c = document.createElement("canvas").getContext("2d"); c.font = "400 " + fs + "px " + f + ", monospace"; return Math.abs(c.measureText("&").width - amp) < 0.01; });
+    return { dx: dx, oldAmp: oldAmp, fs: fs, fam: fam, dpr: dpr, G: G, unit: unit, xd: sr.left + dx + 20 * unit, floor: sr.top + 32 * unit, ink: rgb(cs.color), paper: rgb(getComputedStyle(document.body).backgroundColor) };
+  }
+  // Each glyph drawn as the page would draw it, in its own place, in device pixels. The page's own letters stay
+  // in place from the first frame; the layer covers each with paper (the glyph, grown by two pixels, so not a
+  // fringe shows) and uncovers it as the ink arrives. So the name that's left is the page's own, exactly.
+  function rasterise(P, dy) {
+    var dpr = P.dpr;
+    P.G.forEach(function (g) {
+      var pad = 4, bx = Math.floor(g.l * dpr) - pad, by = Math.floor((g.t + dy) * dpr) - pad;
+      var bw = Math.ceil(g.r * dpr) + pad - bx, bh = Math.ceil((g.b + dy) * dpr) + pad - by;
+      var cv = document.createElement("canvas"); cv.width = bw; cv.height = bh;
+      var c = cv.getContext("2d");
+      c.setTransform(dpr, 0, 0, dpr, -bx, -by); c.font = "400 " + P.fs + "px " + P.fam; c.fillStyle = "#000"; c.fillText(g.ch, g.x, g.base + dy);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      var d = c.getImageData(0, 0, bw, bh).data, n = bw * bh, a = new Float32Array(n), i;
+      for (i = 0; i < n; i++) a[i] = d[i * 4 + 3] / 255;
+      // The ink box, from the glyph as drawn (more exact than the font's own measure, and the same in every engine).
+      var x0 = bw, x1 = 0, y0 = bh, y1 = 0;
+      for (i = 0; i < n; i++) if (a[i] > 0.5) { var px = i % bw, py = i / bw | 0; if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py; }
+      if (x1 > x0) { g.l = (bx + x0) / dpr; g.r = (bx + x1 + 1) / dpr; g.t = (by + y0) / dpr - dy; g.b = (by + y1 + 1) / dpr - dy; }
+      c.clearRect(0, 0, bw, bh);
+      // Grown by two pixels (a 3 × 3 maximum, twice).
+      var dl = a;
+      for (var pass = 0; pass < 2; pass++) {
+        var nx = new Float32Array(n);
+        for (var y = 0; y < bh; y++) for (var x = 0; x < bw; x++) {
+          var m = 0;
+          for (var yy = Math.max(0, y - 1); yy <= Math.min(bh - 1, y + 1); yy++) for (var xx = Math.max(0, x - 1); xx <= Math.min(bw - 1, x + 1); xx++) { var v = dl[yy * bw + xx]; if (v > m) m = v; }
+          nx[y * bw + x] = m;
+        }
+        dl = nx;
+      }
+      Object.assign(g, { cv: cv, c: c, bx: bx, by: by, bw: bw, bh: bh, A: a, Dl: dl, img: c.createImageData(bw, bh), T: new Float32Array(n), done: false, covered: false });
+    });
+    // Never cover a neighbour's own ink (the joined crossbar of "tt", a serif close by).
+    P.G.forEach(function (g) {
+      g.idx = [];
+      for (var i = 0, n = g.bw * g.bh; i < n; i++) {
+        if (!g.Dl[i]) continue;
+        if (g.A[i] < 0.02) {
+          var X = g.bx + i % g.bw, Y = g.by + (i / g.bw | 0), other = false;
+          P.G.forEach(function (h) { if (h === g || other) return; var x = X - h.bx, y = Y - h.by; if (x >= 0 && y >= 0 && x < h.bw && y < h.bh && h.A[y * h.bw + x] > 0.02) other = true; });
+          if (other) { g.Dl[i] = 0; continue; }
+        }
+        g.idx.push(i);
+      }
+    });
+  }
+
+  // ———— The plan: where the bead is at every moment, and when each drop of each letter inks in ————
+  function plan(P, dy) {
+    // Half the stroke's width where the line passes, from the glyph itself.
+    function halfWidth(g, q, a, b) {
+      var dpr = P.dpr, tx = b[0] - a[0], ty = b[1] - a[1], l = Math.hypot(tx, ty) || 1, nx = -ty / l, ny = tx / l, out = [0, 0];
+      [1, -1].forEach(function (sg, k) {
+        for (var d = 0; d < 0.2 * P.fs * dpr; d += 0.5) {
+          var x = Math.round(q[0] * dpr - g.bx + sg * nx * d), y = Math.round(q[1] * dpr - g.by + sg * ny * d);
+          if (x < 0 || y < 0 || x >= g.bw || y >= g.bh || g.A[y * g.bw + x] < 0.5) { out[k] = d; return; }
+          out[k] = d;
+        }
+      });
+      return [out[0] / dpr, out[1] / dpr];
+    }
+    var fs = P.fs, G = P.G, items = [], t, pos;
+    function at(q) { var g = G[q[0]]; return [g.l + q[1] * (g.r - g.l), g.t + dy + q[2] * (g.b - g.t)]; }
+    var R0 = 0.085 * fs, R1 = 0.06 * fs, R2 = 0.048 * fs;            // the drop; the bead as it starts; as it ends
+    var V_INK = 8 * fs, V_RUN = 11 * fs, WORD = 120, LIFT = 0;     // speeds in px/s, pauses in ms
+    var totalInk = 0;
+    var strokes = SEQ.map(function (s) {
+      if (s.word) return s;
+      if (s.amp && P.oldAmp) s = Object.assign({}, s, { p: AMP_OLD });
+      var pts = s.p.map(at), poly = s.dot ? pts : spline(pts, 2.5);
+      var L = [0]; for (var i = 1; i < poly.length; i++) L.push(L[i - 1] + dist(poly[i - 1], poly[i]));
+      var o = Object.assign({}, s, { poly: poly, L: L, len: L[L.length - 1], owners: s.p.map(function (q) { return q[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }) });
+      if (s.ink) totalInk += o.len;
+      return o;
+    });
+    // The drop: a beat of paper, then one fall under gravity onto the start of the I.
+    var first = strokes[0].poly[0], y0 = -R0 * 1.8 - 4, g = 2600, tf = Math.sqrt(2 * (first[1] - y0) / g) * 1000;
+    var T0 = 360, TL = T0 + tf;
+    items.push({ kind: "fall", t0: T0, t1: TL, x: first[0], y0: y0, y1: first[1], g: g });
+    items.push({ kind: "dwell", t0: TL, t1: TL + 260, at: first, land: TL, amp: 0.16 });
+    t = TL + 260; pos = first;
+    var inkSoFar = 0, firstInk = true;
+    strokes.forEach(function (s) {
+      if (s.word) { items.push({ kind: "dwell", t0: t, t1: t + WORD, at: pos }); t += WORD; return; }
+      var a = s.poly[0];
+      if (dist(pos, a) > 0.03 * fs) {
+        var d = dist(pos, a), dur = 72 + 74 * Math.sqrt(d / fs);
+        items.push({ kind: "hop", t0: t, t1: t + dur, a: pos, b: a, h: 0.2 * d + 0.07 * fs });
+        t += dur; items.push({ kind: "dwell", t0: t, t1: t + LIFT, at: a, land: t, amp: 0.1 }); t += LIFT;
+      }
+      if (s.dot) { items.push({ kind: "dwell", t0: t, t1: t + 110, at: a, dot: s, inkAt: inkSoFar }); s.tv = [t]; s.rr = [R1]; t += 110; pos = a; return; }
+      // Slower round the corners, as a hand is: each turn costs a little extra length.
+      var W = [0], poly = s.poly;
+      for (var i = 1; i < poly.length; i++) {
+        var turn = 0;
+        if (i > 1) { var a1 = Math.atan2(poly[i - 1][1] - poly[i - 2][1], poly[i - 1][0] - poly[i - 2][0]), a2 = Math.atan2(poly[i][1] - poly[i - 1][1], poly[i][0] - poly[i - 1][0]); turn = Math.abs(Math.atan2(Math.sin(a2 - a1), Math.cos(a2 - a1))); }
+        W.push(W[i - 1] + dist(poly[i - 1], poly[i]) + 0.08 * fs * turn);
+      }
+      var Wt = W[W.length - 1], dur2 = 40 + Wt / (s.ink ? V_INK : V_RUN) * 1000;
+      s.tv = W.map(function (w) { return t + unjerk(w / Wt) * dur2; });
+      var hw = s.ink ? s.poly.map(function (q, i) { return halfWidth(G[s.owners[0]], q, poly[Math.max(i - 1, 0)], poly[Math.min(i + 1, poly.length - 1)]); }) : null;
+      function smooth(a) { return a.map(function (v, i) { var t = 0, n = 0; for (var k = Math.max(0, i - 4); k <= Math.min(a.length - 1, i + 4); k++) { t += a[k]; n++; } return t / n; }); }
+      // Each side's own width, its narrowest nearby (a crossing stroke would make it look wider than it is).
+      function least(a) { return a.map(function (v, i) { var m = v; for (var k = Math.max(0, i - 5); k <= Math.min(a.length - 1, i + 5); k++) if (a[k] < m) m = a[k]; return m; }); }
+      if (hw) { s.hwP = smooth(least(hw.map(function (v) { return v[0]; }))); s.hwM = smooth(least(hw.map(function (v) { return v[1]; }))); hw = smooth(hw.map(function (v) { return (v[0] + v[1]) / 2; })); }
+      s.hw = hw;
+      s.rr = s.L.map(function (l, i) { var spend = 1 - 0.2 * (inkSoFar + (s.ink ? l : 0)) / totalInk; return (hw ? Math.max(0.62 * R1, Math.min(R1, hw[i] * 1.22)) : R1) * spend; });
+      if (firstInk && s.ink) { s.tv[0] = TL + 40; firstInk = false; }
+      items.push({ kind: "stroke", t0: t, t1: t + dur2, s: s, W: W, Wt: Wt, inkAt: inkSoFar });
+      if (s.ink) inkSoFar += s.len;
+      t += dur2 + (s.ink ? 20 : 0); pos = poly[poly.length - 1];
+    });
+    // The bead's size between strokes: it carries what it had, and arrives at what the next stroke wants.
+    var lastR = R0;
+    items.forEach(function (it, i) {
+      if (it.kind === "stroke") { it.ra = it.s.rr[0]; lastR = it.s.rr[it.s.rr.length - 1]; }
+      else if (it.kind === "hop") { it.ra = lastR; var nx = items.slice(i + 1).filter(function (x) { return x.kind === "stroke" || x.dot; })[0]; it.rb = nx ? (nx.dot ? nx.dot.rr[0] : nx.s.rr[0]) : lastR; lastR = it.rb; }
+      else if (it.kind === "dwell") { it.r = it.dot ? it.dot.rr[0] : lastR; if (it.dot) lastR = it.r; }
+    });
+    return { items: items, t: t, pos: pos, R0: R0, R1: R1, R2: R2, totalInk: totalInk, strokes: strokes, TL: TL };
+  }
+
+  // When each pixel of each glyph inks in: as the bead passes the nearest point of the letter's own strokes,
+  // and a little after for what lies further out (a serif, a bracket), as ink wicks out into the paper.
+  function inkTimes(P, PL) {
+    var dpr = P.dpr, WICK = 1.6 * P.fs * dpr / 1000, FIRST = PL.TL;
+    P.G.forEach(function (g, li) {
+      var polys = PL.strokes.filter(function (s) { return !s.word && (s.ink || s.dot) && s.owners.indexOf(li) >= 0; }).map(function (s) {
+        // A coarser line is plenty for finding the nearest point; times run along it.
+        var X = [], Y = [], TV = [], RR = [], HW = [], HP = [], HM = [], AL = [], n = s.poly.length;
+        function add(i) { AL.push(s.L[i] * dpr); X.push(s.poly[i][0] * dpr - g.bx); Y.push(s.poly[i][1] * dpr - g.by); TV.push(s.tv[i]); RR.push(s.rr[i] * dpr); HW.push((s.hw ? s.hw[i] : s.rr[i]) * dpr); HP.push((s.hwP ? s.hwP[i] : s.rr[i]) * dpr); HM.push((s.hwM ? s.hwM[i] : s.rr[i]) * dpr); }
+        for (var i = 0; i < n; i += 2) add(i);
+        if ((n - 1) % 2) add(n - 1);
+        return { X: X, Y: Y, TV: TV, RR: RR, HW: HW, HP: HP, HM: HM, AL: AL };
+      });
+      var lo = Infinity, hi = 0;
+      var TOL = 0.025 * P.fs * dpr;
+      g.idx.forEach(function (i) {
+        var px = i % g.bw + 0.5, py = (i / g.bw | 0) + 0.5, best = Infinity, bt = 0, br = 0, bp = null, ba = 0, bh = 0, bs = 0, beyond = false, pass;
+        // Three looks. First, the nearest point of the letter's strokes. Then, if the pixel lies outside that stroke's
+        // own ink (a bracket, the root of a stroke that leaves it), it belongs with whichever stroke nearly as close
+        // comes last. Or, if it lies inside, and the line comes round and crosses there again (the &), it inks with
+        // the first pass, never the second.
+        function other(p, a, j) { return p !== bp || Math.abs(a - ba) > 2.5 * Math.max(bh, p.HW[j]) + 4 * dpr; }
+        var near = 0, inside = Infinity;
+        for (pass = 0; pass < 2; pass++) {
+          var lim = Math.pow(Math.sqrt(best) + 2.5 * dpr, 2);
+          polys.forEach(function (p) {
+            var X = p.X, Y = p.Y;
+            if (X.length === 1) {
+              var d0 = (px - X[0]) * (px - X[0]) + (py - Y[0]) * (py - Y[0]);
+              if (!pass) { if (d0 < best) { best = d0; bt = p.TV[0]; br = p.RR[0]; bp = p; ba = 0; bh = p.HW[0]; bs = p.HW[0]; } }
+              else if (p !== bp) { if (d0 <= p.HW[0] * p.HW[0] && p.TV[0] < inside) inside = p.TV[0]; }
+              return;
+            }
+            for (var j = 0; j < X.length - 1; j++) {
+              var ax = X[j], ay = Y[j], vx = X[j + 1] - ax, vy = Y[j + 1] - ay, ll = vx * vx + vy * vy;
+              var f = ll ? ((px - ax) * vx + (py - ay) * vy) / ll : 0; f = f < 0 ? 0 : f > 1 ? 1 : f;
+              var dx = ax + vx * f - px, dy2 = ay + vy * f - py, dd = dx * dx + dy2 * dy2, tt = p.TV[j] + (p.TV[j + 1] - p.TV[j]) * f, al = p.AL[j] + (p.AL[j + 1] - p.AL[j]) * f;
+              var side = ((px - ax) * -vy + (py - ay) * vx > 0 ? p.HP[j] : p.HM[j]);
+              if (!pass) { if (dd < best) { best = dd; bt = tt; br = p.RR[j] + (p.RR[j + 1] - p.RR[j]) * f; bp = p; ba = al; bh = p.HW[j]; bs = side; } }
+              else if (other(p, al, j)) {
+                var end = 1.5 * p.HW[j] + 2 * dpr;
+                if (dd <= lim && tt > near && al > end && al < p.AL[p.AL.length - 1] - end) near = tt;   // a stroke that passes by, not one that starts or ends here
+                if (dd <= side * side * 0.92 && tt < inside) inside = tt;
+              }
+            }
+          });
+          if (!pass) beyond = Math.sqrt(best) > bs + 1.2 * dpr;
+        }
+        if (inside < bt) bt = inside;              // inside an earlier pass's own ink: it inks then
+        else if (beyond && inside === Infinity && near > bt) bt = near;   // outside every stroke: with the last one close by
+        var T = bt + Math.max(0, Math.sqrt(best) - 0.55 * br) / WICK;
+        g.T[i] = T; if (T < lo) lo = T; if (T > hi) hi = T;
+      });
+      g.tmin = lo; g.tmax = hi;
+    });
+  }
+
+  // ———— The pool, the spill and the ball ————
+  // The o's counter, found from the glyph itself: everything inside the ring.
+  function counter(g) {
+    var w = g.bw, h = g.bh, A = g.A, seen = new Uint8Array(w * h), start = (h >> 1) * w + (w >> 1), q = [start], ins = [];
+    if (A[start] >= 0.5) return null;
+    seen[start] = 1;
+    while (q.length) {
+      var i = q.pop(); ins.push(i);
+      var x = i % w, y = i / w | 0;
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+        var xx = x + d[0], yy = y + d[1]; if (xx < 0 || yy < 0 || xx >= w || yy >= h) return;
+        var j = yy * w + xx; if (seen[j]) return; seen[j] = 1;
+        if (A[j] < 0.5) q.push(j); else if (A[j] < 1) ins.push(j);   // the ring's soft inner edge belongs to both
+      });
+      if (ins.length > w * h * 0.6) return null;   // not a closed counter after all
+    }
+    var minx = 1e9, maxx = 0, miny = 1e9, maxy = 0;
+    ins.forEach(function (i) { var x = i % w, y = i / w | 0; if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; });
+    var right = {}; ins.forEach(function (i) { var x = i % w, y = i / w | 0; if (!(y in right) || x > right[y]) right[y] = x; });
+    return { idx: ins, flag: seen, minx: minx, maxx: maxx, miny: miny, maxy: maxy, right: right };
+  }
+
+  function playOpening() {
+    var run = new Run(0), S = performance.now();
+    var P = prepare();
+    // The name is born alone, in the middle of the screen, then rises to its place (as the live page).
+    var hr0 = h1.getBoundingClientRect(), pt = parseFloat(getComputedStyle(h1).paddingTop) || 0, drop = Math.round(innerHeight / 2 - (hr0.top + pt + (hr0.height - pt) / 2));
+    if (drop <= 12) drop = 0;
+    rasterise(P, drop);
+    var PL = plan(P, drop), fs = P.fs, dpr = P.dpr, G = P.G, o = G[8];
+    var C = counter(o);
+    // After the o: the bead slips down the inside of its right wall, into the bottom of the bowl.
+    var slideR = PL.items.filter(function (it) { return it.kind === "stroke"; }).pop().s.rr.slice(-1)[0], tEnd = PL.t, cBot = (o.by + (C ? C.maxy : o.bh * 0.8)) / dpr, cx = (o.bx + (C ? (C.minx + C.maxx) / 2 : o.bw / 2)) / dpr;
+    var slide = [PL.pos];
+    if (C) [0.3, 0.55, 0.78].forEach(function (f) { var yy = Math.round(C.miny + (C.maxy - C.miny) * f); var rx = C.right[yy]; if (rx != null) slide.push([(o.bx + rx) / dpr - slideR * 1.05, (o.by + yy) / dpr]); });
+    slide.push([cx, cBot - slideR * 0.9]);
+    var sp = spline(slide, 2), sL = [0]; for (var si = 1; si < sp.length; si++) sL.push(sL[si - 1] + dist(sp[si - 1], sp[si]));
+    var TSL0 = tEnd + 20, TSL1 = TSL0 + 90 + sL[sL.length - 1] / (4.2 * fs) * 1000;
+    PL.items.push({ kind: "slide", t0: TSL0, t1: TSL1, poly: sp, L: sL });
+    // It pools; the pool spills out of the right side and runs along the line; it gathers into a ball.
+    var hmax = C ? (C.maxy - C.miny) / dpr * 0.26 : 0, TP0 = TSL1, TP1 = TP0 + 200, TS0 = TP1 + 60;
+    var floorY = P.floor + drop, xd = P.xd, HR = 0.05 * fs, RH = 0.066 * fs;
+    var row = Math.round((floorY - HR * 0.55) * dpr) - o.by, xa = o.r - HR;
+    if (row >= 0 && row < o.bh) for (var xx = o.bw - 1; xx >= 0; xx--) if (o.A[row * o.bw + xx] > 0.5) { xa = (o.bx + xx) / dpr - HR * 0.4; break; }
+    var TS1 = TS0 + 220 + 140 * Math.sqrt(Math.max(xd - xa, 1) / fs), TG0 = TS1, TG1 = TG0 + 380;
+    var k0 = RH / (14 * P.unit), K1 = 0.42, TD0 = TG1 + 100, SIMEND = TD0 + 520, SWAP = TG1 + 30;
+    var INK = P.ink, darkInk = INK[0] + INK[1] + INK[2] < 384;
+    var WETC = darkInk ? mix(INK, [112, 100, 82], 0.32) : mix(INK, [196, 180, 152], 0.3);
+    var LITE = darkInk ? mix(INK, [120, 110, 94], 0.5) : INK, RIM = darkInk ? INK : mix(INK, P.paper, 0.32);
+    inkTimes(P, PL);
+
+    // ———— Drawing the ink ————
+    var CW = document.documentElement.clientWidth, CH = innerHeight;
+    layer.width = Math.round(CW * dpr); layer.height = Math.round(CH * dpr); layer.style.width = CW + "px"; layer.style.height = CH + "px"; layer.style.display = "block";
+    var FADE = 10, WET = 440, items = PL.items, cur = 0;
+    function level(t) {
+      if (!C || t < TP0) return 0;
+      if (t < TP1) return hmax * EASE.o((t - TP0) / (TP1 - TP0));
+      if (t < TS0) return hmax;
+      if (t < TS1) return hmax * (1 - 0.45 * EASE.io((t - TS0) / (TS1 - TS0)));
+      return hmax * 0.55 * (1 - EASE.i(Math.min((t - TG0) / 300, 1)));
+    }
+    function tilt(t) { return t > TS0 && t < TG0 + 300 ? 0.14 * Math.sin(Math.PI * Math.min((t - TS0) / (TG0 + 300 - TS0), 1)) : 0; }
+    var PAPER = P.paper, TINT = darkInk ? [112, 100, 82] : [196, 180, 152], WK = 0.32;
+    function letter(g, t, isO) {
+      var pool = isO && C && t >= TP0 && t <= TG0 + 320;
+      if (g.done && !pool) return false;
+      var d = g.img.data, A = g.A, Dl = g.Dl, T = g.T, idx = g.idx, n = idx.length, settled = true, k, i, j;
+      if (t < g.tmin) {
+        if (!g.covered) { for (k = 0; k < n; k++) { i = idx[k]; j = i * 4; d[j] = PAPER[0]; d[j + 1] = PAPER[1]; d[j + 2] = PAPER[2]; d[j + 3] = Dl[i] * 255; } g.c.putImageData(g.img, 0, 0); g.covered = true; }
+        return true;
+      }
+      for (k = 0; k < n; k++) {
+        i = idx[k]; j = i * 4;
+        var age = t - T[i], f = age <= 0 ? 0 : age >= FADE ? 1 : sstep(age / FADE);
+        if (f < 1) { d[j] = PAPER[0]; d[j + 1] = PAPER[1]; d[j + 2] = PAPER[2]; d[j + 3] = Dl[i] * (1 - f) * 255; settled = false; continue; }
+        var w = age >= WET ? 0 : 1 - age / WET;
+        if (w > 0) { d[j] = TINT[0]; d[j + 1] = TINT[1]; d[j + 2] = TINT[2]; d[j + 3] = A[i] * w * w * WK * 255; settled = false; }
+        else d[j + 3] = 0;
+      }
+      if (isO && C) {
+        var L = level(t) * dpr, surf = C.maxy + 1 - L, tl = tilt(t), mid = (C.minx + C.maxx) / 2, hw = (C.maxx - C.minx) / 2, men = Math.min(L * 0.5, 0.03 * fs * dpr);
+        C.idx.forEach(function (i) {
+          var x = i % g.bw, y = i / g.bw | 0, ex = (x - mid) / hw, s = surf + tl * (x - mid) - men * ex * ex * ex * ex, pa = L > 0.2 ? Math.max(0, Math.min(1, y + 0.5 - s)) : 0;
+          if (pa > 0) { d[i * 4] = INK[0]; d[i * 4 + 1] = INK[1]; d[i * 4 + 2] = INK[2]; d[i * 4 + 3] = Math.max(Dl[i] ? d[i * 4 + 3] : 0, pa * (1 - A[i]) * 255); }
+          else if (!Dl[i]) d[i * 4 + 3] = 0;
+        });
+        if (pool) settled = false;
+      }
+      g.c.putImageData(g.img, 0, 0);
+      g.done = settled;
+      return !settled;
+    }
+    // Where the nib is, without its squash: for the speed, and so the bead leans the way it's going.
+    function where(t) {
+      while (cur > 0 && t < items[cur].t0) cur--;
+      while (cur < items.length - 1 && t >= items[cur].t1) cur++;
+      var it = items[cur];
+      if (t < items[0].t0) return null;
+      var u = it.t1 > it.t0 ? Math.max(0, Math.min(1, (t - it.t0) / (it.t1 - it.t0))) : 1, r = PL.R1, x, y;
+      switch (it.kind) {
+        case "fall": var tau = Math.max(0, t - it.t0) / 1000; x = it.x; y = Math.min(it.y0 + 0.5 * it.g * tau * tau, it.y1); r = PL.R0; break;
+        case "dwell": x = it.at[0]; y = it.at[1]; r = cur < 2 ? PL.R0 : it.r; break;
+        case "hop":
+          var e = 0.5 - 0.5 * Math.cos(Math.PI * u), mx = (it.a[0] + it.b[0]) / 2, my = Math.min(it.a[1], it.b[1]) - it.h;
+          x = (1 - e) * (1 - e) * it.a[0] + 2 * (1 - e) * e * mx + e * e * it.b[0]; y = (1 - e) * (1 - e) * it.a[1] + 2 * (1 - e) * e * my + e * e * it.b[1]; r = it.ra + (it.rb - it.ra) * e; break;
+        case "stroke": case "slide":
+          var s = it.s || it, poly = s.poly, Wv = it.W || s.L, wt = (it.Wt || s.L[s.L.length - 1]) * minjerk(u), lo = 0, hi = Wv.length - 1;
+          while (hi - lo > 1) { var md = (lo + hi) >> 1; if (Wv[md] <= wt) lo = md; else hi = md; }
+          var f = Wv[hi] > Wv[lo] ? (wt - Wv[lo]) / (Wv[hi] - Wv[lo]) : 0;
+          x = poly[lo][0] + (poly[hi][0] - poly[lo][0]) * f; y = poly[lo][1] + (poly[hi][1] - poly[lo][1]) * f;
+          r = it.kind === "slide" ? slideR : s.rr ? s.rr[lo] + (s.rr[hi] - s.rr[lo]) * f : PL.R2;
+          // The drop gives itself to the I's heavy top as it starts: from the drop to the bead.
+          if (cur === 2) r = r + (PL.R0 - r) * (1 - sstep(u / 0.45));
+          break;
+      }
+      return { x: x, y: y, r: r, it: it };
+    }
+    var lastR = PL.R0, lands = items.filter(function (it) { return it.land != null && it.kind === "dwell"; }).map(function (it) { return { t: it.land, amp: it.amp }; }).filter(function (l, i, a) { return !i || l.t !== a[i - 1].t; });
+    function bead(t) {
+      if (t >= TP1 + 10) return null;
+      var w = where(t); if (!w) return null;
+      if (w.r == null) w.r = lastR; lastR = w.r;
+      var b = { x: w.x, y: w.y, r: w.r, sx: 1, sy: 1, ang: 0 };
+      // Leaning into its speed: a little longer the way it's going.
+      var w0 = where(t - 8), w1 = where(t + 8);
+      if (w0 && w1) { var vx = (w1.x - w0.x) / 16, vy = (w1.y - w0.y) / 16, v = Math.hypot(vx, vy) * 1000 / fs; if (v > 0.05) { b.ang = Math.atan2(vy, vx); var per = Math.hypot(vx, vy) * 1000 / 60; b.sx = 1 + Math.min(0.6, 0.3 * per / (2 * b.r)); b.sy = 1; } }
+      where(t);
+      // A landing gives: it spreads, and springs back, from where it touched, and the give carries on as it moves off.
+      var ld = null; for (var li = 0; li < lands.length && lands[li].t <= t; li++) ld = lands[li];
+      b.qx = b.qy = 1;
+      if (ld) {
+        var tau2 = (t - ld.t) / 1000, om = 2 * Math.PI * 4.6, z = 0.45, q = ld.amp * 2.2 * Math.exp(-z * om * tau2) * Math.sin(om * Math.sqrt(1 - z * z) * tau2);
+        b.qx = 1 + q; b.qy = 1 / (1 + q); b.y += b.r * (1 - b.qy);
+      }
+      // Into the pool: it sinks and is gone.
+      if (t >= TP0) { var u2 = Math.min((t - TP0) / (TP1 - TP0), 1); b.r *= 1 - EASE.io(u2); b.y += slideR * 0.8 * EASE.o(u2); b.sx = b.sy = b.qx = b.qy = 1; }
+      return b;
+    }
+    function drawBead(b) {
+      if (!b || b.r <= 0.2) return;
+      lc.save(); lc.translate(b.x, b.y); lc.rotate(b.ang); lc.scale(b.sx, b.sy); lc.rotate(-b.ang); lc.scale(b.qx, b.qy);
+      var gr = lc.createRadialGradient(-b.r * 0.35, -b.r * 0.4, b.r * 0.05, 0, 0, b.r * 1.05);
+      gr.addColorStop(0, css(LITE)); gr.addColorStop(0.55, css(mix(LITE, INK, 0.8))); gr.addColorStop(1, css(RIM));
+      lc.beginPath(); lc.arc(0, 0, b.r, 0, Math.PI * 2); lc.fillStyle = gr; lc.fill();
+      // A wet highlight.
+      var hx = -b.r * 0.34, hy = -b.r * 0.4, hg = lc.createRadialGradient(hx, hy, 0, hx, hy, b.r * 0.42);
+      hg.addColorStop(0, "rgba(255,255,255," + (darkInk ? 0.55 : 0.5) + ")"); hg.addColorStop(1, "rgba(255,255,255,0)");
+      lc.beginPath(); lc.arc(hx, hy, b.r * 0.42, 0, Math.PI * 2); lc.fillStyle = hg; lc.fill();
+      lc.restore();
+    }
+    // The run along the line: from the o's side to where Ditto sits, a rounded thread with a bead at its head.
+    function drawRun(t) {
+      if (t < TS0 || t >= TG1) return;
+      var u = Math.min((t - TS0) / (TS1 - TS0), 1), head = t < TS1, xh = xa + (xd - xa) * EASE.io(u);
+      var ut = t < TG0 + 120 ? 0 : Math.min((t - TG0 - 120) / (TG1 - TG0 - 120), 1), xt = xa + (xd - xa) * EASE.i(ut);
+      var hr = HR * (1 - 0.45 * ut), rh = RH * (0.5 + 0.5 * sstep(u * 1.6));
+      lc.fillStyle = css(INK);
+      var x1 = head ? xh : xd;
+      if (x1 - xt > 0.5) {
+        lc.beginPath(); lc.moveTo(xt + hr / 2, floorY - hr); lc.lineTo(x1, floorY - hr); lc.lineTo(x1, floorY); lc.lineTo(xt + hr / 2, floorY);
+        lc.arc(xt + hr / 2, floorY - hr / 2, hr / 2, Math.PI / 2, Math.PI * 1.5); lc.fill();
+      }
+      if (head) {
+        lc.beginPath(); lc.arc(xh, floorY - rh, rh, 0, Math.PI * 2); lc.fill();
+        // A soft fillet where the thread meets the head.
+        lc.beginPath(); lc.moveTo(xh - rh * 2.2, floorY - hr); lc.quadraticCurveTo(xh - rh * 1.1, floorY - hr, xh - rh * 0.7, floorY - rh * 1.55); lc.lineTo(xh, floorY - rh); lc.lineTo(xh, floorY); lc.lineTo(xh - rh * 2.2, floorY); lc.fill();
+      }
+    }
+    function paint(t) {
+      lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, layer.width, layer.height);
+      G.forEach(function (g, i) { if (letter(g, t, i === 8)) lc.drawImage(g.cv, g.bx, g.by); });
+      lc.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var b = bead(t); drawRun(t); drawBead(b);
+      if (CAPTURE) window.__bead = b;
+    }
+    function swap() { layer.style.display = "none"; lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, layer.width, layer.height); }
+    pen = { frame: function (now) { if (pen !== this) return false; var t = now - S; if (t >= SWAP) { this.stop(); return false; } paint(t); return true; },
+      stop: function () { if (pen === this) pen = null; swap(); } };
+    SWAP = Math.max(SWAP, Math.max.apply(null, G.map(function (g) { return g.tmax; })) + WET + 30);
+    window.__setup = Math.round(performance.now() - S);
+    S = performance.now();   // the clock starts now that everything is worked out
+    paint(0);   // the paper goes over the letters in the same frame they appear
+    if (/[?&]tmap\b/.test(location.search)) {   // for tuning: each glyph coloured by when it inks, and the strokes over it
+      lc.setTransform(1, 0, 0, 1, 0, 0); lc.fillStyle = "#fff"; lc.fillRect(0, 0, layer.width, layer.height);
+      G.forEach(function (g) { var d = g.img.data; g.idx.forEach(function (i) { var u = (g.T[i] - g.tmin) / Math.max(1, g.tmax - g.tmin), j = i * 4; d[j] = 255 * Math.min(1, 2 * u); d[j + 1] = 255 * (1 - Math.abs(2 * u - 1)) * 0.8; d[j + 2] = 255 * Math.min(1, 2 - 2 * u); d[j + 3] = 255 * g.A[i]; }); g.c.putImageData(g.img, 0, 0); lc.drawImage(g.cv, g.bx, g.by); });
+      lc.setTransform(dpr, 0, 0, dpr, 0, 0); lc.lineWidth = 1; PL.strokes.forEach(function (st) { if (st.word || !st.poly) return; lc.strokeStyle = st.ink ? "rgba(0,0,0,.6)" : "rgba(0,0,0,.25)"; lc.beginPath(); st.poly.forEach(function (q, i) { i ? lc.lineTo(q[0], q[1]) : lc.moveTo(q[0], q[1]); }); lc.stroke(); });
+      if (/[?&]grid\b/.test(location.search)) G.forEach(function (g) { lc.strokeStyle = "rgba(0,140,0,.35)"; lc.lineWidth = 0.5; for (var k = 0; k <= 10; k++) { var x = g.l + (g.r - g.l) * k / 10, y = g.t + drop + (g.b - g.t) * k / 10; lc.beginPath(); lc.moveTo(x, g.t + drop); lc.lineTo(x, g.b + drop); lc.moveTo(g.l, y); lc.lineTo(g.r, y); lc.stroke(); } });
+      pen = null; return;
+    }
+    wake(pen);
+
+    // ———— Ditto: the ball gathers, then rises into the dome and opens its eyes ————
+    var red = hdSvg.querySelector(".red"), sh = hdSvg.querySelector(".sh"), rim = hdSvg.querySelector(".rim");
+    red.style.fill = "var(--ink)";
+    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: (SIMEND - 90) / (SIMEND + 90), easing: "ease-in-out" }, { opacity: 0 }], { duration: SIMEND + 90, easing: "linear", fill: "backwards" });
+    [sh, rim].forEach(function (e) { run.go(e, [{ opacity: 0 }, { opacity: 0, offset: (SIMEND - 60) / (SIMEND + 160), easing: "ease-out" }, { opacity: 1 }], { duration: SIMEND + 160, easing: "linear", fill: "backwards" }); });
+    var keys = [
+      { t: 0, o: 0, open: 0, foot: 3.6, firm: 4, round: 1, k: k0 }, { t: TG0 - 1, o: 0 }, { t: TG0, o: 1 },
+      { t: TG0, k: k0 }, { t: TG1, k: K1 }, { t: TD0, k: K1, round: 1 }, { t: SIMEND, k: 1, round: 0 },
+      { t: SIMEND - 200, firm: 4 }, { t: SIMEND + 200, firm: 1 },
+      { t: SIMEND + 120, open: 0 }, { t: SIMEND + 200, open: 0.2 }, { t: SIMEND + 300, open: 1 },
+      { t: SIMEND + 560, open: 1 }, { t: SIMEND + 640, open: 0.1 }, { t: SIMEND + 760, open: 1 }
+    ];
+    var END = SIMEND + 800;
+    var RISE = END + 450, RD = 1250;
+    // The name: centred both ways while it's written; across to its own centre as the ink runs out to become
+    // Ditto (the ink layer travels with it, exactly); then up to its place, unhurried, as the live page.
+    var DX = P.dx, GX0 = TP0, GX1 = TG1, glideE = "cubic-bezier(.45,0,.25,1)", L = RISE + RD;
+    function at2(x, y) { return "translate(" + x + "px," + y + "px)"; }
+    if (drop || DX) run.go(h1, [{ transform: at2(DX, drop), offset: 0 }, { transform: at2(DX, drop), offset: GX0 / L, easing: glideE },
+      { transform: at2(0, drop), offset: GX1 / L }, { transform: at2(0, drop), offset: RISE / L, easing: "cubic-bezier(.45,0,.18,1)" },
+      { transform: "none", offset: 1 }], { duration: L, easing: "linear", fill: "backwards" });
+    if (DX) run.go(layer, [{ transform: "none", offset: 0 }, { transform: "none", offset: GX0 / GX1, easing: glideE }, { transform: "translateX(" + -DX + "px)", offset: 1 }],
+      { duration: GX1, easing: "linear", fill: "backwards" });
+    heroHop = { at: S, keys: keys, path: function () { return {}; }, end: END + 40 };
+    heroRig.snap(heroPose(0));
+    wakeHero();
+    // The page arrives as the live one does: a beat on the name alone, each line by itself, the bar with the button.
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = drop > 12 ? RISE + RD * 0.62 : END + 650;
+    var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
+    var lastLine = when2;
+    rest.forEach(function (e, i) {
+      var dur = i === 0 ? 900 : 800;
+      if (i <= 2) lastLine = when2;
+      run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
+      when2 += dur + 450;
+    });
+    document.querySelectorAll(".bar-inner, main > :not(.hero), footer, .replay").forEach(function (e) {
+      run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: lastLine, duration: 700, easing: "ease-out" });
+    });
+    opening = run.list;
+    replay.style.pointerEvents = "none";
+    replayOn = window.setTimeout(function () { replay.style.pointerEvents = ""; }, lastLine);
+    delete root.dataset.opening;
+    window.__items = PL.items.map(function (it) { return [it.kind, Math.round(it.t0), Math.round(it.t1 - it.t0), it.s ? Math.round(it.s.len) + (it.s.ink ? 'i' : 'r') : '']; });
+    window.__timeline = { fall: PL.items[0].t0, land: PL.TL, write: PL.items[2].t0, written: tEnd, slide: TSL0, pool: TP0, spill: TS0, gather: TG0, ball: TG1, swap: SWAP, dome: TD0, ditto: SIMEND, END: END, rise: RISE, risen: RISE + RD, lines: drop > 12 ? RISE + RD * 0.62 : END + 650, last: when2 };
+    window.setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
+    run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
+  }
+  function heroPose(t) { var p = pose(heroHop.keys, t); return Object.assign(p, heroHop.path(t)); }
+  // A change of look, size or orientation mid-opening goes straight to the last frame.
+  document.addEventListener("inktheme", endOpening);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", endOpening);
+  addEventListener("resize", function () { if (pen) endOpening(); });
+
+  function start() {
+    if (still.matches || scrollY > 4) { delete root.dataset.opening; return; }
+    // Wait for the serif (briefly), so the first frame is the last font.
+    var face = "400 " + parseFloat(getComputedStyle(h1).fontSize) + "px " + getComputedStyle(h1).fontFamily;
+    var ready = document.fonts && document.fonts.load ? document.fonts.load(face).catch(function () {}) : Promise.resolve();
+    Promise.race([ready, new Promise(function (r) { window.setTimeout(r, 700); })]).then(function () {
+      if (scrollY > 4) { delete root.dataset.opening; return; }
+      playOpening(); window.__playing = true;
+    });
+  }
+  if ("opening" in root.dataset) start();
+
+  // ———— Ditto at rest, beside its name ————
+  // The same soft body: a slow breath that changes its shape for its first minute, a blink at a person's
+  // irregular rhythm, and its eyes on your pointer. Only while it's on screen and the page is in front.
+  (function () {
+    var seen = true, born = 0, blinkAt = 0, tx = 0, ty = 0;
+    var hero = { frame: function (now) {
+      if (!seen || document.hidden) { heroRig.last = 0; return false; }
+      if (heroHop) {
+        var t = now - heroHop.at;
+        if (t < heroHop.end) { heroRig.target(heroPose(t)); heroRig.tick(now); return; }
+        heroHop = null; born = now;
+      }
+      if (!born) born = now;
+      var age = now - born, p = Object.assign({}, REST), busy = false;
+      // Breathing: in for 1.9 s, out for 2.9 s; it fades in, and after a minute it's still.
+      var amp = Math.min(age / 1500, 1) * Math.max(0, Math.min((60000 - age) / 3000, 1));
+      if (amp > 0) { var ph = (age % 4800) / 4800, b = ph < 0.4 ? EASE.io(ph / 0.4) : 1 - EASE.io((ph - 0.4) / 0.6); p.s = 1 + 0.02 * b * amp; p.foot = 3.6 - 0.3 * b * amp; busy = true; }
+      if (now >= blinkAt && now < blinkAt + 190) { var u = (now - blinkAt) / 190; p.open = u < 0.45 ? 1 - EASE.i(u / 0.45) * 0.92 : 0.08 + EASE.o((u - 0.45) / 0.55) * 0.92; busy = true; }
+      p.lx = tx; p.ly = ty;
+      heroRig.target(p);
+      return heroRig.tick(now) || busy;
+    } };
+    wakeHero = function () { if (!still.matches) wake(hero); };
+    function blink() {
+      setTimeout(function () { blinkAt = performance.now(); wakeHero(); blink(); }, 4000 + Math.random() * 5000);
+    }
+    new IntersectionObserver(function (e) {
+      seen = e[0].isIntersecting;
+      if (seen) wakeHero();
+      // The bar's lockup and status come back once the name has gone by.
+      seen ? delete root.dataset.past : (root.dataset.past = "");
+    }).observe(h1);
+    if (still.matches) return;
+    blink(); wakeHero();
+    document.addEventListener("visibilitychange", wakeHero);
+    if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    addEventListener("pointermove", function (e) {
+      var r = hd.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height * 0.55), d = Math.hypot(dx, dy) || 1, k = Math.min(d / 260, 1);
+      tx = dx / d * 2.2 * k; ty = dy / d * 1.4 * k;
+      wakeHero();
+    }, { passive: true });
+  })();
+
+
+  function watchCue() {
+  // ———— Read on ————
+  // Once the name and both lines have arrived and the reader has been still for a moment, a
+  // hairline chevron writes itself in as one stroke, settles once, and rests; Ditto glances down at it. The
+  // first scroll takes it away for the visit. Only when the name is the first screen.
+  (function () {
+    var cue = document.querySelector(".cue"); if (!cue) return;
+    var gone = !!location.hash || scrollY > 4, last = performance.now();
+    function away() { if (scrollY > 4) { gone = true; cue.classList.remove("on"); removeEventListener("scroll", away); } last = performance.now(); }
+    addEventListener("scroll", away, { passive: true });
+    cue.addEventListener("click", function (e) {
+      var v = document.getElementById("verse"); if (!v) return;
+      e.preventDefault(); v.scrollIntoView({ behavior: still.matches ? "auto" : "smooth", block: "start" });
+    });
+    function settled() { return !opening.length && !heroHop && !("opening" in root.dataset); }
+    var since = 0;
+    (function wait() {
+      if (gone) return;
+      if (!settled()) { since = 0; return setTimeout(wait, 250); }
+      if (!since) since = performance.now();
+      if (performance.now() - Math.max(last, since) < 700) return setTimeout(wait, 100);
+      cue.classList.add("on");
+      if (still.matches) return;
+      var path = cue.querySelector("path");
+      path.style.strokeDasharray = "1"; path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], { duration: 450, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "backwards" });
+      cue.animate([{ transform: "translateY(-6px)" }, { transform: "translateY(-6px)", offset: 0.4 }, { transform: "none" }], { duration: 1200, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
+      // Ditto looks down at it, once, and back.
+      heroRig.play([{ t: 0, ly: 0, lx: 0 }, { t: 260, ly: 1.7, lx: 0 }, { t: 1000, ly: 1.7, lx: 0 }, { t: 1350, ly: 0, lx: 0 }]); wakeHero();
+    })();
+  })();
+
+  }
+  watchCue();
+
+  // Replay: the whole opening again, from blank paper.
+  replay.addEventListener("click", function () {
+    endOpening();
+    if (heroRig.fx) heroRig.stopFx();
+    var cue = document.querySelector(".cue"); if (cue) cue.classList.remove("on");
+    root.dataset.opening = "";
+    start(); watchCue();
+  });
+})();
+
+</script>
+</body>
+</html>
