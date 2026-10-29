@@ -641,6 +641,11 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
 .store img { height: 2.75rem; width: auto; }
 .button.tall { height: 2.75rem; padding-block: 0; box-sizing: border-box; }
 .button svg { width: 1em; height: 1em; }
+/* The opening's ink: a window-sized layer laid on the page where the window was when it began, so it scrolls with
+   the name, and is never clipped by the name's own box. */
+.ink-layer { position: absolute; left: 0; top: 0; z-index: 4; display: none; pointer-events: none; }
+/* Nothing invisible takes a press: the lines and the bar wait until they have arrived. */
+:root[data-arriving] .hero > :not(h1), :root[data-arriving] .bar-inner { pointer-events: none; }
 </style>
 
 </head>
@@ -997,6 +1002,8 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
   <button class="film-close" type="button" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
   <video controls playsinline preload="none" poster="assets/film-poster.jpg" width="1280" height="720"></video>
 </dialog>
+
+<canvas class="ink-layer" aria-hidden="true"></canvas>
 
 <footer class="end">
   <p class="end-line">Write it down. It&nbsp;gets&nbsp;done<span class="om-ditto rests" aria-hidden="true"><svg class="ditto7" viewBox="0 0 40 34" aria-hidden="true"><defs><radialGradient id="fdg" cx="0.5" cy="0.56" r="0.56" fx="0.36" fy="0.3"><stop offset="0" style="stop-color: var(--dm0)"/><stop offset="0.5" style="stop-color: var(--dm1)"/><stop offset="0.86" style="stop-color: var(--dm2)"/><stop offset="1" style="stop-color: var(--dm3)"/></radialGradient><linearGradient id="fds" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: #fff; stop-opacity: var(--dsh)"/><stop offset="1" style="stop-color: #fff; stop-opacity: 0"/></linearGradient><linearGradient id="fdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--drim); stop-opacity: var(--drim-a)"/><stop offset="0.7" style="stop-color: var(--drim); stop-opacity: 0"/></linearGradient><filter id="fdf" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="0.28"/></filter><filter id="fdh" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.35"/></filter><clipPath id="fdc"><path class="bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/></clipPath><clipPath id="fdl0"><path class="lp" d="M13.18 17.71Q16.1 17.71 19.03 17.71L19.03 24.3Q16.1 24.3 13.18 24.3Z"/></clipPath><clipPath id="fdl1"><path class="lp" d="M26.83 17.71Q23.9 17.71 20.98 17.71L20.98 24.3Q23.9 24.3 26.83 24.3Z"/></clipPath></defs><g class="rig"><ellipse class="bl" cx="20.05" cy="31.88" rx="13.45" ry="0.42" filter="url(#fdf)"/><path class="b bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="url(#fdg)"/><path class="b red bp" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z"/><path class="sh" clip-path="url(#fdc)" d="M9.9 17.9C10.1 14.6 12 11.7 15.1 10.2C16.6 9.5 17.6 10.4 16.7 11.3C14.6 13 13.1 15.1 12.5 17.6C12.1 19.2 9.9 19.4 9.9 17.9Z" fill="url(#fds)" filter="url(#fdh)"/><path class="rim bp" clip-path="url(#fdc)" d="M11.3 31.95C9.43 31.9 7.67 31.8 6.52 31.03C5.37 30.27 4.83 28.83 4.5 27.28C4.17 25.73 4.03 24.07 4.33 21.87C4.63 19.67 5.37 16.93 6.55 14.68C7.73 12.43 9.37 10.67 11.72 9.37C14.07 8.07 17.13 7.23 20.12 7.25C23.1 7.27 26 8.13 28.23 9.48C30.47 10.83 32.03 12.67 33.23 14.93C34.43 17.2 35.27 19.9 35.62 22.07C35.97 24.23 35.83 25.87 35.52 27.38C35.2 28.9 34.7 30.3 33.57 31.05C32.43 31.8 30.67 31.9 28.8 31.95C26.93 32 24.97 32 23 32C21.03 32 19.07 32 17.1 32C15.13 32 13.17 32 11.3 31.95Z" fill="none" stroke="url(#fdr)" stroke-width="1.5"/><g class="eyes"><g clip-path="url(#fdl0)"><ellipse class="ew" cx="16.1" cy="21.01" rx="1.95" ry="3.05"/></g><g clip-path="url(#fdl1)"><ellipse class="ew" cx="23.9" cy="21.01" rx="1.95" ry="3.05"/></g></g></g></svg></span><span class="vh">.</span></p>
@@ -1567,166 +1574,879 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
   lockDemo.addEventListener("click", function () { lockDemo.classList.contains("open") ? (clearTimeout(closeTimer), lockDemo.classList.remove("open")) : unlock(); });
 
   // ———— The opening ————
-  // Paper, and Ink's caret, steady, then a blink: a held beat before the first key. "Ink &" is typed at a
-  // person's pace, a breath after "Ink" and after "&", each letter inking in. Ditto comes in from the edge:
-  // two hops on true arcs, a long crouch before the second, a firm landing that settles in two, and a blink.
-  // Its name is typed up to it; the caret goes; the line and the page come up. Under four seconds. The whole
-  // line is laid out from the first frame (letters present, unseen), and it waits for the serif first, so
-  // nothing moves but what's meant to. Any key, tap, wheel or scroll goes straight to the last frame.
+  // Blank paper. One drop of ink falls where the "I" begins and writes the name in the hero's own serif, the way a
+  // hand would: each stroke in its order, the nib lifting between words, the ink soaking in behind a wet bead. The
+  // i of Ditto is left undotted; the pen comes back and dots it, one sure tap, and the dot it leaves is the page's
+  // own. It rises out of the dot and swings over Ditto's place; a drop gathers hanging from the nib, lets go, falls
+  // and lands; the ball swells, the dome rises out of it as Ditto's material soaks up, and its eyes open. It looks
+  // up once at the dot it came from, and back; then the name rises to its place and the page arrives, line by
+  // line. The ink is drawn on a layer over the window; the letters left behind are the page's own, exactly. Any
+  // key, tap, wheel or scroll hurries everything left to the same last frame in under a second.
   var h1 = document.querySelector(".hero h1"), hd = h1.querySelector(".om-ditto"), hdSvg = hd.querySelector("svg");
-  var opening = [], heroRig = new Rig(hdSvg), heroHop = null, wakeHero = function () {};
+  var opening = [], heroRig = new Rig(hdSvg), heroHop = null, wakeHero = function () {}, pen = null, hurry = null, quietUntil = 0;
+  var layer = document.querySelector(".ink-layer"), lc = layer.getContext("2d");
   function endOpening() {
-    if (!opening.length && !heroHop) return;
+    if (!opening.length && !heroHop && !pen) return;
     var a = opening; opening = [];
     a.forEach(function (x) { try { x.finish(); } catch (e) { x.cancel(); } });
+    if (pen) pen.stop();
+    var rgr = hdSvg.querySelector(".rig"); if (rgr) rgr.removeAttribute("mask");
+    h1.style.willChange = "";
+    layer.style.display = "none"; layer.getAnimations().forEach(function (a) { a.cancel(); });
+    arrived();
     if (heroHop) { heroHop = null; heroRig.snap(Object.assign({}, REST)); }
-    ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, endOpening, true); });
+    hurry = null;
+    ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, hurryUp, true); });
   }
-  function playOpening() {
-    var run = new Run(0), S = performance.now();
-    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b"));
-    var ink = [{ opacity: 0, filter: "blur(0.6px)" }, { opacity: 1, filter: "blur(0)" }], inkOpt = function (t) { return { delay: t, duration: 90, easing: "cubic-bezier(.2,.8,.2,1)" }; };
-    // "Ink &": a held beat with the caret blinking, then a person's rhythm, a breath after "Ink" and after "&".
-    var timesA = [600, 712, 790, 1000, 1118, 1290];
-    A.forEach(function (l, i) { run.go(l, ink, inkOpt(timesA[i])); });
-    // The caret glides to each new place; the anchor carries it, so the stroke itself is free to pool.
-    var anchor = h1.querySelector(".caret-at"), caret = h1.querySelector(".caret"), last = B[B.length - 1].getBoundingClientRect(), glide = "cubic-bezier(.2,.8,.2,1)";
-    function at(r, edge) { return "translate(" + (r[edge] - last.right).toFixed(1) + "px," + (r.top - last.top).toFixed(1) + "px)"; }
-    var T = 2400, kf = [{ offset: 0, transform: at(A[0].getBoundingClientRect(), "left") }], prev = kf[0].transform;
-    A.forEach(function (l, i) { var now = at(l.getBoundingClientRect(), "right"); kf.push({ offset: timesA[i] / T, transform: prev, easing: glide }, { offset: (timesA[i] + 70) / T, transform: now }); prev = now; });
-    kf.push({ offset: 1, transform: prev });
-    run.go(anchor, kf, { duration: T, easing: "linear", fill: "backwards" });
-    run.go(caret, [[0, 0], [100, 1], [400, 1], [470, 0.08], [530, 0.08], [600, 1], [1640, 1], [1700, 0.08], [1820, 0.08], [1880, 1], [2150, 1], [2320, 0]]
-      .map(function (b) { return { offset: b[0] / T, opacity: b[1] }; }), { duration: T, easing: "linear", fill: "both" });
-    // It softens: the stroke shortens and flows down into its own foot.
-    run.go(caret, [{ transform: "none" }, { transform: "none", offset: 0.82 }, { transform: "scaleY(0.12)" }], { duration: 2340, easing: "cubic-bezier(.55,0,.75,.3)", fill: "both" });
-    // The drop, as physics. The caret's ink gathers at its foot into a drop; it pops up and falls back under
-    // gravity (the rise, hang and fall measured from LoveFrom's full stop), lands with a squash that's as
-    // deep as it was fast, springs off into a roll, writes "Ditto" as it rolls (each letter inking in just
-    // behind it), slows like a ball losing its roll and stops exactly in its place (critically damped: no
-    // overshoot, no slide back), and only then, still, becomes Ditto: the
-    // dome rises out of the ball, and the eyes open. Worked out once, step by step, before the first frame.
-    var unit = hd.getBoundingClientRect().width / 40, fr = hdSvg.getBoundingClientRect(), fx = fr.left + 20 * unit;
-    var sp = A[A.length - 1].getBoundingClientRect();
-    var X0 = (sp.right + unit * 1.5 - fx) / unit, Y0 = -(sp.top - last.top) / unit;
-    var red = hdSvg.querySelector(".red");
-    var G = 550, POP = 2400, H = 1 / 240, R0 = 14;
-    var sim = [], x = X0, y = Y0, vx = 22, vy = 211, q = 0, qv = 0, ph = "pool", xl = 0, d = 0, w0 = 3.4, z0 = 1.0, vroll = 0, xs = 0, TR = 1000, bounced = false, tl = 0, Reff = 1, turns = 1, rollAt = 0;
-    for (var tt = 0; tt <= 6200; tt += H * 1000) {
-      var kk = 0.12, rnd = 1, st = 1, rot = 0;
-      if (tt < POP) { kk = tt < 2150 ? 0.12 : 0.12 + 0.18 * EASE.o(Math.min((tt - 2150) / 250, 1)); }
-      else if (ph === "pool") ph = "fly";
-      if (ph === "fly") {
-        vy -= (vy > 0 ? 586 : 760) * H; y += vy * H; x += vx * H;
-        kk = 0.3 + 0.15 * Math.min((tt - POP) / 650, 1);
-        if (y <= 0 && vy < 0 && !bounced && Math.abs(vy) > 90) {
-          // A ball of ink, round the whole way: it meets the line and gives one small, low bounce.
-          y = 0; vy = -vy * 0.24; bounced = true;
-        } else if (y <= 0 && vy < 0) {
-          // Down for good: it rolls on.
-          y = 0; ph = "push"; tl = tt; xl = x; d = -x;
-          vroll = w0 * d / (2 * z0); turns = Math.max(1, Math.round(d / (2 * Math.PI * R0 * 0.75))); Reff = (d + 0.0001) / (2 * Math.PI * turns);
-          vy = 0;
-        }
-      } else if (ph === "push") {
-        // The squash gives back what it took, forward: the roll's speed arrives over 140 ms.
-        var u2 = Math.min((tt - tl) / 140, 1); vx = 24 + (vroll - 24) * EASE.io(u2); x += vx * H;
-        if (u2 >= 1) { ph = "roll"; rollAt = tt; xs = x; TR = Math.max(700, Math.min(1400, 3 * Math.abs(x) / Math.max(Math.abs(vx), 1) * 1000)); }
-      } else if (ph === "roll") {
-        // Like a ball losing its roll: it slows evenly and stops exactly in its place, at a definite moment
-        // (an ease-out from the speed it had), with no overshoot, no creep and no slide back.
-        var ur = Math.min((tt - rollAt) / TR, 1), om = 1 - ur; x = xs * om * om * om; vx = 3 * -xs * om * om / (TR / 1000);
+  // A click, key, tap or scroll mid-opening doesn't cut it off: everything left plays out together, quickly (about
+  // two thirds of a second, whatever was left), and lands on the same last frame.
+  function arrived() { delete root.dataset.arriving; }
+  function hurryUp(e) {
+    // A shortcut or a bare modifier (⌘-Tab, a screenshot) isn't a request to skip ahead.
+    if (e && e.type === "keydown" && (e.metaKey || e.ctrlKey || e.altKey || ["Shift", "Control", "Alt", "Meta", "CapsLock", "Fn"].indexOf(e.key) >= 0)) return;
+    if (hurry) hurry(); else endOpening();
+  }
+
+  // The strokes, as a hand writes them. Each point is [letter, across, down] inside that letter's own ink box,
+  // so the same strokes fit New York, Iowan or Georgia. "run" is the nib going back over ink it has just laid
+  // (up the n's stem into its arch). Within a word the strokes are joined on the paper; between words it lifts.
+  var O = [];
+  for (var th = -60; th >= -420; th -= 15) O.push([8, 0.5 + 0.4 * Math.cos(th * Math.PI / 180), 0.5 + 0.46 * Math.sin(th * Math.PI / 180)]);
+  var SEQ = [
+    { ink: 1, p: [[0, .5, .02], [0, .5, .98]] },                                                                   // I
+    { ink: 1, p: [[1, .21, .04], [1, .21, .97]] },                                                                 // n: the stem,
+    { run: 1, p: [[1, .21, .97], [1, .21, .42]] },                                                                 // back up it,
+    { ink: 1, p: [[1, .21, .42], [1, .31, .14], [1, .5, .03], [1, .69, .1], [1, .79, .3], [1, .8, .56], [1, .8, .97]] }, // and the arch
+    { ink: 1, p: [[2, .22, .02], [2, .22, .97]] },                                                                 // k: the stem,
+    { ink: 1, p: [[2, .9, .39], [2, .64, .51], [2, .42, .62], [2, .6, .78], [2, .84, .97]] },                       // the arm into the leg
+    { word: 1 },
+    { ink: 1, amp: 1, p: [[3, .92, .97], [3, .7, .78], [3, .5, .58], [3, .38, .44], [3, .29, .3], [3, .2, .18], [3, .25, .07], [3, .38, .02], [3, .52, .07],
+      [3, .59, .18], [3, .55, .3], [3, .44, .39], [3, .3, .46], [3, .16, .55], [3, .08, .7], [3, .12, .88], [3, .27, .98], [3, .45, .95], [3, .6, .8],
+      [3, .7, .63], [3, .8, .48], [3, .9, .39]] }, // & in one stroke
+    { word: 1 },
+    { ink: 1, p: [[4, .13, .02], [4, .13, .98]] },                                                                 // D: the stem,
+    { ink: 1, p: [[4, .2, .98], [4, .5, .97], [4, .82, .82], [4, .94, .5], [4, .8, .18], [4, .5, .03], [4, .2, .02]] }, // and round the bowl from its foot
+    { word: 1, lift: 1 },                                                                                          // the pen leaves the D
+    { ink: 1, p: [[5, .55, .3], [5, .55, .98]] },                                                                  // i (its dot comes last)
+    { word: 1, lift: 1 },                                                                                          // and on to the t
+    { ink: 1, p: [[6, .3, .04], [6, .3, .7], [6, .35, .91], [6, .57, .98], [6, .93, .86]] },                       // t
+    { ink: 1, p: [[7, .3, .04], [7, .3, .7], [7, .35, .91], [7, .57, .98], [7, .93, .86]] },                       // t
+    { ink: 1, p: [[6, .03, .2], [6, .6, .19], [7, .6, .19], [7, .98, .18]] },                                      // one bar across both
+    { ink: 1, p: O, loop: 1 },                                                                                     // o
+    { word: 1, back: 1 },                                                                                          // back to the i,
+    { dot: 1, p: [[5, .55, .08]] }                                                                                 // and dot it
+  ];
+
+  // A stroke's pace: it gathers speed, travels, and eases to a stop (a smooth trapezoid of speed), so the
+  // nib never moves at a corner in time and never races at its peak.
+  var MJ = (function () { var a = 0.24, v = [], c = [0], n = 512, i; for (i = 0; i <= n; i++) { var u = i / n, e = u < a ? u / a : u > 1 - a ? (1 - u) / a : 1; v.push(Math.pow(Math.sin(Math.PI / 2 * e), 2)); }
+    for (i = 1; i <= n; i++) c.push(c[i - 1] + (v[i - 1] + v[i]) / 2); return c.map(function (x) { return x / c[n]; }); })();
+  // The & of an old-style face (Iowan, Georgia: the leg ends in a tail that turns up) is written the same way,
+  // from the tail, up the diagonal, round the loop, round the bowl and out along the arm.
+  var AMP_OLD = [[3, .97, .83], [3, .86, .95], [3, .71, .91], [3, .46, .63], [3, .26, .36], [3, .17, .16], [3, .32, .02], [3, .47, .12], [3, .44, .3],
+    [3, .3, .42], [3, .12, .55], [3, .04, .75], [3, .15, .94], [3, .33, .99], [3, .52, .88], [3, .66, .6], [3, .76, .39], [3, .95, .34]];
+  function minjerk(u) { u = u < 0 ? 0 : u > 1 ? 1 : u; var x = u * 512, i = Math.min(511, x | 0); return MJ[i] + (MJ[i + 1] - MJ[i]) * (x - i); }
+  function unjerk(f) { var lo = 0, hi = 512; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (MJ[m] < f) lo = m; else hi = m; } var a = MJ[lo], b = MJ[hi]; return (lo + (b > a ? Math.max(0, Math.min(1, (f - a) / (b - a))) : 0)) / 512; }
+  function rgb(s) { var m = s.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2]]; }
+  function mix(a, b, k) { return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]; }
+  function css(c, a) { return "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + "," + (a == null ? 1 : a) + ")"; }
+  function sstep(u) { u = u < 0 ? 0 : u > 1 ? 1 : u; return u * u * (3 - 2 * u); }
+  function dist(a, b) { return Math.hypot(b[0] - a[0], b[1] - a[1]); }
+  // A smooth line through the points (uniform Catmull–Rom), every few pixels.
+  function spline(P, step) {
+    var out = [P[0].slice()];
+    for (var i = 0; i < P.length - 1; i++) {
+      var p0 = P[Math.max(i - 1, 0)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(i + 2, P.length - 1)];
+      var n = Math.max(2, Math.ceil(dist(p1, p2) / step));
+      for (var k = 1; k <= n; k++) {
+        var t = k / n, t2 = t * t, t3 = t2 * t, q = [];
+        for (var j = 0; j < 2; j++) q.push(0.5 * (2 * p1[j] + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2 + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3));
+        out.push(q);
       }
-      if (ph === "push" || ph === "roll") { kk = 0.45 + 0.55 * Math.max(0, Math.min((x - xl) / d, 1)); rot = (x - xl) / Reff; }
-      var wq = 2 * Math.PI * 3.4; qv += (-wq * wq * q - 2 * 0.36 * wq * qv) * H; q += qv * H;
-      st = 1;   // round the whole way: no stretch in flight, no squash on landing (the dome comes only at rest)
-      // Still enough, it stops being a ball: the dome rises out of it.
-      // It rolls as a true ball of ink; only once it has rocked back and is still does the dome rise out of it.
-      if (ph === "push" || ph === "roll") rnd = 1;
-      if (ph === "roll" && tt - rollAt > TR + 200) rnd = Math.max(0, 1 - EASE.io(Math.min((tt - rollAt - TR - 200) / 480, 1)));
-      // As it becomes Ditto it comes upright, whatever is left of its rocking.
-      var up = 2 * Math.PI * turns; if (ph === "roll" && tt - rollAt > TR + 200) rot = up + (rot - up) * rnd;
-      sim.push([tt, x, Math.max(y, 0), rot, rnd, kk, Math.max(0.55, st)]);
     }
-    var SIMEND = rollAt + TR + 200 + 480;
-    function simAt(t) {
-      var step = H * 1000, i = Math.min(sim.length - 1, Math.max(0, Math.floor(t / step))), a = sim[i], b = sim[Math.min(i + 1, sim.length - 1)], u = Math.max(0, Math.min((t - a[0]) / step, 1));
-      var L = function (j) { return a[j] + (b[j] - a[j]) * u; };
-      return { x: L(1), lift: L(2), rot: L(3), round: L(4), k: L(5), s: L(6) };
-    }
-    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.3 }, { opacity: 0 }], { delay: 2150, duration: 1500, easing: "ease-in-out", fill: "backwards" });
-    var keys = [
-      // A firm ball of ink until it rests (it holds a true circle through the pop, the fall, the bounce and
-      // the roll); soft again as the dome rises out of it.
-      { t: 0, open: 0, o: 0, foot: 3.6, firm: 4 }, { t: 2140, o: 0 }, { t: 2190, o: 1 },
-      { t: SIMEND - 200, firm: 4 }, { t: SIMEND + 200, firm: 1 },
-      { t: SIMEND + 120, open: 0 }, { t: SIMEND + 200, open: 0.2 }, { t: SIMEND + 300, open: 1 },
-      { t: SIMEND + 560, open: 1 }, { t: SIMEND + 640, open: 0.1 }, { t: SIMEND + 760, open: 1 }
-    ];
-    function path(t) { var p = simAt(t); if (t > SIMEND) { p.round = 0; p.rot = Math.round(p.rot / (2 * Math.PI)) * 2 * Math.PI; } return p; }
-    // When each letter of "Ditto" appears: as the back of the rolling drop passes the middle of it.
-    B.forEach(function (l) {
-      var r = l.getBoundingClientRect(), c = (r.right - fx) / unit, when = SIMEND;
-      for (var t = POP; t <= SIMEND; t += 8) { var p = simAt(t); if (p.x - R0 * p.k * 1.05 >= c) { when = t; break; } }
-      run.go(l, ink, inkOpt(when));
+    return out;
+  }
+
+  // ———— Everything worked out before the first frame ————
+  function prepare() {
+    var cs = getComputedStyle(h1), fs = parseFloat(cs.fontSize), fam = cs.fontFamily, dpr = Math.min(Math.max(devicePixelRatio || 1, 1), 3);
+    var A = letters(h1.querySelector(".om-a")), B = letters(h1.querySelector(".om-b"));
+    var asc = h1.querySelector(".caret-at").getBoundingClientRect().bottom - B[0].getBoundingClientRect().top;
+    var m = document.createElement("canvas").getContext("2d"); m.font = "400 " + fs + "px " + fam;
+    var G = A.concat(B).filter(function (s) { return s.textContent.trim(); }).map(function (s) {
+      var r = s.getBoundingClientRect(), base = r.top + asc, mm = m.measureText(s.textContent);
+      return { span: s, ch: s.textContent, x: r.left, base: base, l: r.left - mm.actualBoundingBoxLeft, r: r.left + mm.actualBoundingBoxRight, t: base - mm.actualBoundingBoxAscent, b: base + mm.actualBoundingBoxDescent };
     });
+    var sr = hdSvg.getBoundingClientRect(), unit = sr.width / 40;
+    // Across: the written words centred on the screen while they're written (Ditto's place is still empty).
+    // The whole lockup, the name and Ditto's place beside it, is centred from the first frame (as it rests), so the
+    // ball gathers exactly where Ditto lives and nothing ever slides sideways.
+    var dx = 0;
+    G.forEach(function (g) { g.x += dx; g.l += dx; g.r += dx; });
+    // Which & the page is showing: New York's, or an old-style one.
+    var amp = m.measureText("&").width, oldAmp = ['"Iowan Old Style"', "Georgia", "Charter"].some(function (f) { var c = document.createElement("canvas").getContext("2d"); c.font = "400 " + fs + "px " + f + ", monospace"; return Math.abs(c.measureText("&").width - amp) < 0.01; });
+    return { dx: dx, oldAmp: oldAmp, fs: fs, fam: fam, dpr: dpr, G: G, unit: unit, xd: sr.left + dx + 20 * unit, floor: sr.top + 32 * unit, ink: rgb(cs.color), paper: rgb(getComputedStyle(document.body).backgroundColor) };
+  }
+  // Each glyph drawn as the page would draw it, in its own place, in device pixels. The page's own letters stay
+  // in place from the first frame; the layer covers each with paper (the glyph, grown by two pixels, so not a
+  // fringe shows) and uncovers it as the ink arrives. So the name that's left is the page's own, exactly.
+  function rasterise(P, dy) {
+    var dpr = P.dpr;
+    P.G.forEach(function (g) {
+      var pad = 4, bx = Math.floor(g.l * dpr) - pad, by = Math.floor((g.t + dy) * dpr) - pad;
+      var bw = Math.ceil(g.r * dpr) + pad - bx, bh = Math.ceil((g.b + dy) * dpr) + pad - by;
+      var cv = document.createElement("canvas"); cv.width = bw; cv.height = bh;
+      var c = cv.getContext("2d");
+      c.setTransform(dpr, 0, 0, dpr, -bx, -by); c.font = "400 " + P.fs + "px " + P.fam; c.fillStyle = "#000"; c.fillText(g.ch, g.x, g.base + dy);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      var d = c.getImageData(0, 0, bw, bh).data, n = bw * bh, a = new Float32Array(n), i;
+      for (i = 0; i < n; i++) a[i] = d[i * 4 + 3] / 255;
+      // The ink box, from the glyph as drawn (more exact than the font's own measure, and the same in every engine).
+      var x0 = bw, x1 = 0, y0 = bh, y1 = 0;
+      for (i = 0; i < n; i++) if (a[i] > 0.5) { var px = i % bw, py = i / bw | 0; if (px < x0) x0 = px; if (px > x1) x1 = px; if (py < y0) y0 = py; if (py > y1) y1 = py; }
+      if (x1 > x0) { g.l = (bx + x0) / dpr; g.r = (bx + x1 + 1) / dpr; g.t = (by + y0) / dpr - dy; g.b = (by + y1 + 1) / dpr - dy; }
+      c.clearRect(0, 0, bw, bh);
+      // Grown by two pixels (a 3 × 3 maximum, twice).
+      var dl = a;
+      for (var pass = 0; pass < 2; pass++) {
+        var nx = new Float32Array(n);
+        for (var y = 0; y < bh; y++) for (var x = 0; x < bw; x++) {
+          var m = 0;
+          for (var yy = Math.max(0, y - 1); yy <= Math.min(bh - 1, y + 1); yy++) for (var xx = Math.max(0, x - 1); xx <= Math.min(bw - 1, x + 1); xx++) { var v = dl[yy * bw + xx]; if (v > m) m = v; }
+          nx[y * bw + x] = m;
+        }
+        dl = nx;
+      }
+      Object.assign(g, { cv: cv, c: c, bx: bx, by: by, bw: bw, bh: bh, A: a, Dl: dl, img: c.createImageData(bw, bh), T: new Float32Array(n), T2: new Float32Array(n), C2: new Float32Array(n), done: false, covered: false });
+    });
+    // Never cover a neighbour's own ink (the joined crossbar of "tt", a serif close by).
+    P.G.forEach(function (g) {
+      g.idx = [];
+      for (var i = 0, n = g.bw * g.bh; i < n; i++) {
+        if (!g.Dl[i]) continue;
+        if (g.A[i] < 0.02) {
+          var X = g.bx + i % g.bw, Y = g.by + (i / g.bw | 0), other = false;
+          P.G.forEach(function (h) { if (h === g || other) return; var x = X - h.bx, y = Y - h.by; if (x >= 0 && y >= 0 && x < h.bw && y < h.bh && h.A[y * h.bw + x] > 0.02) other = true; });
+          if (other) { g.Dl[i] = 0; continue; }
+        }
+        g.idx.push(i);
+      }
+    });
+  }
+
+  // ———— The plan: where the bead is at every moment, and when each drop of each letter inks in ————
+  // A hand writes a word in one movement: each letter joins the next on the paper, the nib slowing into its
+  // turns and stopping only where the line turns right back on itself, and lifting only between words. The
+  // pace comes from that path (a top speed, a limit on how hard it can speed up or turn), not from a clock.
+  function plan(P, dy) {
+    // Half the stroke's width either side of where the line passes, from the glyph itself.
+    function halfWidth(g, q, a, b) {
+      var dpr = P.dpr, tx = b[0] - a[0], ty = b[1] - a[1], l = Math.hypot(tx, ty) || 1, nx = -ty / l, ny = tx / l, out = [0, 0];
+      function alpha(x, y) {   // bilinear, on pixel centres
+        x -= 0.5; y -= 0.5; var x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0;
+        function a(i, j) { return i < 0 || j < 0 || i >= g.bw || j >= g.bh ? 0 : g.A[j * g.bw + i]; }
+        return (a(x0, y0) * (1 - fx) + a(x0 + 1, y0) * fx) * (1 - fy) + (a(x0, y0 + 1) * (1 - fx) + a(x0 + 1, y0 + 1) * fx) * fy;
+      }
+      [1, -1].forEach(function (sg, k) {
+        var prev = alpha(q[0] * dpr - g.bx, q[1] * dpr - g.by);
+        for (var d = 0.25; d < 0.2 * P.fs * dpr; d += 0.25) {
+          var cur = alpha(q[0] * dpr - g.bx + sg * nx * d, q[1] * dpr - g.by + sg * ny * d);
+          if (cur < 0.5) { out[k] = prev >= 0.5 && prev > cur ? d - 0.25 + 0.25 * (prev - 0.5) / (prev - cur) : d - 0.25; return; }
+          prev = cur; out[k] = d;
+        }
+      });
+      return [out[0] / dpr, out[1] / dpr];
+    }
+    function smooth(a) { return a.map(function (v, i) { var t = 0, n = 0; for (var k = Math.max(0, i - 4); k <= Math.min(a.length - 1, i + 4); k++) { t += a[k]; n++; } return t / n; }); }
+    // Each side's own width, its narrowest nearby (a crossing stroke would make it look wider than it is).
+    // The median nearby: a crossing makes a stroke look wider for a few pixels; its own edge runs straight on through.
+    function median(a) { return a.map(function (v, i) { var w = a.slice(Math.max(0, i - 10), Math.min(a.length, i + 11)).sort(function (x, y) { return x - y; }); return w[w.length >> 1]; }); }
+    function least(a) { return a.map(function (v, i) { var m = v; for (var k = Math.max(0, i - 5); k <= Math.min(a.length - 1, i + 5); k++) if (a[k] < m) m = a[k]; return m; }); }
+    var fs = P.fs, G = P.G, items = [], t, pos;
+    // The i's dot as the page draws it: the top band of its ink, its centre and its size.
+    function tittle(g) {
+      if (!g || !g.A) return null;
+      var w = g.bw, h = g.bh, rows = [], y, x, top = -1, bot = -1;
+      for (y = 0; y < h; y++) { var any = false; for (x = 0; x < w; x++) if (g.A[y * w + x] > 0.5) { any = true; break; } rows.push(any); }
+      for (y = 0; y < h; y++) if (rows[y]) { top = y; break; }
+      if (top < 0) return null;
+      for (y = top; y < h && rows[y]; y++) bot = y;
+      if (bot >= h - 1 || (bot - top) > 0.4 * h) return null;
+      var a = 0, cx = 0, cy = 0;
+      for (y = top; y <= bot; y++) for (x = 0; x < w; x++) { var v = g.A[y * w + x]; a += v; cx += v * x; cy += v * y; }
+      if (!a) return null;
+      var mask = new Uint8Array(w * h), st = [Math.round(cy / a) * w + Math.round(cx / a)], ylim = bot + Math.max(2, Math.round((bot - top) * 0.5));
+      while (st.length) { var j = st.pop(); if (j < 0 || j >= w * h || mask[j] || g.A[j] <= 0.01 || (j / w | 0) > ylim) continue; mask[j] = 1; var jx = j % w; if (jx > 0) st.push(j - 1); if (jx < w - 1) st.push(j + 1); st.push(j - w, j + w); }
+      var grown = new Uint8Array(mask); for (var j2 = 0; j2 < w * h; j2++) if (mask[j2]) for (var oy = -3; oy <= 3; oy++) for (var ox = -3; ox <= 3; ox++) { var k2 = j2 + oy * w + ox; if (ox * ox + oy * oy <= 10 && k2 >= 0 && k2 < w * h && Math.abs((k2 % w) - (j2 % w)) <= 3) grown[k2] = 1; }
+      var ccx = cx / a, ccy = cy / a, rin = Infinity;
+      for (y = Math.max(0, top - 2); y <= Math.min(h - 1, bot + 2); y++) for (x = 0; x < w; x++) if (g.A[y * w + x] < 0.5) { var dd = Math.hypot(x + 0.5 - (ccx + 0.5), y + 0.5 - (ccy + 0.5)) - 0.5; if (dd < rin) rin = dd; }
+      var rr = Math.sqrt(a / Math.PI) / P.dpr;
+      return { x: (g.bx + cx / a + 0.5) / P.dpr, y: (g.by + cy / a + 0.5) / P.dpr, r: rr, rb: Math.min(rr * 0.72, 0.78 * rin / P.dpr), mask: grown, g: g };
+    }
+    var TIT = tittle(G[5]);
+    function at(q) { var g = G[q[0]]; return [g.l + q[1] * (g.r - g.l), g.t + dy + q[2] * (g.b - g.t)]; }
+    var R0 = 0.085 * fs, R1 = 0.06 * fs, R2 = 0.048 * fs;           // the drop; the bead as it starts; as it ends
+    // The hand: a top speed, how quickly it can speed up and slow down, how hard it can turn (all per em).
+    var VMAX = 9 * fs, ACC = 260 * fs, TURN = 190 * fs, LIFT_V = 4.8 * fs;
+    var totalInk = 0;
+    var pieces = SEQ.map(function (s) {
+      if (s.word) return s;
+      if (s.amp && P.oldAmp) s = Object.assign({}, s, { p: AMP_OLD });
+      var pts = s.dot && TIT ? [[TIT.x, TIT.y]] : s.p.map(at), poly = s.dot ? pts : spline(pts, 2.5);
+      var L = [0]; for (var i = 1; i < poly.length; i++) L.push(L[i - 1] + dist(poly[i - 1], poly[i]));
+      var o = Object.assign({}, s, { poly: poly, L: L, len: L[L.length - 1], owners: s.p.map(function (q) { return q[0]; }).filter(function (v, i, a) { return a.indexOf(v) === i; }) });
+      if (s.ink) totalInk += o.len;
+      if (!s.dot) {
+        var hw = poly.map(function (q, i) { return halfWidth(G[o.owners[0]], q, poly[Math.max(i - 1, 0)], poly[Math.min(i + 1, poly.length - 1)]); });
+        o.hwP = smooth(median(hw.map(function (v) { return v[0]; }))); o.hwM = smooth(median(hw.map(function (v) { return v[1]; })));
+        o.hw = smooth(hw.map(function (v) { return (v[0] + v[1]) / 2; }));
+      }
+      return o;
+    });
+    var words = [[]]; pieces.forEach(function (s) { if (s.word) { words.push([]); words[words.length - 1].small = !!s.lift; words[words.length - 1].back = !!s.back; } else words[words.length - 1].push(s); });
+    // The drop: a beat of paper, then one fall under gravity onto the start of the I, and it settles in.
+    var first = pieces[0].poly[0], y0 = -R0 * 1.8 - 4, g = 3600, tf = Math.sqrt(2 * (first[1] - y0) / g) * 1000;
+    var T0 = 220, TL = T0 + tf, SOAK = 90;
+    items.push({ kind: "fall", t0: T0, t1: TL, x: first[0], y0: y0, y1: first[1], g: g });
+    items.push({ kind: "dwell", t0: TL, t1: TL + SOAK, at: first, land: TL, amp: 0.26, r: R0 });
+    t = TL + SOAK; pos = first;
+    var inkSoFar = 0, lastR = R0, firstPiece = true, joins = [];
+    function dir(poly, end) { var n = poly.length; if (n < 2) return null; var a = end ? poly[n - 2] : poly[0], b = end ? poly[n - 1] : poly[1]; var l = dist(a, b) || 1; return [(b[0] - a[0]) / l, (b[1] - a[1]) / l]; }
+    // A join: on the paper, from where one stroke ends into where the next begins, arriving the way it goes on.
+    function join(a, b, db) {
+      var L = dist(a, b), c2 = db ? [b[0] - db[0] * Math.min(0.4 * L, 0.2 * fs), b[1] - db[1] * Math.min(0.4 * L, 0.2 * fs)] : [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      var ux = (b[0] - a[0]) / (L || 1), uy = (b[1] - a[1]) / (L || 1), sag = 0.16 * L;   // to the right of travel: under an upstroke
+      var c1 = [a[0] + (c2[0] - a[0]) * 0.35 - uy * sag, a[1] + (c2[1] - a[1]) * 0.35 + ux * sag], n = Math.max(4, Math.ceil(L * 1.3 / 2.5)), out = [];
+      for (var k = 1; k <= n; k++) { var u = k / n, v = 1 - u; out.push([v * v * v * a[0] + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * b[0], v * v * v * a[1] + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * b[1]]); }
+      return out;
+    }
+    words.forEach(function (wd, wi) {
+      var start = wd[0].poly[0];
+      if (wi > 0) {
+        // Between words the nib lifts: one unhurried arc through the air, never faster than a calm hand.
+        // (within a word, where a hand lifts anyway: a small, quick arc)
+        var d = dist(pos, start), dur = wd.back ? Math.max(240, Math.PI * d / (2 * LIFT_V * 1.5) * 1000) : Math.max(wd.small ? 140 : 220, Math.PI * d / (2 * LIFT_V * (wd.small ? 1.12 : 1)) * 1000), pause = wd.small ? 20 : wd.back ? 60 : 40;
+        items.push({ kind: "dwell", t0: t, t1: t + pause, at: pos, r: lastR }); t += pause;
+        items.push({ kind: "hop", t0: t, t1: t + dur, a: pos, b: start, h: wd.small ? 0.25 * d + 0.06 * fs : wd.back ? 0.22 * d + 0.12 * fs : 0.5 * d + 0.16 * fs, ra: lastR, small: !!wd.small, tap: !!wd.back });
+        t += dur; items.push({ kind: "dwell", t0: t, t1: t, at: start, land: t, amp: wd.back ? 0.1 : 0.1, soft: !!wd.back });   // the dot: a sure tap, the ink spreading a touch under the nib
+      }
+      // The word as one path: its strokes and the joins between them.
+      var path = [start.slice()], kind = [null], owner = [null], idx = [0];   // per vertex: the kind of the segment arriving there
+      wd.forEach(function (s, k) {
+        var a = path[path.length - 1];
+        if (k > 0 && dist(a, s.poly[0]) > 0.03 * fs) join(a, s.poly[0], s.dot ? null : dir(s.poly)).forEach(function (q) { path.push(q); kind.push("join"); owner.push(null); idx.push(0); });
+        s.at0 = path.length - 1;
+        if (s.dot) { s.atDot = path.length - 1; return; }
+        for (var i = 1; i < s.poly.length; i++) { path.push(s.poly[i]); kind.push(s.ink ? "ink" : "run"); owner.push(s); idx.push(i); }
+        s.at1 = path.length - 1;
+      });
+      // Speed along it: capped by the turns (a sharp reversal is a stop), eased in and out by what the hand can do.
+      var n = path.length, ds = [0], v = [], cap = [];
+      for (var i = 1; i < n; i++) ds.push(Math.max(1e-3, dist(path[i - 1], path[i])));
+      for (i = 0; i < n; i++) {
+        var turn = 0, span = 0;
+        for (var k2 = Math.max(1, i - 3); k2 <= Math.min(n - 2, i + 3); k2++) {
+          var a1 = Math.atan2(path[k2][1] - path[k2 - 1][1], path[k2][0] - path[k2 - 1][0]), a2 = Math.atan2(path[k2 + 1][1] - path[k2][1], path[k2 + 1][0] - path[k2][0]);
+          var tt2 = Math.abs(Math.atan2(Math.sin(a2 - a1), Math.cos(a2 - a1))); if (k2 === i && tt2 > 1.9) turn = Infinity; turn += tt2; span += ds[k2];
+        }
+        var kap = span ? turn / span : 0;
+        cap.push(i === 0 || i === n - 1 || turn === Infinity ? 0 : Math.min(VMAX, kap > 0 ? Math.sqrt(TURN / kap) : VMAX));
+      }
+      wd.forEach(function (s) { if (s.dot) cap[s.atDot] = 0; });
+      v = cap.slice();
+      for (i = 1; i < n; i++) v[i] = Math.min(v[i], Math.sqrt(v[i - 1] * v[i - 1] + 2 * ACC * ds[i]));
+      for (i = n - 2; i >= 0; i--) v[i] = Math.min(v[i], Math.sqrt(v[i + 1] * v[i + 1] + 2 * ACC * ds[i + 1]));
+      var T = [t];
+      for (i = 1; i < n; i++) { var vm = (v[i - 1] + v[i]) / 2; T.push(T[i - 1] + 1000 * (vm > 0.02 * VMAX ? ds[i] / vm : 2 * Math.sqrt(ds[i] / ACC))); }
+      // The dot is a tap: a moment on it.
+      wd.forEach(function (s) { if (s.dot && !wd.back) for (i = s.atDot; i < n; i++) T[i] += 100; });
+      // Size: the nib swells on a stem and thins on a hairline, spends itself as it goes, and draws in a little on a join.
+      var R = new Array(n);
+      wd.forEach(function (s) {
+        if (s.dot) { R[s.atDot] = TIT ? TIT.rb : R1 * (1 - 0.08 * inkSoFar / totalInk); s.tv = [T[s.atDot]]; s.rr = [R[s.atDot]]; s.hw = [R1 * 0.8]; s.hwP = s.hw; s.hwM = s.hw; s.L = [0]; return; }
+        s.tv = []; s.rr = [];
+        for (var j = 0; j < s.poly.length; j++) {
+          var spend = 1 - 0.08 * (inkSoFar + (s.ink ? s.L[j] : 0)) / totalInk, r = Math.max(0.62 * R1, Math.min(R1, s.hw[j] * 1.22)) * spend;
+          if (firstPiece) r += (R0 - r) * (1 - sstep(s.L[j] / (0.9 * s.len)));
+          s.tv.push(T[s.at0 + j]); s.rr.push(r); R[s.at0 + j] = r;
+        }
+        if (firstPiece) { s.tv[0] = TL + 40; firstPiece = false; }
+        if (s.ink) inkSoFar += s.len;
+      });
+      // Joins carry the size across, a little lighter in the middle.
+      for (i = 0; i < n; i++) if (R[i] == null) {
+        var a3 = i, b3 = i; while (a3 > 0 && R[a3] == null) a3--; while (b3 < n - 1 && R[b3] == null) b3++;
+        var ra = R[a3] != null ? R[a3] : lastR, rb = R[b3] != null ? R[b3] : ra, u3 = (i - a3) / Math.max(1, b3 - a3);
+        R[i] = (ra + (rb - ra) * u3) * (1 - 0.12 * Math.sin(Math.PI * u3));
+      }
+      // Its size never jumps: eased along the path (by time, so a fast stretch changes no quicker than a slow one).
+      for (var pass2 = 0; pass2 < 3; pass2++) R = R.map(function (r, i) { var a = 0, w = 0; for (var k = i - 1; k >= 0 && T[i] - T[k] < 40; k--) { a += R[k]; w++; } for (k = i + 1; k < n && T[k] - T[i] < 40; k++) { a += R[k]; w++; } return (a + r) / (w + 1); });
+      items.forEach(function (it) { if (it.kind === "hop" && it.rb == null) it.rb = R[0]; });
+      for (i = 1; i < n; i++) if (kind[i] === "join" && kind[i - 1] !== "join") { var jp = [path[i - 1]], jt = [T[i - 1]]; for (var k4 = i; k4 < n && (kind[k4] === "join" || kind[k4 - 1] === "join"); k4++) { jp.push(path[k4]); jt.push(T[k4]); if (kind[k4] !== "join") break; } joins.push({ pts: jp, T: jt }); }
+      items.push({ kind: "path", t0: t, t1: T[n - 1], poly: path, T: T, R: R });
+      t = T[n - 1]; pos = path[n - 1]; lastR = R[n - 1];
+    });
+    var strokes = pieces.filter(function (s) { return !s.word; });
+    return { tit: TIT, joins: joins, items: items, t: t, pos: pos, R0: R0, R1: R1, R2: R2, lastR: lastR, totalInk: totalInk, strokes: strokes, TL: TL };
+  }
+
+  // When each pixel of each glyph inks in: as the bead passes the nearest point of the letter's own strokes,
+  // and a little after for what lies further out (a serif, a bracket), as ink wicks out into the paper.
+  function inkTimes(P, PL) {
+    var dpr = P.dpr, WICK = 1.0 * P.fs * dpr / 1000, FIRST = PL.TL;
+    P.G.forEach(function (g, li) {
+      var polys = PL.strokes.filter(function (s) { return !s.word && (s.ink || s.dot) && s.owners.indexOf(li) >= 0; }).map(function (s) {
+        // A coarser line is plenty for finding the nearest point; times run along it.
+        var X = [], Y = [], TV = [], RR = [], HW = [], HP = [], HM = [], AL = [], n = s.poly.length;
+        function add(i) { AL.push(s.L[i] * dpr); X.push(s.poly[i][0] * dpr - g.bx); Y.push(s.poly[i][1] * dpr - g.by); TV.push(s.tv[i]); RR.push(s.rr[i] * dpr); HW.push((s.hw ? s.hw[i] : s.rr[i]) * dpr); HP.push((s.hwP ? s.hwP[i] : s.rr[i]) * dpr); HM.push((s.hwM ? s.hwM[i] : s.rr[i]) * dpr); }
+        for (var i = 0; i < n; i += 2) add(i);
+        if ((n - 1) % 2) add(n - 1);
+        return { X: X, Y: Y, TV: TV, RR: RR, HW: HW, HP: HP, HM: HM, AL: AL, dot: !!s.dot };
+      });
+      var TM = PL.tit && PL.tit.g === g ? PL.tit.mask : null, dotPolys = polys.filter(function (p) { return p.dot; }), strokePolys = polys.filter(function (p) { return !p.dot; });
+      if (!dotPolys.length) TM = null;
+      var lo = Infinity, hi = 0;
+      var TOL = 0.025 * P.fs * dpr;
+      g.idx.forEach(function (i) {
+        var PP = TM ? (TM[i] ? dotPolys : strokePolys) : polys;
+        var px = i % g.bw + 0.5, py = (i / g.bw | 0) + 0.5, best = Infinity, bt = 0, br = 0, bp = null, ba = 0, bh = 0, bs = 0, beyond = false, pass;
+        // Three looks. First, the nearest point of the letter's strokes. Then, if the pixel lies outside that stroke's
+        // own ink (a bracket, the root of a stroke that leaves it), it belongs with whichever stroke nearly as close
+        // comes last. Or, if it lies inside, and the line comes round and crosses there again (the &), it inks with
+        // the first pass, never the second.
+        function other(p, a, j) { return p !== bp || Math.abs(a - ba) > 2.5 * Math.max(bh, p.HW[j]) + 4 * dpr; }
+        var near = 0, inside = Infinity, cov = 0, cmax = 0;
+        for (pass = 0; pass < 2; pass++) {
+          var lim = Math.pow(Math.sqrt(best) + 2.5 * dpr, 2);
+          PP.forEach(function (p) {
+            var X = p.X, Y = p.Y;
+            if (X.length === 1) {
+              var d0 = (px - X[0]) * (px - X[0]) + (py - Y[0]) * (py - Y[0]);
+              if (!pass) { if (d0 < best) { best = d0; bt = p.TV[0]; br = p.RR[0]; bp = p; ba = 0; bh = p.HW[0]; bs = p.HW[0]; } }
+              else if (p !== bp) { if (d0 <= p.HW[0] * p.HW[0] && p.TV[0] < inside) { inside = p.TV[0]; cov = 1; } }
+              return;
+            }
+            for (var j = 0; j < X.length - 1; j++) {
+              var ax = X[j], ay = Y[j], vx = X[j + 1] - ax, vy = Y[j + 1] - ay, ll = vx * vx + vy * vy;
+              var f = ll ? ((px - ax) * vx + (py - ay) * vy) / ll : 0; f = f < 0 ? 0 : f > 1 ? 1 : f;
+              var dx = ax + vx * f - px, dy2 = ay + vy * f - py, dd = dx * dx + dy2 * dy2, tt = p.TV[j] + (p.TV[j + 1] - p.TV[j]) * f, al = p.AL[j] + (p.AL[j + 1] - p.AL[j]) * f;
+              var side = ((px - ax) * -vy + (py - ay) * vx > 0 ? p.HP[j] : p.HM[j]);
+              if (!pass) { if (dd < best) { best = dd; bt = tt; br = p.RR[j] + (p.RR[j + 1] - p.RR[j]) * f; bp = p; ba = al; bh = p.HW[j]; bs = side; } }
+              else if (other(p, al, j)) {
+                var end = 1.5 * p.HW[j] + 2 * dpr;
+                if (dd <= lim && tt > near && al > end && al < p.AL[p.AL.length - 1] - end) near = tt;   // a stroke that passes by, not one that starts or ends here
+                var c3 = side + 0.5 - Math.sqrt(dd); if (c3 > 0 && tt < bt && c3 > cmax) { cmax = c3; inside = tt; cov = Math.min(1, c3); }   // the point of that pass the pixel is deepest in
+              }
+            }
+          });
+          if (!pass) beyond = Math.sqrt(best) > bs + 1.2 * dpr;
+        }
+        var early = Infinity, share = 0;
+        if (inside < bt) { if (cov >= 0.999 || g.A[i] < 0.98) bt = inside; else { early = inside; share = cov; } }   // inside an earlier pass's ink: it inks then
+        if (beyond && inside === Infinity && near > bt) bt = near;   // outside every stroke: with the last one close by
+        g.T2[i] = early; g.C2[i] = share;
+        var T = bt - 6 + Math.max(0, Math.sqrt(best) - 1.0 * br) / WICK;
+        if (TM && TM[i]) { (g.FD = g.FD || new Float32Array(g.bw * g.bh))[i] = 28; var Rt = PL.tit.r * dpr; T = bt - 10 + 130 * sstep((Math.sqrt(best) - 0.5 * Rt) / (0.7 * Rt)); }
+        g.T[i] = T; if (Math.min(T, early) < lo) lo = Math.min(T, early); if (T > hi) hi = T;
+      });
+      // two passes of a neighbour average, only among pixels within 70 ms of each other
+      var Tm = g.T, w = g.bw, inG = new Uint8Array(g.bw * g.bh); g.idx.forEach(function (i) { inG[i] = 1; });
+      for (var pass = 0; pass < 3; pass++) {
+        var nT = new Float32Array(Tm);
+        g.idx.forEach(function (i) {
+          var a = 0, c = 0, t0 = Tm[i];
+          for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) {
+            var j = i + dy * w + dx; if (j < 0 || j >= Tm.length || !inG[j]) continue;
+            if (Math.abs(Tm[j] - t0) > 70) continue;
+            var wt = dx === 0 && dy === 0 ? 2 : 1 / (Math.abs(dx) + Math.abs(dy)); a += Tm[j] * wt; c += wt;
+          }
+          nT[i] = a / c;
+        });
+        Tm = nT;
+      }
+      var Tc = new Float32Array(Tm);
+      g.idx.forEach(function (i) {
+        if (g.A[i] >= 0.98) return;
+        var v = [];
+        for (var dy = -2; dy <= 2; dy++) for (var dx = -2; dx <= 2; dx++) { var j = i + dy * w + dx; if (j >= 0 && j < Tm.length && inG[j] && g.A[j] > 0.5) v.push(Tm[j]); }
+        if (v.length < 3) return; v.sort(function (a, b) { return a - b; }); var md = v[v.length >> 1];
+        Tc[i] = Math.max(md - 25, Math.min(md + 25, Tm[i]));
+      });
+      Tm = Tc;
+      g.T = Tm; lo = Infinity; hi = 0; g.idx.forEach(function (i) { var T = Math.min(Tm[i], g.T2[i]); if (T < lo) lo = T; if (Tm[i] > hi) hi = Tm[i]; });
+      g.tmin = lo; g.tmax = hi;
+    });
+  }
+
+  // ———— The pool, the spill and the ball ————
+  // The o's counter, found from the glyph itself: everything inside the ring.
+  function counter(g) {
+    var w = g.bw, h = g.bh, A = g.A, seen = new Uint8Array(w * h), start = (h >> 1) * w + (w >> 1), q = [start], ins = [];
+    if (A[start] >= 0.5) return null;
+    seen[start] = 1;
+    while (q.length) {
+      var i = q.pop(); ins.push(i);
+      var x = i % w, y = i / w | 0;
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) {
+        var xx = x + d[0], yy = y + d[1]; if (xx < 0 || yy < 0 || xx >= w || yy >= h) return;
+        var j = yy * w + xx; if (seen[j]) return; seen[j] = 1;
+        if (A[j] < 0.5) q.push(j); else if (A[j] < 1) ins.push(j);   // the ring's soft inner edge belongs to both
+      });
+      if (ins.length > w * h * 0.6) return null;   // not a closed counter after all
+    }
+    var minx = 1e9, maxx = 0, miny = 1e9, maxy = 0;
+    ins.forEach(function (i) { var x = i % w, y = i / w | 0; if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; });
+    var right = {}; ins.forEach(function (i) { var x = i % w, y = i / w | 0; if (!(y in right) || x > right[y]) right[y] = x; });
+    return { idx: ins, flag: seen, minx: minx, maxx: maxx, miny: miny, maxy: maxy, right: right };
+  }
+
+  function playOpening() {
+    layer.getAnimations().forEach(function (a) { a.cancel(); }); layer.style.opacity = "";
+    hdSvg.querySelectorAll("#hdsoak stop").forEach(function (st) { st.style.stopColor = ""; });
+    var rgrp = hdSvg.querySelector(".rig"); if (rgrp) rgrp.removeAttribute("mask");
+    // The name keeps its own layer for the whole opening, so a hurry can hand its motion on without it being drawn again.
+    h1.style.willChange = "transform";
+    var run = new Run(0), S = performance.now();
+    var P = prepare();
+    // The name is born alone, in the middle of the screen, then rises to its place (as the live page).
+    var hr0 = h1.getBoundingClientRect(), pt = parseFloat(getComputedStyle(h1).paddingTop) || 0, drop = Math.round(innerHeight / 2 - (hr0.top + pt + (hr0.height - pt) / 2));
+    if (drop <= 12) drop = 0;
+    rasterise(P, drop);
+    var PL = plan(P, drop), fs = P.fs, dpr = P.dpr, G = P.G, o = G[8];
+    var C = null;   // the o stays an open letter: written once, and never filled
+    // ———— One drop falls, and becomes Ditto ————
+    var tEnd = PL.t, floorY = P.floor + drop, xd = P.xd, unit = P.unit, RB = PL.lastR, RF = 14 * unit, RH = RB * 1.45;
+    var dotP = PL.pos, RD0 = PL.tit ? PL.tit.rb : RB, RSW = Math.max(0.42 * RD0 / 0.72, 1.4), RS0 = RSW, RH = Math.max(RB, 2.5) * 1.45, hover = [xd, floorY - 0.72 * fs], dD = dist(dotP, hover);
+    var up = [dotP[0] + 0.12 * (hover[0] - dotP[0]), dotP[1] - Math.max(0.12 * fs, RD0 * 2.6)];
+    var TSL0 = tEnd + 200;                                                     // the dot settles; a beat
+    var TU = TSL0;
+    var TH0 = TSL0 + 460;                                                      // up out of the dot and over Ditto's place, in one movement
+    var TH1 = TH0 + 380;                                                       // a bead gathers, hangs, its neck thins
+    var hangTop = hover[1] - RS0, GD = Math.min(3400, 2 * (floorY - RH - (hangTop + RH)) / 0.035), TS1 = TH1 + Math.sqrt(2 * (floorY - RH - (hangTop + RH)) / GD) * 1000;   // it falls (never quicker than ~0.19 s)
+    var TG1 = TS1 + 300;                                                       // it swells into all of Ditto's ink
+    var swP = spline([dotP, up, [(up[0] + hover[0]) / 2, Math.min(up[1], hover[1]) - 0.1 * dD - 0.04 * fs], hover], 2), swL = [0];
+    for (var swi = 1; swi < swP.length; swi++) swL.push(swL[swi - 1] + dist(swP[swi - 1], swP[swi]));
+    PL.items.push({ kind: "swing", t0: TSL0, t1: TH0, poly: swP, L: swL });
+    PL.items.push({ kind: "hang", t0: TH0, t1: TH1, at: hover });
+    PL.items.push({ kind: "drop", t0: TH1, t1: TS1, x: hover[0], y0: hangTop + RH, g: GD });
+    PL.items.push({ kind: "dwell", t0: TS1, t1: TS1, at: [xd, floorY - RH], r: RH });
+    function radiusAt(t) { return t <= TH0 ? RS0 : t <= TH1 ? RS0 + (RH - RS0) * sstep((t - TH0) / ((TH1 - TH0) * 0.5)) : t <= TS1 ? RH : RH + (RF - RH) * minjerk(Math.min(1, (t - TS1) / (TG1 - TS1))); }
+    function kAt(t) { return radiusAt(t) / RF; }
+    var tFloor = TS1, TS0 = TS1, TG0 = TS1, TP0 = TSL0, TF1 = TS1, xa = xd;
+    var GX0 = TG1, GX1 = TG1, TD0 = TG1 + 150, SIMEND = TD0 + 300, SWAP = TS1 + 30;   // a held breath, then the dome
+    function tailX() { return xd; }
+    // Ditto looks up, once, at the dot it came from.
+    var gdx = dotP[0] - xd, gdy = Math.min(dotP[1] - (floorY - 0.45 * fs), -0.15 * Math.abs(dotP[0] - xd)), gdl = Math.hypot(gdx, gdy) || 1;
+    var GMu = Math.max(1.4, 3.2 / unit);   // the eyes move this far (Ditto's units): never less than 3 CSS px
+    var GLX = GMu * (gdx / gdl) / (0.32 * 0.88), GLY = GMu * (gdy / gdl) / (0.3 * 0.72);
+    var INK = P.ink, darkInk = INK[0] + INK[1] + INK[2] < 384;
+    var WETC = darkInk ? mix(INK, [112, 100, 82], 0.32) : mix(INK, [196, 180, 152], 0.3);
+    var LITE = darkInk ? mix(INK, [120, 110, 94], 0.5) : INK, RIM = darkInk ? INK : mix(INK, P.paper, 0.32);
+    inkTimes(P, PL);
+
+    // ———— Drawing the ink ————
+    var CW = document.documentElement.clientWidth, CH = innerHeight;
+    layer.width = Math.round(CW * dpr); layer.height = Math.round(CH * dpr); layer.style.width = CW + "px"; layer.style.height = CH + "px"; layer.style.top = scrollY + "px"; layer.style.display = "block";
+    var FADE = 8, WET = 440, items = PL.items, cur = 0;
+    function level() { return 0; }
+    function tilt() { return 0; }
+    var PAPER = P.paper, TINT = darkInk ? [8, 7, 5] : [255, 250, 240], WK = 0.1;
+    function letter(g, t, isO) {
+      var pool = isO && C && t >= TP0 && t <= TG1 + 20;
+      if (g.done && !pool) return false;
+      var d = g.img.data, A = g.A, Dl = g.Dl, T = g.T, idx = g.idx, n = idx.length, settled = true, k, i, j;
+      if (t < g.tmin) {
+        if (!g.covered) { for (k = 0; k < n; k++) { i = idx[k]; j = i * 4; d[j] = PAPER[0]; d[j + 1] = PAPER[1]; d[j + 2] = PAPER[2]; d[j + 3] = Dl[i] * 255; } g.c.putImageData(g.img, 0, 0); g.covered = true; }
+        return true;
+      }
+      for (k = 0; k < n; k++) {
+        i = idx[k]; j = i * 4;
+        var FD = g.FD && g.FD[i] ? g.FD[i] : FADE, age = t - T[i], f = age <= 0 ? 0 : age >= FD ? 1 : sstep(age / FD);
+        if (f < 1 && g.C2[i]) { var a2 = t - g.T2[i]; if (a2 > 0) { f = Math.max(f, g.C2[i] * (a2 >= FADE ? 1 : sstep(a2 / FADE))); age = Math.max(age, Math.min(a2, 0)); } }
+        if (f < 1) { d[j] = PAPER[0]; d[j + 1] = PAPER[1]; d[j + 2] = PAPER[2]; d[j + 3] = Dl[i] * (1 - f) * 255; settled = false; continue; }
+        var w = age >= WET ? 0 : 1 - age / WET;
+        if (w > 0) { d[j] = TINT[0]; d[j + 1] = TINT[1]; d[j + 2] = TINT[2]; d[j + 3] = A[i] * w * w * WK * 255; settled = false; }
+        else d[j + 3] = 0;
+      }
+      if (isO && C) {
+        var L = level(t) * dpr, surf = C.maxy + 1 - L, tl = tilt(t), mid = (C.minx + C.maxx) / 2, hw = (C.maxx - C.minx) / 2, men = Math.min(L * 0.5, 0.03 * fs * dpr);
+        C.idx.forEach(function (i) {
+          var x = i % g.bw, y = i / g.bw | 0, ex = (x - mid) / hw, s = surf + tl * (x - mid) - men * ex * ex * ex * ex, pa = L > 0.2 ? Math.max(0, Math.min(1, y + 0.5 - s)) : 0;
+          if (pa > 0) { d[i * 4] = INK[0]; d[i * 4 + 1] = INK[1]; d[i * 4 + 2] = INK[2]; d[i * 4 + 3] = Math.max(Dl[i] ? d[i * 4 + 3] : 0, pa * (1 - A[i]) * 255); }
+          else if (!Dl[i]) d[i * 4 + 3] = 0;
+        });
+        if (pool) settled = false;
+      }
+      g.c.putImageData(g.img, 0, 0);
+      g.done = settled;
+      return !settled;
+    }
+    // Where the nib is, without its squash: for the speed, and so the bead leans the way it's going.
+    function where(t) {
+      while (cur > 0 && t < items[cur].t0) cur--;
+      while (cur < items.length - 1 && t >= items[cur].t1) cur++;
+      var it = items[cur];
+      if (t < items[0].t0) return null;
+      var u = it.t1 > it.t0 ? Math.max(0, Math.min(1, (t - it.t0) / (it.t1 - it.t0))) : 1, r = PL.R1, x, y;
+      switch (it.kind) {
+        case "fall": var tau = Math.max(0, t - it.t0) / 1000; x = it.x; y = Math.min(it.y0 + 0.5 * it.g * tau * tau, it.y1); r = PL.R0; break;
+        case "dwell": x = it.at[0]; y = it.at[1]; r = it.r; break;
+        case "hop":
+          var e = it.tap ? (1 - Math.cos(Math.PI * 0.86 * u)) / (1 - Math.cos(Math.PI * 0.86)) : 0.5 - 0.5 * Math.cos(Math.PI * u), mx = it.tap ? it.b[0] : it.straight ? (it.a[0] + it.b[0]) / 2 : (it.a[0] + it.b[0]) / 2 + Math.max(0, 0.5 * fs - Math.abs(it.b[0] - it.a[0])) * 0.9, my = Math.min(it.a[1], it.b[1]) - it.h;   // a lift is an arc, even straight up (it swings out a little)
+          x = (1 - e) * (1 - e) * it.a[0] + 2 * (1 - e) * e * mx + e * e * it.b[0]; y = (1 - e) * (1 - e) * it.a[1] + 2 * (1 - e) * e * my + e * e * it.b[1]; r = (it.ra + (it.rb - it.ra) * e) * (1 - (it.small ? 0.5 * sstep(u / 0.2) * (1 - sstep((u - 0.75) / 0.25)) : 0.18 * Math.sin(Math.PI * u))); break;
+        case "path":
+          var T = it.T, lo2 = 0, hi2 = T.length - 1;
+          while (hi2 - lo2 > 1) { var m2 = (lo2 + hi2) >> 1; if (T[m2] <= t) lo2 = m2; else hi2 = m2; }
+          var f2 = T[hi2] > T[lo2] ? Math.max(0, Math.min(1, (t - T[lo2]) / (T[hi2] - T[lo2]))) : 1;
+          x = it.poly[lo2][0] + (it.poly[hi2][0] - it.poly[lo2][0]) * f2; y = it.poly[lo2][1] + (it.poly[hi2][1] - it.poly[lo2][1]) * f2;
+          r = it.R[lo2] + (it.R[hi2] - it.R[lo2]) * f2; break;
+        case "flow":
+          var sF = flowS(t), lo3 = 0, hi3 = it.L.length - 1;
+          while (hi3 - lo3 > 1) { var m3 = (lo3 + hi3) >> 1; if (it.L[m3] <= sF) lo3 = m3; else hi3 = m3; }
+          var f3 = it.L[hi3] > it.L[lo3] ? (sF - it.L[lo3]) / (it.L[hi3] - it.L[lo3]) : 0;
+          x = it.poly[lo3][0] + (it.poly[hi3][0] - it.poly[lo3][0]) * f3; y = it.poly[lo3][1] + (it.poly[hi3][1] - it.poly[lo3][1]) * f3;
+          r = radiusAt(t); if (sF >= LS) y = floorY - r; else y = Math.min(y, floorY - r); break;
+        case "swing":
+          var sL = it.L[it.L.length - 1] * minjerk(u), lo4 = 0, hi4 = it.L.length - 1;
+          while (hi4 - lo4 > 1) { var m4 = (lo4 + hi4) >> 1; if (it.L[m4] <= sL) lo4 = m4; else hi4 = m4; }
+          var f4 = it.L[hi4] > it.L[lo4] ? (sL - it.L[lo4]) / (it.L[hi4] - it.L[lo4]) : 0;
+          x = it.poly[lo4][0] + (it.poly[hi4][0] - it.poly[lo4][0]) * f4; y = it.poly[lo4][1] + (it.poly[hi4][1] - it.poly[lo4][1]) * f4;
+          r = RSW + (RD0 - RSW) * (1 - sstep(sL / (1.0 * RD0 / 0.72))); break;   // leaving its ink in the dot, it draws in before it clears it
+        case "hang":
+          r = radiusAt(t); x = it.at[0]; y = hangTop + r; break;   // hanging from the nib: the top stays, it fills downward
+        case "drop":
+          var tau3 = Math.max(0, t - it.t0) / 1000; x = it.x; y = Math.min(it.y0 + 0.5 * it.g * tau3 * tau3, floorY - RH); r = RH; break;
+        case "slide":
+          var s = it.s || it, poly = s.poly, Wv = it.W || s.L, wt = (it.Wt || s.L[s.L.length - 1]) * minjerk(u), lo = 0, hi = Wv.length - 1;
+          while (hi - lo > 1) { var md = (lo + hi) >> 1; if (Wv[md] <= wt) lo = md; else hi = md; }
+          var f = Wv[hi] > Wv[lo] ? (wt - Wv[lo]) / (Wv[hi] - Wv[lo]) : 0;
+          x = poly[lo][0] + (poly[hi][0] - poly[lo][0]) * f; y = poly[lo][1] + (poly[hi][1] - poly[lo][1]) * f;
+          r = s.rr ? s.rr[lo] + (s.rr[hi] - s.rr[lo]) * f : PL.R2;
+          break;
+      }
+      return { x: x, y: y, r: r, it: it };
+    }
+    var TAP1 = (PL.items.filter(function (it) { return it.kind === "hop" && it.tap; })[0] || {}).t1;
+    var beadGo = 0, lastR = PL.R0, lands = items.filter(function (it) { return it.land != null && it.kind === "dwell"; }).map(function (it) { return { t: it.land, amp: it.amp, soft: it.soft }; }).filter(function (l, i, a) { return !i || l.t !== a[i - 1].t; });
+    function bead(t) {
+      var sink = beadGo ? 1 - sstep((performance.now() - beadGo) / 140) : 1;
+      if (t >= TS1) return null;   // arrived: from here it's the Rig's ball
+      var w = where(t); if (!w) return null;
+      if (w.r == null) w.r = lastR; lastR = w.r;
+      var b = { x: w.x, y: w.y, r: w.r, sx: 1, sy: 1, ang: 0 };
+      // Leaning into its speed: a little longer the way it's going.
+      var w0 = where(t - 8), w1 = where(t + 8);
+      if (w0 && w1) { var vx = (w1.x - w0.x) / 16, vy = (w1.y - w0.y) / 16, v = Math.hypot(vx, vy) * 1000 / fs; if (v > 0.05) { b.ang = Math.atan2(vy, vx); var per = Math.hypot(vx, vy) * 1000 / 60; b.sx = 1 + Math.min(0.6, Math.max(0, b.r / 1.5 - 1), 0.3 * per / (2 * b.r)); b.sy = 1 / b.sx; } }
+      if (w.it && w.it.kind === "swing" && b.sx > 1.25) { b.sx = 1.25; b.sy = 1 / b.sx; }
+      where(t);
+      // A landing gives: it spreads, and springs back, from where it touched, and the give carries on as it moves off.
+      var ld = null; for (var li = 0; li < lands.length && lands[li].t <= t; li++) ld = lands[li];
+      b.qx = b.qy = 1;
+      if (ld) {
+        var tau2 = (t - ld.t) / 1000, om = 2 * Math.PI * 5.4, z = 0.42, q = ld.soft ? ld.amp * sstep(tau2 / 0.08) * (1 - sstep((t - TSL0) / 90)) : ld.amp * 2.2 * Math.exp(-z * om * tau2) * Math.sin(om * Math.sqrt(1 - z * z) * tau2);
+        b.qx = 1 + q; b.qy = 1 / (1 + q); b.y += b.r * (1 - b.qy);
+      }
+      // Into the pool: it sinks and is gone.
+      // Leaving the o it loses its bead's shine: just ink now, flat, like the ball it's becoming.
+      b.hl = t <= PL.TL ? 1 : t <= PL.TL + 260 ? 1 - 0.75 * sstep((t - PL.TL) / 260) : t <= TH1 ? 0.25 : 0.25 * (1 - sstep((t - TH1) / Math.max(1, TS1 - TH1)));
+      if (TAP1 != null && t >= TAP1 - 60) b.hl *= t < TH0 ? 1 - sstep((t - TAP1 + 60) / 50) : sstep((t - TH0) / 200);
+      if (t > TH0 && t < TH1) { var hu = (t - TH0) / (TH1 - TH0); b.sx = b.sy = 1; b.ang = 0; b.neck = { w: b.r * 0.55 * sstep(hu / 0.25) * (1 - sstep((hu - 0.62) / 0.38)), l: RH * 0.6 }; }   // its neck to the nib thins, and lets go
+      b.r *= sink;
+      return b;
+    }
+    function drawBead(b) {
+      if (!b || b.r <= 0.2) return;
+      if (b.neck && b.neck.w > 0.15) {   // a drop hanging by its neck: a soft taper up to the nib
+        var nw = b.neck.w, top = b.y - b.r - b.neck.l, k = b.r * 0.92;
+        var ng = lc.createLinearGradient(0, top, 0, b.y - b.r * 0.3); ng.addColorStop(0, css(INK, 0)); ng.addColorStop(0.5, css(INK, 1)); ng.addColorStop(1, css(INK, 1));
+        lc.beginPath(); lc.moveTo(b.x, top); lc.quadraticCurveTo(b.x + nw * 0.5, top, b.x + nw * 0.5, top + nw * 0.6);
+        lc.quadraticCurveTo(b.x + nw * 0.5, b.y - b.r * 0.55, b.x + k, b.y - b.r * 0.3); lc.lineTo(b.x - k, b.y - b.r * 0.3);
+        lc.quadraticCurveTo(b.x - nw * 0.5, b.y - b.r * 0.55, b.x - nw * 0.5, top + nw * 0.6); lc.quadraticCurveTo(b.x - nw * 0.5, top, b.x, top); lc.closePath(); lc.fillStyle = ng; lc.fill();
+      }
+      lc.save(); lc.translate(b.x, b.y); lc.rotate(b.ang); lc.scale(b.sx, b.sy); lc.rotate(-b.ang); lc.scale(b.qx, b.qy);
+      var hl = b.hl == null ? 1 : b.hl;
+      lc.beginPath(); lc.arc(0, 0, b.r, 0, Math.PI * 2); lc.fillStyle = css(INK); lc.fill();
+      if (hl > 0.01 && b.r > 1.5) {
+        var gx = -b.r * 0.38, gy = -b.r * 0.42, gr2 = Math.max(0.6, b.r * 0.2), g2 = lc.createRadialGradient(gx, gy, 0, gx, gy, gr2);
+        g2.addColorStop(0, "rgba(255,255,255," + (0.42 * hl).toFixed(3) + ")"); g2.addColorStop(1, "rgba(255,255,255,0)");
+        lc.beginPath(); lc.arc(gx, gy, gr2, 0, Math.PI * 2); lc.fillStyle = g2; lc.fill();
+      }
+      lc.restore();
+    }
+    // The run along the line: from the o's side to where Ditto sits, a rounded thread with a bead at its head.
+    function drawRun(t, b) {
+      return;
+      if (t < tFloor || t >= TG1) return;
+      var xh = t < TS1 ? (b ? b.x : xd) : xd, rh = radiusAt(t), xt = tailX(t);
+      var wt = RB * 0.5, wh = Math.max(wt, Math.min(rh * 0.3, RB * 1.5));   // thickness at the tail, and where it meets the head
+      if (xh - xt < 0.5) return;
+      lc.fillStyle = css(INK); lc.beginPath();
+      lc.moveTo(xt, floorY);
+      var n = Math.max(6, Math.ceil((xh - xt) / 3)), x0 = xh - rh * 0.2, thin = Math.min(1, Math.max(0, (x0 - xt) / (rh * 1.2)));   // the last of it draws in to nothing
+      if (x0 - xt < 0.5) return;
+      wt *= thin;
+      lc.lineTo(x0, floorY);
+      for (var k = n; k >= 0; k--) {
+        var x = xt + (x0 - xt) * k / n, q = (x - xt) / Math.max(1, x0 - xt), w = (wt + (wh - wt) * q * q) * (t > tFloor + 20 && q < 0.3 ? sstep(q / 0.3) * 0.85 + 0.15 : 1);
+        // into the head with surface tension: the stream's top curves up to meet the round of the ball
+        var span = x0 - xt, neck = Math.min(rh * 0.8, span * 0.45), dx = x0 - x; if (dx < neck) { var c = 1 - dx / neck; w = w + (rh * 0.75 * Math.min(1, span / (rh * 2.5)) - w) * c * c * c * c; }
+        lc.lineTo(x, floorY - w * thin);
+      }
+      lc.closePath(); lc.fill();
+    }
+    // A fast join leaves the faintest wet hairline, which soaks into the paper and is gone.
+    var DRY = 600, JW = Math.max(0.55, 0.012 * fs);
+    function drawJoins(t, b) {
+      lc.lineCap = "butt"; lc.lineJoin = "round";
+      PL.joins.forEach(function (jn) {
+        var n = jn.pts.length; if (jn.T[0] > t || t - jn.T[n - 1] > DRY) return;
+        for (var i = 0; i < n - 1; i += 4) {
+          var e = Math.min(n - 1, i + 4); if (jn.T[i] > t) break;
+          var age = t - jn.T[e], a = 0.3 * Math.pow(1 - Math.min(1, Math.max(0, age) / DRY), 2); if (a < 0.01) continue;
+          var u3 = (i + 2) / (n - 1), w = JW * (0.45 + 0.55 * Math.sin(Math.PI * Math.min(1, Math.max(0, u3))));
+          lc.beginPath(); lc.moveTo(jn.pts[i][0], jn.pts[i][1]);
+          for (var k = i + 1; k <= e; k++) { if (jn.T[k] > t) { if (b) lc.lineTo(b.x, b.y); break; } lc.lineTo(jn.pts[k][0], jn.pts[k][1]); }
+          lc.strokeStyle = css(INK, a); lc.lineWidth = w; lc.stroke();
+        }
+      });
+    }
+    function paint(t) {
+      lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, layer.width, layer.height);
+      G.forEach(function (g, i) { if (letter(g, t, i === 8)) lc.drawImage(g.cv, g.bx, g.by); });
+      lc.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var b = bead(t); drawJoins(t, b); drawRun(t, b); drawBead(b);
+    }
+    function swap() { lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, layer.width, layer.height); }
+    var warp = { on: false, n0: 0, t0: 0, rate: 1 };
+    function T(now) { return warp.fn ? warp.fn(now) : warp.on ? warp.t0 + (now - warp.n0) * warp.rate : now - S; }
+    pen = { frame: function (now) { if (pen !== this) return false; var t = T(now); if (t >= SWAP) { this.stop(); return false; } paint(t); return true; },
+      stop: function () { if (pen === this) pen = null; swap(); } };
+    SWAP = Math.max(SWAP, Math.max.apply(null, G.map(function (g) { return g.tmax; })) + WET + 30, PL.joins.length ? PL.joins[PL.joins.length - 1].T.slice(-1)[0] + DRY + 30 : 0);
+    S = performance.now();   // the clock starts now that everything is worked out
+    paint(0);   // the paper goes over the letters in the same frame they appear
+    if (/^#lab-tmap/.test(location.hash)) {   // for tuning: each glyph coloured by when it inks, and the strokes over it
+      lc.setTransform(1, 0, 0, 1, 0, 0); lc.fillStyle = "#fff"; lc.fillRect(0, 0, layer.width, layer.height);
+      G.forEach(function (g) { var d = g.img.data; g.idx.forEach(function (i) { var u = (g.T[i] - g.tmin) / Math.max(1, g.tmax - g.tmin), j = i * 4; d[j] = 255 * Math.min(1, 2 * u); d[j + 1] = 255 * (1 - Math.abs(2 * u - 1)) * 0.8; d[j + 2] = 255 * Math.min(1, 2 - 2 * u); d[j + 3] = 255 * g.A[i]; }); g.c.putImageData(g.img, 0, 0); lc.drawImage(g.cv, g.bx, g.by); });
+      lc.setTransform(dpr, 0, 0, dpr, 0, 0); lc.lineWidth = 1; PL.strokes.forEach(function (st) { if (st.word || !st.poly) return; lc.strokeStyle = st.ink ? "rgba(0,0,0,.6)" : "rgba(0,0,0,.25)"; lc.beginPath(); st.poly.forEach(function (q, i) { i ? lc.lineTo(q[0], q[1]) : lc.moveTo(q[0], q[1]); }); lc.stroke(); });
+      if (/grid/.test(location.hash)) G.forEach(function (g) { lc.strokeStyle = "rgba(0,140,0,.35)"; lc.lineWidth = 0.5; for (var k = 0; k <= 10; k++) { var x = g.l + (g.r - g.l) * k / 10, y = g.t + drop + (g.b - g.t) * k / 10; lc.beginPath(); lc.moveTo(x, g.t + drop); lc.lineTo(x, g.b + drop); lc.moveTo(g.l, y); lc.lineTo(g.r, y); lc.stroke(); } });
+      pen = null; return;
+    }
+    wake(pen);
+
+    // ———— Ditto: the ball gathers, then rises into the dome and opens its eyes ————
+    var red = hdSvg.querySelector(".red"), sh = hdSvg.querySelector(".sh"), rim = hdSvg.querySelector(".rim");
+    // While it's ink, the ball is the ink's own colour. As the dome rises, Ditto's material comes up through it from
+    // the paper, a soft edge climbing to the crown (the way ink soaks in), and its shine and rim come with it.
+    var NS = "http://www.w3.org/2000/svg", soak = hdSvg.querySelector("#hdsoak");
+    if (!soak) {
+      soak = document.createElementNS(NS, "radialGradient"); soak.id = "hdsoak";
+      [["cx", 0.5], ["cy", 1.15], ["r", 1.2], ["fx", 0.5], ["fy", 1.15]].forEach(function (a) { soak.setAttribute(a[0], a[1]); });
+      for (var si2 = 0; si2 <= 16; si2++) { var st = document.createElementNS(NS, "stop"); st.setAttribute("offset", si2 / 16); st.setAttribute("style", "stop-color: var(--ink); stop-opacity: 1"); soak.appendChild(st); }
+      hdSvg.querySelector("defs").appendChild(soak);
+    }
+    var stops = soak.querySelectorAll("stop"), SK0 = TD0 - 20, SK1 = SIMEND + 320, BAND = 0.3;
+    function soakAt(t) {
+      var e = -BAND + (1 + BAND) * sstep(Math.max(0, Math.min(1, (t - SK0) / (SK1 - SK0))));
+      for (var i = 0; i < stops.length; i++) { var o = i / (stops.length - 1); stops[i].style.stopOpacity = sstep((o - e) / BAND).toFixed(3); }
+    }
+    soakAt(0); red.style.fill = "url(#hdsoak)";
+    run.go(red, [{ opacity: 1 }, { opacity: 1, offset: 0.999 }, { opacity: 0 }], { duration: SK1 + 20, easing: "linear", fill: "backwards" });
+    wake({ frame: function (now) { if (revealH) { var ur = Math.min(1, (now - revealH.n0) / revealH.W); reveal(ur); if (ur >= 1) revealH = null; return true; } if (soakH) { var u = Math.min(1, (now - soakH.n0) / soakH.W); soakAt(soakH.from + (SK1 - soakH.from) * u); if (u >= 1) soakH = null; return true; } if (!heroHop) { if (!hurried) soakAt(1e9); return false; } var t = T(now); soakAt(t); return t < SK1 + 30; } });
+    [sh, rim].forEach(function (e) { run.go(e, [{ opacity: 0 }, { opacity: 0, offset: TD0 / (SK0 + (SK1 - SK0) * 0.55), easing: "ease-in-out" }, { opacity: 1 }], { duration: SK0 + (SK1 - SK0) * 0.55, easing: "linear", fill: "backwards" }); });
+    var keys = [
+      { t: 0, o: 0, open: 0, foot: 3.6, firm: 4, round: 1, k: 1, s: 1 }, { t: TS1 - 1, o: 0 }, { t: TS1, o: 1 },
+      { t: TD0, round: 1 }, { t: SIMEND, round: 0 },
+      { t: SIMEND - 200, firm: 4 }, { t: SIMEND + 200, firm: 1 },
+      { t: SIMEND - 40, open: 0 }, { t: SIMEND + 40, open: 0.2 }, { t: SIMEND + 140, open: 1 },
+      { t: SIMEND + 300, open: 1, lx: 0, ly: 0 }, { t: SIMEND + 470, lx: GLX, ly: GLY }, { t: SIMEND + 650, lx: GLX, ly: GLY }, { t: SIMEND + 800, lx: 0, ly: 0 }
+    ];
     var END = SIMEND + 800;
-    // The name is born alone, in the middle of the screen; once Ditto is itself, it rises, unhurried, to its place,
-    // and the words arrive into the room it leaves (Ash, 16 Oct). Everything below is already laid out, so the rise
-    // ends exactly where the name rests and nothing else moves.
-    var hr = h1.getBoundingClientRect(), pt = parseFloat(getComputedStyle(h1).paddingTop) || 0, drop = Math.round(innerHeight / 2 - (hr.top + pt + (hr.height - pt) / 2));
-    var RISE = END + 450, RD = 1250;
-    // And across: the caret starts in the middle of the screen, the words stay centred as they're typed, and as the
-    // drop rolls out "Ditto" the name eases across to its own centre, arriving as the drop comes to rest (Ash, 16 Oct:
-    // start where LoveFrom starts). Its own property (translate), so it never fights the rise.
-    var aL = A[0].getBoundingClientRect().left, aR = A[A.length - 1].getBoundingClientRect().right;
-    var nameMid = (aL + hd.getBoundingClientRect().right) / 2, X0c = Math.round(nameMid - aL), X1c = Math.round(nameMid - (aL + aR) / 2);
-    var XT = rollAt + TR, typed = timesA[timesA.length - 1] + 90, glide = "cubic-bezier(.45,0,.25,1)";
-    if (Math.abs(X0c) > 8 && XT > POP) run.go(h1, [
-      { translate: X0c + "px 0", offset: 0 }, { translate: X0c + "px 0", offset: timesA[0] / XT, easing: glide },
-      { translate: X1c + "px 0", offset: typed / XT }, { translate: X1c + "px 0", offset: POP / XT, easing: glide },
-      { translate: "0px 0", offset: 1 }], { duration: XT, easing: "linear", fill: "backwards" });
-    if (drop > 12) run.go(h1, [{ transform: "translateY(" + drop + "px)" },
-      { transform: "translateY(" + drop + "px)", offset: RISE / (RISE + RD), easing: "cubic-bezier(.45,0,.18,1)" },
-      { transform: "none" }], { duration: RISE + RD, easing: "linear", fill: "backwards" });
-    heroHop = { at: S, keys: keys, path: path, end: END + 40 };
+    var RISE = END + 120, RD = 1250;   // the look itself is the beat before the name rises
+    // The name: centred both ways while it's written; once the ball has gathered (the ink layer is gone by then),
+    // across to its own centre, by itself; then, Ditto made, up to its place, unhurried, as the live page.
+    var DX = P.dx, glideE = "cubic-bezier(.45,0,.25,1)", L = RISE + RD;
+    function at2(x, y) { return "translate(" + x + "px," + y + "px)"; }
+    if (drop || DX) run.go(h1, [{ transform: at2(DX, drop), offset: 0 }, { transform: at2(DX, drop), offset: GX0 / L, easing: glideE },
+      { transform: at2(0, drop), offset: GX1 / L }, { transform: at2(0, drop), offset: RISE / L, easing: "cubic-bezier(.45,0,.18,1)" },
+      { transform: "none", offset: 1 }], { duration: L, easing: "linear", fill: "backwards" });
+    // The name's own layer is let go once it has risen (on the opening's clock, so it's the same when recorded).
+    wake({ frame: function (now) { if (!h1.style.willChange) return false; if (T(now) >= RISE + RD + 60) { h1.style.willChange = ""; return false; } return true; } });
+    function sAt(t) { if (t < TS1 || t > TS1 + 240) return 1; var u = (t - TS1) / 240; return u < 0.45 ? 0.86 + 0.18 * sstep(u / 0.45) : 1.04 - 0.04 * sstep((u - 0.45) / 0.55); }
+    heroHop = { keys: keys, path: function (t) { if (t >= TG1) return {}; var sv = sAt(t); return { k: Math.max(0.01, kAt(t)) / Math.pow(sv, 0.25), s: sv }; }, end: END + 40 };   // (the Rig's area goes as k² √s: kept)
+    // Ditto's own loop reads the time as now − at; at follows the opening's clock, hurried or not.
+    Object.defineProperty(heroHop, "at", { get: function () { var n = performance.now(); return n - T(n); } });
     heroRig.snap(heroPose(0));
     wakeHero();
-    // A real beat on the name alone; then each line inks in by itself, slowly, the second quieter than the
-    // first; the bar's controls last. Nothing arrives at once.
-    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = drop > 12 ? RISE + RD * 0.62 : END + 650;   // Ash's pacing: never hurried (16 Oct)
+    // The page arrives as the live one does: a beat on the name alone, each line by itself, the bar with the button.
+    var soft = "cubic-bezier(.25,.6,.3,1)", when2 = drop > 12 ? RISE + RD * 0.62 : END + 650;
     var rest = Array.prototype.filter.call(document.querySelectorAll(".hero > *"), function (e) { return e !== h1 && e.offsetParent && !e.classList.contains("cue"); });
+    // How far the name's ink sits above the tagline once at rest: after a hurry the lines wait until the rising name is
+    // no lower than that.
+    var inkBot = Math.max(P.floor, Math.max.apply(null, P.G.map(function (g) { return g.b; }))), CLR = rest.length ? rest[0].getBoundingClientRect().top - inkBot - 2 : 1e9;
+    function riseInv(y) {   // cubic-bezier(.45,0,.18,1): the share of the time by which the rise has covered y of its way
+      if (y <= 0) return 0; if (y >= 1) return 1;
+      var lo = 0, hi = 1; for (var i = 0; i < 32; i++) { var m = (lo + hi) / 2; if (3 * m * m - 2 * m * m * m < y) lo = m; else hi = m; }
+      var q = (lo + hi) / 2; return 3 * (1 - q) * (1 - q) * q * 0.45 + 3 * (1 - q) * q * q * 0.18 + q * q * q;
+    }
     var lastLine = when2;
     rest.forEach(function (e, i) {
       var dur = i === 0 ? 900 : 800;
-      if (i <= 2) lastLine = when2;   // the bar comes with the hero's button, its twin
+      if (i <= 2) lastLine = when2;
       run.go(e, [{ opacity: 0, transform: "translateY(" + (i === 0 ? 6 : 4) + "px)", filter: "blur(" + (i === 0 ? 2 : 1.5) + "px)" }, { opacity: 1, transform: "none", filter: "blur(0)" }], { delay: when2, duration: dur, easing: soft });
       when2 += dur + 450;
     });
-    // The bar's controls come with the hero's Download button, not after every line (Ash, 16 Oct: a touch too long).
     document.querySelectorAll(".bar-inner, main > :not(.hero), footer").forEach(function (e) {
       run.go(e, [{ opacity: 0 }, { opacity: 1 }], { delay: lastLine, duration: 700, easing: "ease-out" });
     });
     opening = run.list;
+    root.dataset.arriving = "";
     delete root.dataset.opening;
-    setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, endOpening, { capture: true, passive: true }); }); }, 0);
-    // And if the browser puts the page somewhere below the name anyway (its own scroll restoring), the page shows at once.
-    (function watch(n) { if (!opening.length) return; if (scrollY > 4) return endOpening(); if (n < 120) requestAnimationFrame(function () { watch(n + 1); }); })(0);
-    run.list[run.list.length - 1].finished.then(function () { opening = []; }, function () {});
+    var lastEnd = Math.max.apply(null, run.list.map(function (a) { return a.effect.getComputedTiming().endTime; }));
+    quietUntil = S + lastEnd + 4000;
+    var hurried = false, soakH = null, revealH = null;
+    // a soft mask on Ditto, rising from below its foot like the soak, for the hurried reveal
+    var revealM = null, revealStops = [];
+    function reveal(u) {
+      var g = hdSvg.querySelector(".rig");
+      if (u >= 1) { if (g) g.removeAttribute("mask"); return; }
+      if (!revealM) {
+        revealM = document.createElementNS(NS, "mask"); revealM.id = "hdreveal";
+        [["maskUnits", "userSpaceOnUse"], ["x", -20], ["y", -20], ["width", 80], ["height", 80]].forEach(function (a) { revealM.setAttribute(a[0], a[1]); });
+        var rg = document.createElementNS(NS, "radialGradient"); rg.id = "hdrevealg"; rg.setAttribute("gradientUnits", "userSpaceOnUse");
+        [["cx", 20], ["cy", 37], ["r", 32]].forEach(function (a) { rg.setAttribute(a[0], a[1]); });
+        for (var k = 0; k <= 16; k++) { var st = document.createElementNS(NS, "stop"); st.setAttribute("offset", k / 16); st.setAttribute("stop-color", "#fff"); rg.appendChild(st); revealStops.push(st); }
+        var rc = document.createElementNS(NS, "rect"); [["x", -20], ["y", -20], ["width", 80], ["height", 80], ["fill", "url(#hdrevealg)"]].forEach(function (a) { rc.setAttribute(a[0], a[1]); });
+        revealM.appendChild(rg); revealM.appendChild(rc); hdSvg.querySelector("defs").appendChild(revealM);
+      }
+      var B = 0.14, e = -B + (1 + B) * sstep(u);
+      revealStops.forEach(function (st, k) { st.setAttribute("stop-opacity", (1 - sstep((k / 16 - e) / B)).toFixed(3)); });
+      if (g) g.setAttribute("mask", "url(#hdreveal)");
+    }
+    hurry = function () {
+      if (hurried) return; hurried = true;
+      var n = performance.now(), t = T(n);
+      if (t > lastEnd - 120) return endOpening();
+      if (t >= TSL0 && t < TG1 && pen) {
+        // the stream: let it finish (a fifth of a second), then carry on as from the breath
+        var t0S = t, dA = t < TH1 ? 100 : 0, fB = Math.max(0, TS1 - Math.max(t, TH1)) / 2.2, dC = 120;
+        warp.fn = function (now) {
+          var dt = now - n;
+          if (dt < dA) return t0S + (TH1 - t0S) * sstep(dt / dA);
+          var tb = Math.max(t0S, TH1), dt2 = dt - dA;
+          if (dt2 < fB) return tb + dt2 * 2.2;
+          var dt3 = dt2 - fB, tc = Math.max(t0S, TS1);
+          return tc + (TG1 - tc) * Math.min(1, dt3 / dC) + Math.max(0, dt3 - dC);
+        };
+        opening = opening.map(function (a) {
+          var e = a.effect && a.effect.target; if (!e || !e.closest || !e.closest("main, footer") || e.closest(".hero")) return a;
+          var from = getComputedStyle(e).opacity; a.cancel(); var to = getComputedStyle(e).opacity;
+          return e.animate([{ opacity: from }, { opacity: to }], { duration: 320, easing: soft, fill: "backwards" });
+        });
+        hurried = false; var holdHurry = hurry; hurry = function () {};
+        wake({ frame: function (now) { if (T(now) < TG1) return true; warp.fn = null; warp.on = true; warp.t0 = TG1; warp.n0 = now; warp.rate = 1; hurry = holdHurry; hurry(); return false; } });
+        return;
+      }
+      var formed = !heroHop || t >= SIMEND;                  // is Ditto itself yet?
+      var W = pen ? 200 : !formed ? 150 : 0;                 // the still window: ink completes, Ditto finishes
+      // The ink: the bead carries on along its way as the unwritten letters appear and the layer fades.
+      var tapIt = PL.items.filter(function (it) { return it.kind === "hop" && it.tap; })[0];
+      var holdL = 0;
+      if (pen && tapIt && t >= tapIt.t0 && t < tapIt.t1 + 140) { var tA = t, tB = tapIt.t1, d1 = Math.min(120, Math.max(0, tB - tA) * 1.5), tC = Math.max(tA, tB); warp.fn = function (now) { var dt = now - n; return dt < d1 ? tA + (tB - tA) * sstep(dt / d1) : tC + Math.max(0, Math.min(170 - (tC - tB), (dt - d1) * 3)); }; beadGo = n + 180; holdL = 180; W += 180; }
+      else if (pen && t < PL.TL && t >= PL.items[0].t0) { var tF = t, tL = PL.TL; warp.fn = function (now) { var dt = now - n; return dt < 100 ? tF + (tL - tF) * (dt / 100) * (dt / 100) : tL + Math.min(80, dt - 100); }; beadGo = n + 140; }
+      if (pen) { var pp = pen; if (t >= PL.TL && !(tapIt && t >= tapIt.t0 && t < tapIt.t1 + 140)) { var t0P = t; warp.fn = function (now) { var dt = now - n, R = 100, u = Math.min(1, dt / R); return t0P + (dt < R ? dt - R * (u * u * u - u * u * u * u / 2) : R * 0.5); }; beadGo = n; }
+        else if (false) { var tF = t, tL = PL.TL; warp.fn = function (now) { var dt = now - n; return dt < 100 ? tF + (tL - tF) * (dt / 100) * (dt / 100) : tL + Math.min(80, dt - 100); }; beadGo = n + 140; } layer.animate([{ opacity: 1 }, { opacity: 0 }], { delay: holdL, duration: W - holdL, easing: "ease-in-out", fill: "forwards" }).finished.then(function () { pp.stop(); }, function () {}); }
+      // Ditto, in place and solid, inside that window.
+      var heroWait = false, EYE = 0;
+      if (heroHop && t < heroHop.end) {
+        heroWait = true;
+        var c = Object.assign({}, heroRig.cur || REST), preBall = false; heroHop = null;
+        EYE = W + 120;   // the eyes are open by then; the name waits for them
+        if (c.o < 0.5) {
+          heroRig.snap(Object.assign({}, REST, { o: 1, open: 0 })); preBall = true; reveal(0);
+          heroRig.play([{ t: 0, open: 0 }, { t: W, open: 0 }, { t: EYE, open: 1 }]);
+        } else if (c.round > 0.5) {
+          // a ball: it rises into the dome in place, then opens its eyes
+          heroRig.play([{ t: 0, o: 1, k: c.k, round: c.round, firm: Math.min(c.firm, 2), open: c.open, lift: 0 }, { t: Math.max(W, 1), k: 1, round: 0, firm: 1 },
+            { t: Math.max(W, 1) + 10, open: c.open }, { t: EYE, open: 1 }]);
+        } else {
+          // already Ditto: whatever its eyes are doing, they carry on to open
+          var looking = Math.abs(c.lx || 0) + Math.abs(c.ly || 0) > 0.05;
+          heroRig.play([{ t: 0, o: 1, k: 1, round: c.round, firm: Math.min(c.firm, 2), open: c.open, lx: c.lx || 0, ly: c.ly || 0 }, { t: 160, round: 0, firm: 1, open: 1 }, { t: looking ? 190 : 1, lx: 0, ly: 0 }]);
+          W = 0; EYE = looking ? 200 : c.open > 0.98 && t > SIMEND + 640 ? 0 : 160;
+        }
+        // The material soaks up through it over the same window (in dark, never a grey crossfade).
+        if (preBall) { soakAt(SK1); revealH = { n0: n, W: W }; } else soakH = { n0: n, from: Math.max(t, SK0), W: Math.max(W, 120) };
+        wakeHero();
+      }
+      var GO = pen ? W : 0;   // when the name may move: once the ink layer has gone
+      var dyNow = drop; try { dyNow = new DOMMatrixReadOnly(getComputedStyle(h1).transform).m42; } catch (e) {}
+      var hMoving = t >= RISE && t < RISE + RD, LINES;
+      if (t >= RISE + RD) LINES = 0;
+      else if (hMoving) { var tCl = RISE + RD * riseInv(1 - CLR / Math.max(1, drop)), kR = Math.max(1, (RISE + RD - t) / 480); LINES = tCl <= t ? 40 : (tCl - t) / kR + 60; }
+      else LINES = GO + (dyNow > CLR ? 460 * riseInv(1 - CLR / dyNow) : 0) + 20;   // when the lines may come
+      var list = opening; opening = [];
+      var skip = ["offset", "computedOffset", "easing", "composite"];
+      list.forEach(function (a) {
+        var e = a.effect && a.effect.target; if (!e || e === layer) return;
+        var ct = a.effect.getComputedTiming();
+        if (e === red || e === sh || e === rim) {
+          // these go with the soak: the overlay goes once the soak is through; the shine and rim come in with it
+          var cs0 = getComputedStyle(e).opacity; a.cancel(); var to0 = getComputedStyle(e).opacity;
+          if (e === red) { if (preBall) { a.cancel(); return; } e.style.opacity = cs0; opening.push(e.animate([{ opacity: cs0 }, { opacity: cs0, offset: 0.98 }, { opacity: to0 }], { duration: Math.max(W, 120) + 20, fill: "backwards" })); }
+          else opening.push(e.animate([{ opacity: cs0 }, { opacity: to0 }], preBall ? { delay: W * 0.6, duration: W * 0.4 + 80, easing: "ease-in-out", fill: "backwards" } : { duration: Math.max(W, 120), easing: "ease-in-out", fill: "backwards" }));   // before the ball, the shine comes once the body has inked up
+          if (e === red) e.style.opacity = "";
+          return;
+        }
+        // Already on its way (the name rising, a line arriving): it isn't stopped and restarted, only sped up.
+        var moving = e === h1 ? t >= RISE && t < RISE + RD : ct.progress != null && ct.progress > 0 && ct.progress < 1 && ct.localTime > (ct.delay || 0);
+        if (moving) {
+          var left = ct.endTime - ct.localTime, k = Math.max(1, left / (e === h1 ? 480 : 360));
+          // eased up to its new pace over a few frames, so it never lurches
+          (function (a, k) { var n0 = performance.now(); wake({ frame: function (now) { var u = Math.min(1, (now - n0) / 120); try { a.playbackRate = 1 + (k - 1) * u * u * (3 - 2 * u); } catch (e) {} return u < 1; } }); })(a, k);
+          opening.push(a); return;
+        }
+        var props = Object.keys(a.effect.getKeyframes()[0] || {}).filter(function (k) { return skip.indexOf(k) < 0; });
+        var cs = getComputedStyle(e), from = {}; props.forEach(function (k) { from[k] = cs[k]; });
+        a.cancel();
+        var cs2 = getComputedStyle(e), to = {}; props.forEach(function (k) { to[k] = cs2[k]; });
+        if (props.every(function (k) { return from[k] === to[k]; })) return;
+        var i = rest.indexOf(e), isBar = !e.closest(".hero") && e !== h1;
+        var o = e === h1 ? { duration: 460, delay: GO, easing: "cubic-bezier(.45,0,.18,1)" }
+          : { duration: 320, delay: e.closest("main, footer") && !e.closest(".hero") ? 0 : LINES + (i >= 0 ? 40 * i : 0) + (isBar ? 60 : 0), easing: soft };
+        o.fill = "backwards"; opening.push(e.animate([from, to], o));
+      });
+      quietUntil = n + 1100 + 4000;
+      Promise.all(opening.map(function (a) { return a.finished.catch(function () {}); })).then(function () {
+        if (!pen) { layer.style.display = "none"; layer.getAnimations().forEach(function (a) { a.cancel(); }); layer.style.opacity = ""; }
+        h1.style.willChange = ""; opening = []; hurry = null; arrived();
+        ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, hurryUp, true); });
+      });
+    };
+    window.setTimeout(function () { ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { addEventListener(e, hurryUp, { capture: true, passive: true }); }); }, 0);
+    // Once everything has arrived and nothing moves, the (empty) ink layer goes.
+    Promise.all(run.list.map(function (a) { return a.finished.catch(function () {}); })).then(function () {
+      if (hurried) return;   // a hurry ends it in its own way
+      opening = []; if (!pen) layer.style.display = "none"; h1.style.willChange = ""; arrived(); hurry = null;
+      ["keydown", "pointerdown", "wheel", "touchstart", "scroll"].forEach(function (e) { removeEventListener(e, hurryUp, true); });
+    });
   }
   function heroPose(t) { var p = pose(heroHop.keys, t); return Object.assign(p, heroHop.path(t)); }
-  if ("opening" in root.dataset) {
-    if (still.matches || scrollY > 4) delete root.dataset.opening;
-    else {
-      // Wait for the serif (briefly), so the first frame is the last font.
-      var face = "400 " + parseFloat(getComputedStyle(h1).fontSize) + "px " + getComputedStyle(h1).fontFamily;
-      var ready = document.fonts && document.fonts.load ? document.fonts.load(face).catch(function () {}) : Promise.resolve();
-      Promise.race([ready, new Promise(function (r) { setTimeout(r, 700); })]).then(function () {
-        if (scrollY > 4) { delete root.dataset.opening; return; }
-        playOpening();
-      });
-    }
+  // A change of look, size or orientation mid-opening goes straight to the last frame.
+  document.addEventListener("inktheme", endOpening);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", endOpening);
+  addEventListener("resize", function () { if (pen) endOpening(); });
+
+  function start() {
+    if (still.matches || scrollY > 4) { delete root.dataset.opening; return; }
+    // Wait for the serif (briefly), so the first frame is the last font.
+    var face = "400 " + parseFloat(getComputedStyle(h1).fontSize) + "px " + getComputedStyle(h1).fontFamily;
+    var ready = document.fonts && document.fonts.load ? document.fonts.load(face).catch(function () {}) : Promise.resolve();
+    Promise.race([ready, new Promise(function (r) { window.setTimeout(r, 700); })]).then(function () {
+      if (scrollY > 4) { delete root.dataset.opening; return; }
+      playOpening();
+    });
   }
+  if ("opening" in root.dataset) start();
 
   // ———— Ditto at rest, beside its name ————
   // The same soft body: a slow breath that changes its shape for its first minute, a blink at a person's
@@ -1745,7 +2465,7 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
       // Breathing: in for 1.9 s, out for 2.9 s; it fades in, and after a minute it's still.
       var amp = Math.min(age / 1500, 1) * Math.max(0, Math.min((60000 - age) / 3000, 1));
       if (amp > 0) { var ph = (age % 4800) / 4800, b = ph < 0.4 ? EASE.io(ph / 0.4) : 1 - EASE.io((ph - 0.4) / 0.6); p.s = 1 + 0.02 * b * amp; p.foot = 3.6 - 0.3 * b * amp; busy = true; }
-      if (now >= blinkAt && now < blinkAt + 190) { var u = (now - blinkAt) / 190; p.open = u < 0.45 ? 1 - EASE.i(u / 0.45) * 0.92 : 0.08 + EASE.o((u - 0.45) / 0.55) * 0.92; busy = true; }
+      if (now >= blinkAt && now < blinkAt + 190 && now > quietUntil) { var u = (now - blinkAt) / 190; p.open = u < 0.45 ? 1 - EASE.i(u / 0.45) * 0.92 : 0.08 + EASE.o((u - 0.45) / 0.55) * 0.92; busy = true; }
       p.lx = tx; p.ly = ty;
       heroRig.target(p);
       return heroRig.tick(now) || busy;
