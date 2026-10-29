@@ -19,8 +19,8 @@
   // until then the page says "Coming soon".
   var MAC_DOWNLOAD_URL = "https://github.com/ashbronca/inkandditto.com/releases/latest/download/Ink-and-Ditto.dmg";            // the notarised .dmg
   var SHOW_MAC_DOWNLOAD = true;
-  var APP_STORE_URL = "";               // https://apps.apple.com/app/…
-  var SHOW_APP_STORE = false;
+  var APP_STORE_URL = "https://apps.apple.com/app/id6820760549";
+  var SHOW_APP_STORE = true;
   // Apple's own black badge (developer.apple.com › App Store › Marketing guidelines). At release, save it
   // into assets/ and point this at the copy.
   var APP_STORE_BADGE = "https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg";
@@ -683,7 +683,7 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
       <a class="store when-store" data-get="store" href="#download"><img decoding="async" data-badge alt="Download on the App Store" width="120" height="40"></a>
     </div>
     <p class="get-note when-mac">Free. macOS 26 or later. Ditto needs Claude&nbsp;Code.</p>
-    <p class="get-note when-ios">Ink for Mac is ready now. iPhone is coming soon.</p>
+    <p class="get-note when-ios">Ink for Mac is free too.</p>
     <button class="button small share when-ios" type="button" data-share>Send to Mac</button>
     <button class="film-link" type="button" data-film><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7.25" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 5.4v5.2L10.9 8z" fill="currentColor"/></svg>Watch the film <span class="dur">1 min</span></button>
     <a class="cue" href="#verse" aria-label="Read on"><svg viewBox="0 0 22 13" aria-hidden="true"><path pathLength="1" d="M1.5 1.75 11 11.25 20.5 1.75"/></svg></a>
@@ -760,7 +760,7 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
     <img decoding="async" class="phone light" src="assets/iphone-note-light.webp" srcset="assets/iphone-note-light-400.webp 400w, assets/iphone-note-light.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone" width="598" height="1300" loading="lazy" fetchpriority="high">
     <img decoding="async" class="phone dark" src="assets/iphone-note-dark.webp" srcset="assets/iphone-note-dark-400.webp 400w, assets/iphone-note-dark.webp 598w" sizes="(max-width: 34rem) 15rem, 13.5rem" alt="The same note on iPhone, in dark mode" width="598" height="1300" loading="lazy" fetchpriority="high">
     </div>
-    <p class="aside">On iPhone (coming soon), hand Ditto a line, follow the work and make the call from anywhere.</p>
+    <p class="aside">On iPhone, hand Ditto a line, follow the work and make the call from anywhere.</p>
   </section>
 
   <section class="chapter" aria-labelledby="who">
@@ -790,7 +790,7 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
     <h2 id="trust" class="statement">Plain Markdown files you own.<br>No account. Nothing comes to us.</h2>
     <p class="lead">Your notes stay on your devices and in your iCloud Drive. There’s no AI anywhere until you connect it. When you do, Ditto works like this.</p>
     <ul class="facts">
-      <li><h3>Nothing pushed or merged.</h3><p>Ship It commits to Ditto’s branch. What happens next is yours.</p></li>
+      <li><h3>Yours to merge.</h3><p>Ship It commits the work to Ditto’s own branch on your Mac. Nothing is pushed or merged.</p></li>
       <li><h3>Asks before it spends.</h3><p>If a line isn’t code, Ditto asks first. Stop any work, and nothing more is spent.</p></li>
       <li><h3>Your own Claude account.</h3><p>Ditto runs Claude&nbsp;Code on your Mac. Your code never passes through us.</p></li>
     </ul>
