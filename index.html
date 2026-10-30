@@ -638,7 +638,9 @@ dialog.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 
 :root[data-get] .bar .button.status { background: var(--ink); color: var(--paper); box-shadow: none; }
 :root[data-get] .actions .how { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule); }
 .store { display: inline-flex; border-radius: 9px; }
-.store img { height: 2.75rem; width: auto; }
+.store img { height: 2.75rem; width: auto; aspect-ratio: 120 / 40; }
+/* The badge holds its place before it has loaded, whatever the browser draws for an image not there yet. */
+.hero .store img { width: 8.25rem; }
 .button.tall { height: 2.75rem; padding-block: 0; box-sizing: border-box; }
 .button svg { width: 1em; height: 1em; }
 /* The opening's ink: a window-sized layer laid on the page where the window was when it began, so it scrolls with
